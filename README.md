@@ -1,5 +1,3 @@
-Here's a comprehensive README.md file for your project:
-
 ```markdown
 # Vedic Astrology Dashboard
 
@@ -147,16 +145,15 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 
 ## Support
 
-For support, email [your-email@example.com](mailto:your-email@example.com) or open an issue in the repository.
+For support, open an issue in the repository.
 
 ## Screenshots
 
-[Add screenshots of your application here]
+[Will be added soon]
 
 ## Future Enhancements
 
 - [ ] Add location-based calculations
 - [ ] Include more detailed Muhurta information
 - [ ] Add horoscope chart generation
-- [ ] Implement API for external usage
 - [ ] Add mobile application support
