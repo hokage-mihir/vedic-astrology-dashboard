@@ -1,9 +1,10 @@
-```markdown
 # Vedic Astrology Dashboard
 
-A modern web application that provides real-time Vedic astronomical calculations including Chandrashtam, Nakshatra positions, and Panchang details. This is a work in progress and a very first project of mine.
+A modern web application that provides real-time Vedic astronomical calculations including Chandrashtam, Nakshatra positions, and Panchang details. This is my first project, focused on making Vedic astronomical calculations accessible through a modern interface.
 
-## Features
+![Dashboard Preview](screenshot-link)
+
+## 🌟 Features
 
 - **Chandrashtam Calculator**
   - Real-time Moon position in sidereal zodiac
@@ -17,32 +18,30 @@ A modern web application that provides real-time Vedic astronomical calculations
   - Traditional symbols
   - Precise degree calculations
 
-- **Vedic Details**
-  - Tithi (lunar day) calculation
-  - Karana (half-tithi)
-  - Yoga calculations
-  - Real-time updates of Sun and Moon positions
-
 - **Panchang Details**
-  - Current Muhurta
   - Inauspicious periods (Rahu Kalam, Gulika Kalam, Yamghanti)
   - Day divisions and important time periods
   - Customizable location-based calculations
+  
 
-## Technology Stack
+## 🚀 Live Demo
 
-- React (Vite)
-- TailwindCSS
-- Shadcn/ui Components
-- Astronomia (for astronomical calculations)
+Visit the live application: [Vedic Astrology Dashboard](your-vercel-url)
 
-## Prerequisites
+## 💻 Technology Stack
+
+- React (Vite) - Frontend framework
+- TailwindCSS - Styling
+- Shadcn/ui - UI Components
+- Astronomia - Astronomical calculations
+- Vercel - Deployment
+
+## ⚙️ Prerequisites
 
 ```bash
 Node.js >= 16.0.0
 npm >= 7.0.0
 ```
-
 ## Installation
 
 1. Clone the repository:
@@ -61,7 +60,7 @@ npm install
 npm run dev
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 vedic-astrology-dashboard/
@@ -85,7 +84,7 @@ vedic-astrology-dashboard/
 └── vite.config.js
 ```
 
-## Component Details
+## 🔧 Component Details
 
 ### ChandrashtamCalculator
 Calculates and displays the current Moon position and the Chandrashtam (8th house) position in real-time.
@@ -97,13 +96,6 @@ Shows detailed information about the current lunar mansion including:
 - Traditional symbol
 - Planetary ruler
 
-### VedicDetails
-Displays various Vedic time divisions:
-- Tithi (lunar day)
-- Karana (half-tithi)
-- Yoga (Sun-Moon combinations)
-- Real-time astronomical positions
-
 ### PanchangDetails
 Provides comprehensive daily timing information:
 - Current Muhurta
@@ -111,7 +103,7 @@ Provides comprehensive daily timing information:
 - Important time divisions
 - Daily auspicious periods
 
-## Customization
+## ⚡ Customization
 
 ### Ayanamsa Settings
 You can modify the ayanamsa calculation in `astro-calculator.js`:
@@ -125,7 +117,7 @@ const calculateAyanamsa = (jd) => {
 ### Time Periods
 Customize the Muhurta and other time period calculations in `PanchangDetails.jsx`.
 
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -133,27 +125,46 @@ Customize the Muhurta and other time period calculations in `PanchangDetails.jsx
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## License
+## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE.md file for details
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- Astronomia library for astronomical calculations
-- Shadcn/ui for React components
+- [Astronomia](https://github.com/commenthol/astronomia) for astronomical calculations
+- [Shadcn/ui](https://ui.shadcn.com/) for React components
 - Indian astrological texts for traditional calculations
 
-## Support
+## 🐛 Known Issues
 
-For support, open an issue in the repository.
+- Currently only supports fixed location (Mumbai, India)
+- Times are approximate and may need refinement
+- Calculations don't account for daylight saving time
 
-## Screenshots
+## 🔮 Future Enhancements
 
-[Will be added soon]
+- [ ] Custom location support
+- [ ] More accurate sunrise/sunset calculations
+- [ ] Additional Panchang details
+- [ ] Horoscope generation
+- [ ] PWA support
+- [ ] Multiple language support
 
-## Future Enhancements
+## 📱 Screenshots
 
-- [ ] Add location-based calculations
-- [ ] Include more detailed Muhurta information
-- [ ] Add horoscope chart generation
-- [ ] Add mobile application support
+### Dark Mode
+
+
+### Light Mode
+
+
+## 📞 Contact & Support
+
+- Create an [Issue](https://github.com/hokage-mihir/vedic-astrology-dashboard/issues) for bug reports or feature requests
+- For other queries: Drop a message
+
+---
+
+<div align="center">
+Made with ❤️ by Mihir
+</div>
