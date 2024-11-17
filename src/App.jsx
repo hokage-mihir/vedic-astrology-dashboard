@@ -5,7 +5,7 @@ import PanchangDetails from './components/PanchangDetails'
 function App() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
-      <div className="container mx-auto max-w-7xl">
+      <div className="container mx-auto max-w-4xl">
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-4 md:mb-8 text-gray-900 dark:text-white">
           Vedic Astrology Dashboard
         </h1>
