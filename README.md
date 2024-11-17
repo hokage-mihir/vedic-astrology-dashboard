@@ -19,8 +19,8 @@ A modern web application that provides real-time Vedic astronomical calculations
   - Precise degree calculations
 
 - **Panchang Details**
-  - Inauspicious periods (Rahu Kalam, Gulika Kalam, Yamghanti)
-  - Day divisions and important time periods
+  - Inauspicious periods - Rahu Kalam
+  - Tithi and Paksha (Date and Phase of Moon)
   - Customizable location-based calculations
   
 
@@ -84,6 +84,8 @@ vedic-astrology-dashboard/
 
 ### ChandrashtamCalculator
 Calculates and displays the current Moon position and the Chandrashtam (8th house) position in real-time.
+- The afflicted Rashi
+- Duration in current Rashi
 
 ### NakshatraInfo
 Shows detailed information about the current lunar mansion including:
@@ -94,9 +96,9 @@ Shows detailed information about the current lunar mansion including:
 
 ### PanchangDetails
 Provides comprehensive daily timing information:
-- Current Muhurta
-- Inauspicious periods
-- Important time divisions
+- Current Tithi
+- Rahu Kaal - Inauspicious Period
+- Sun and Moon positions with degrees
 - Daily auspicious periods
 
 ## ⚡ Customization
