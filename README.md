@@ -2,7 +2,7 @@
 
 A modern web application that provides real-time Vedic astronomical calculations including Chandrashtam, Nakshatra positions, and Panchang details. This is my first project, focused on making Vedic astronomical calculations accessible through a modern interface.
 
-![Dashboard Preview](screenshot-link)
+![Dashboard Preview](assets/screenshot.png)
 
 ## 🌟 Features
 
@@ -146,12 +146,6 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 - [ ] PWA support
 - [ ] Multiple language support
 
-## 📱 Screenshots
-
-### Dark Mode
-
-
-### Light Mode
 
 
 ## 📞 Contact & Support
