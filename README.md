@@ -42,7 +42,7 @@ npm >= 7.0.0
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/vedic-astrology-dashboard.git
+git clone https://github.com/hokage-mihir/vedic-astrology-dashboard
 cd vedic-astrology-dashboard
 ```
 
