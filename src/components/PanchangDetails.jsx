@@ -49,14 +49,14 @@ const PanchangDetails = () => {
           throw new Error('Failed to calculate positions');
         }
 
-        // Calculate tithi
-        const moonSunAngle = (moonPos.longitude - sunPos.longitude + 360) % 360;
+        // Calculate lunar phase angle using raw longitudes
+        const moonSunAngle = (moonPos.raw_longitude - sunPos.longitude + 360) % 360;
         const tithiNumber = Math.floor(moonSunAngle / 12);
         const paksha = moonSunAngle >= 180 ? 'Krishna' : 'Shukla';
 
         // Get tithi name with special handling for Purnima/Amavasya
-        let tithiName = tithiNames[tithiNumber];
-        if (tithiNumber === 14) {
+        let tithiName = tithiNames[tithiNumber % 15];
+        if (tithiNumber === 14 || tithiNumber === 29) {
           tithiName = paksha === 'Shukla' ? 'Purnima' : 'Amavasya';
         }
 
@@ -75,7 +75,8 @@ const PanchangDetails = () => {
           },
           tithi: {
             name: tithiName,
-            paksha: paksha
+            paksha: paksha,
+            number: (tithiNumber % 15) + 1
           },
           muhurtas: {
             brahma: "4:24 AM - 5:12 AM",
@@ -135,7 +136,7 @@ const PanchangDetails = () => {
               </div>
               <div className="text-gray-900 dark:text-white">
                 <span className="font-semibold">Tithi:</span>{' '}
-                {details.tithi.name} ({details.tithi.paksha})
+                {details.tithi.name} ({details.tithi.number}) - {details.tithi.paksha}
               </div>
               <div className="text-gray-900 dark:text-white">
                 <span className="font-semibold">Timings:</span>
