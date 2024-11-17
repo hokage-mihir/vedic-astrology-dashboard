@@ -24,10 +24,6 @@ A modern web application that provides real-time Vedic astronomical calculations
   - Customizable location-based calculations
   
 
-## 🚀 Live Demo
-
-Visit the live application: [Vedic Astrology Dashboard](your-vercel-url)
-
 ## 💻 Technology Stack
 
 - React (Vite) - Frontend framework
