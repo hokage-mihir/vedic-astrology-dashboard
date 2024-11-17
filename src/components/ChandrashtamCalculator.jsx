@@ -13,7 +13,24 @@ const ChandrashtamCalculator = () => {
   const [moonData, setMoonData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [lastUpdated, setLastUpdated] = useState(null);
+
+  const calculateTimeLeft = (degreesInRashi, moonSpeed) => {
+    const degreesLeft = 30 - degreesInRashi; // Each Rashi is 30 degrees
+    const timeLeftHours = (degreesLeft / moonSpeed) * 24; // Convert to hours
+    
+    const days = Math.floor(timeLeftHours / 24);
+    const remainingHours = Math.floor(timeLeftHours % 24);
+    const minutes = Math.floor((timeLeftHours - Math.floor(timeLeftHours)) * 60);
+    
+    // If less than 24 hours remaining, just show hours and minutes
+    if (days === 0) {
+      return `${remainingHours}h ${minutes}m`;
+    }
+    
+    // Otherwise show days with hours and minutes in brackets
+    const daysText = days === 1 ? 'day' : 'days';
+    return `${days} ${daysText} (${remainingHours}h ${minutes}m)`;
+  };
 
   const calculatePositions = useCallback(() => {
     try {
@@ -24,16 +41,15 @@ const ChandrashtamCalculator = () => {
       const chandrashtamIndex = (moonPos.rashi_number + 7) % 12;
       const chandrashtamRashi = rashiOrder[chandrashtamIndex];
       
+      const timeLeft = calculateTimeLeft(moonPos.degrees_in_rashi, moonPos.speed);
+      
       setMoonData({
         current_rashi: currentRashi,
         chandrashtam_rashi: chandrashtamRashi,
-        longitude: moonPos.longitude,
         degrees_in_rashi: moonPos.degrees_in_rashi,
-        speed: moonPos.speed,
-        ayanamsa: moonPos.ayanamsa
+        time_left: timeLeft
       });
       
-      setLastUpdated(new Date().toLocaleTimeString());
       setError(null);
     } catch (err) {
       setError(`Calculation error: ${err.message}`);
@@ -52,59 +68,39 @@ const ChandrashtamCalculator = () => {
   }, [calculatePositions]);
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-bold">
-            Chandrashtam Calculator (Sidereal)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading && (
-            <div className="text-center p-4">Calculating...</div>
-          )}
-          
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          
-          {moonData && !loading && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 p-4 bg-gray-100 rounded-lg">
-                <div>
-                  <h3 className="font-semibold">Current Moon Position:</h3>
-                  <p className="text-lg">{moonData.current_rashi}</p>
-                  <p className="text-sm text-gray-600">
-                    {moonData.degrees_in_rashi.toFixed(2)}°
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold">Chandrashtam Rashi:</h3>
-                  <p className="text-lg text-red-600">{moonData.chandrashtam_rashi}</p>
-                </div>
+    <Card className="bg-white dark:bg-gray-800">
+      <CardHeader>
+        <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+          Chandrashtam Details(Sidereal)
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {loading && (
+          <div className="text-center p-4 text-gray-600 dark:text-gray-400">Calculating...</div>
+        )}
+        
+        {moonData && !loading && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Current Moon Position:</h3>
+                <p className="text-lg text-gray-900 dark:text-white">{moonData.current_rashi}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {moonData.degrees_in_rashi.toFixed(2)}°
+                </p>
+                <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                  Time left in Rashi: {moonData.time_left}
+                </p>
               </div>
-              
-              <div className="mt-4 space-y-2">
-                <div className="text-sm text-gray-600">
-                  Sidereal Longitude: {moonData.longitude.toFixed(2)}°
-                </div>
-                <div className="text-sm text-gray-600">
-                  Ayanamsa: {moonData.ayanamsa.toFixed(4)}°
-                </div>
-                <div className="text-sm text-gray-600">
-                  Moon Speed: {moonData.speed.toFixed(4)}°/day
-                </div>
-                <div className="text-sm text-gray-500">
-                  Last updated: {lastUpdated}
-                </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Chandrashtam Rashi:</h3>
+                <p className="text-lg text-red-600 dark:text-red-400">{moonData.chandrashtam_rashi}</p>
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

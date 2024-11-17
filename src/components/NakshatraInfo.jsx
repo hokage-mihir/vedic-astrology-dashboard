@@ -1,4 +1,3 @@
-// src/components/NakshatraInfo.jsx
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { calculateMoonPosition } from '../lib/astro-calculator';
@@ -58,35 +57,44 @@ const NakshatraInfo = () => {
   }, []);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-xl font-bold">Nakshatra Details</CardTitle>
+    <Card className="bg-white dark:bg-gray-800">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+          Nakshatra Details
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {nakshatraInfo && (
-          <div className="space-y-3">
-            <div>
-              <h3 className="font-semibold">Current Nakshatra:</h3>
-              <p className="text-lg">{nakshatraInfo.name}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Current Nakshatra:</h3>
+                <p className="text-lg text-gray-800 dark:text-gray-200">{nakshatraInfo.name}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Pada (Quarter):</h3>
+                <p className="text-gray-800 dark:text-gray-200">{nakshatraInfo.pada}/4</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Ruling Deity:</h3>
+                <p className="text-gray-800 dark:text-gray-200">{nakshatraInfo.deity}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold">Pada (Quarter):</h3>
-              <p>{nakshatraInfo.pada}/4</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Ruling Deity:</h3>
-              <p>{nakshatraInfo.deity}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Symbol:</h3>
-              <p>{nakshatraInfo.symbol}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Planetary Ruler:</h3>
-              <p>{nakshatraInfo.ruler}</p>
-            </div>
-            <div className="text-sm text-gray-600">
-              <p>Degrees in Nakshatra: {nakshatraInfo.degrees}°</p>
+            
+            <div className="space-y-2">
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Symbol:</h3>
+                <p className="text-gray-800 dark:text-gray-200">{nakshatraInfo.symbol}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Planetary Ruler:</h3>
+                <p className="text-gray-800 dark:text-gray-200">{nakshatraInfo.ruler}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Degrees in Nakshatra: {nakshatraInfo.degrees}°
+                </p>
+              </div>
             </div>
           </div>
         )}
