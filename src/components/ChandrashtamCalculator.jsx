@@ -71,10 +71,18 @@ const ChandrashtamCalculator = () => {
     <Card className="bg-white dark:bg-gray-800">
       <CardHeader>
         <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
-          Chandrashtam Details(Sidereal)
+          Chandrashtam Details (Sidereal)
         </CardTitle>
       </CardHeader>
       <CardContent>
+        <Alert className="mb-6">
+          <AlertDescription className="text-sm text-gray-700 dark:text-gray-300">
+            On Chandra Ashtama days, our mind is not in a balanced state to make correct decisions. 
+            The Moon will induce more negative thoughts in you, disturb your mind, confuse you, and overall add stress. 
+            Just by being aware of these days, you can save your mind from the negative effects of the moon.
+          </AlertDescription>
+        </Alert>
+        
         {loading && (
           <div className="text-center p-4 text-gray-600 dark:text-gray-400">Calculating...</div>
         )}
