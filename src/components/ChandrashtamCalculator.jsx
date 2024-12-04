@@ -3,6 +3,22 @@ import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card"
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { calculateMoonPosition, AYANAMSA } from '../lib/astro-calculator';
 
+// Define the relationship: Key is the afflicted Rashi, Value is Moon's position when that Rashi is afflicted
+const chandrashtamMap = {
+  'Mesh': 'Vrischik',
+  'Vrishab': 'Dhanu',
+  'Mithun': 'Makar',
+  'Kark': 'Kumbha',
+  'Simha': 'Meen',
+  'Kanya': 'Mesh',
+  'Tula': 'Vrishab',
+  'Vrischik': 'Mithun',
+  'Dhanu': 'Kark',
+  'Makar': 'Simha',
+  'Kumbha': 'Kanya',
+  'Meen': 'Tula'
+};
+
 const rashiOrder = [
   'Mesh', 'Vrishab', 'Mithun', 'Kark', 
   'Simha', 'Kanya', 'Tula', 'Vrischik', 
@@ -22,12 +38,10 @@ const ChandrashtamCalculator = () => {
     const remainingHours = Math.floor(timeLeftHours % 24);
     const minutes = Math.floor((timeLeftHours - Math.floor(timeLeftHours)) * 60);
     
-    // If less than 24 hours remaining, just show hours and minutes
     if (days === 0) {
       return `${remainingHours}h ${minutes}m`;
     }
     
-    // Otherwise show days with hours and minutes in brackets
     const daysText = days === 1 ? 'day' : 'days';
     return `${days} ${daysText} (${remainingHours}h ${minutes}m)`;
   };
@@ -38,14 +52,17 @@ const ChandrashtamCalculator = () => {
       
       const moonPos = calculateMoonPosition();
       const currentRashi = rashiOrder[moonPos.rashi_number];
-      const chandrashtamIndex = (moonPos.rashi_number + 7) % 12;
-      const chandrashtamRashi = rashiOrder[chandrashtamIndex];
+      
+      // Find which Rashi is afflicted when Moon is in current position
+      const afflictedRashi = Object.entries(chandrashtamMap).find(
+        ([rashi, moonPosition]) => moonPosition === currentRashi
+      )?.[0] || null;
       
       const timeLeft = calculateTimeLeft(moonPos.degrees_in_rashi, moonPos.speed);
       
       setMoonData({
         current_rashi: currentRashi,
-        chandrashtam_rashi: chandrashtamRashi,
+        afflicted_rashi: afflictedRashi,
         degrees_in_rashi: moonPos.degrees_in_rashi,
         time_left: timeLeft
       });
@@ -101,8 +118,8 @@ const ChandrashtamCalculator = () => {
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">Chandrashtam Rashi:</h3>
-                <p className="text-lg text-red-600 dark:text-red-400">{moonData.chandrashtam_rashi}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Currently Afflicted Rashi:</h3>
+                <p className="text-lg text-red-600 dark:text-red-400">{moonData.afflicted_rashi}</p>
               </div>
             </div>
           </div>

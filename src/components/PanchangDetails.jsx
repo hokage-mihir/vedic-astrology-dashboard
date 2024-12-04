@@ -19,6 +19,7 @@ const PanchangDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  //  Rahu Kalam calculation
   const calculateRahuKalam = (date) => {
     try {
       const rahuPeriods = {
@@ -37,6 +38,72 @@ const PanchangDetails = () => {
     }
   };
 
+  const calculateTithiEndTime = (moonPos, sunPos) => {
+    try {
+      if (!moonPos || !sunPos) return null;
+      
+      const moonLong = moonPos.longitude;
+      const sunLong = sunPos.longitude;
+      let distance = moonLong - sunLong;
+      if (distance < 0) distance += 360;
+      
+      const currentTithiStartDegree = Math.floor(distance / 12) * 12;
+      const degreesToNextTithi = (currentTithiStartDegree + 12) - distance;
+      
+      // Use speed from positions
+      const relativeSpeed = Math.abs(moonPos.speed - sunPos.speed);
+      if (relativeSpeed === 0) return null; // Avoid division by zero
+      
+      const hoursToNextTithi = (degreesToNextTithi / relativeSpeed) * 24;
+      
+      const now = new Date();
+      const endTime = new Date(now.getTime() + hoursToNextTithi * 60 * 60 * 1000);
+      
+      return {
+        time: endTime,
+        hours: hoursToNextTithi
+      };
+    } catch (err) {
+      console.error('Error calculating tithi end time:', err);
+      return null;
+    }
+  };
+  
+  const calculateTithi = (moonPos, sunPos) => {
+    try {
+      if (!moonPos || !sunPos) throw new Error('Invalid position data');
+  
+      const moonLong = moonPos.longitude;
+      const sunLong = sunPos.longitude;
+      
+      let distance = moonLong - sunLong;
+      if (distance < 0) distance += 360;
+      
+      const tithiNumber = Math.floor(distance / 12);
+      const paksha = tithiNumber >= 15 ? 'Krishna' : 'Shukla';
+      const tithiIndex = tithiNumber % 15;
+      
+      let tithiName = tithiNames[tithiIndex];
+      if (tithiIndex === 14) {
+        tithiName = paksha === 'Shukla' ? 'Purnima' : 'Amavasya';
+      }
+      
+      // Calculate end time only if we have valid positions
+      const endTimeInfo = calculateTithiEndTime(moonPos, sunPos);
+      
+      return {
+        name: tithiName,
+        number: tithiIndex + 1,
+        paksha: paksha,
+        degrees: distance % 12,
+        endTime: endTimeInfo?.time,
+        hoursToEnd: endTimeInfo?.hours
+      };
+    } catch (err) {
+      console.error('Error calculating tithi:', err);
+      throw new Error('Tithi calculation failed');
+    }
+  };
   useEffect(() => {
     const updateDetails = () => {
       try {
@@ -49,20 +116,7 @@ const PanchangDetails = () => {
           throw new Error('Failed to calculate positions');
         }
 
-        // Calculate lunar phase angle using raw longitudes
-        const moonSunAngle = (moonPos.raw_longitude - sunPos.longitude + 360) % 360;
-        const tithiNumber = Math.floor(moonSunAngle / 12);
-        const paksha = moonSunAngle >= 180 ? 'Krishna' : 'Shukla';
-
-        // Get tithi name with special handling for Purnima/Amavasya
-        let tithiName = tithiNames[tithiNumber % 15];
-        if (tithiNumber === 14 || tithiNumber === 29) {
-          tithiName = paksha === 'Shukla' ? 'Purnima' : 'Amavasya';
-        }
-
-        // Calculate sunrise/sunset times (simplified)
-        const sunriseTime = new Date(now.setHours(6, 30, 0));
-        const sunsetTime = new Date(now.setHours(18, 30, 0));
+        const tithiDetails = calculateTithi(moonPos, sunPos);
 
         setDetails({
           moonPosition: {
@@ -73,21 +127,24 @@ const PanchangDetails = () => {
             rashi: rashiOrder[sunPos.rashi_number],
             degrees: sunPos.degrees_in_rashi.toFixed(2)
           },
-          tithi: {
-            name: tithiName,
-            paksha: paksha,
-            number: (tithiNumber % 15) + 1
-          },
+          tithi: tithiDetails,
           muhurtas: {
             brahma: "4:24 AM - 5:12 AM",
             abhijeet: "11:48 AM - 12:36 PM"
           },
           rahuKalam: calculateRahuKalam(now),
           timings: {
-            sunrise: sunriseTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            sunset: sunsetTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            sunrise: new Date(now.setHours(6, 30, 0)).toLocaleTimeString([], { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            }),
+            sunset: new Date(now.setHours(18, 30, 0)).toLocaleTimeString([], { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            })
           }
         });
+        
         setError(null);
       } catch (err) {
         console.error('Error updating details:', err);
@@ -121,7 +178,7 @@ const PanchangDetails = () => {
             {error}
           </div>
         )}
-
+  
         {!loading && !error && details && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
             {/* Left Column */}
@@ -137,9 +194,22 @@ const PanchangDetails = () => {
               <div className="text-gray-900 dark:text-white">
                 <span className="font-semibold">Tithi:</span>{' '}
                 {details.tithi.name} ({details.tithi.number}) - {details.tithi.paksha}
+                {details.tithi.endTime && (
+                  <div className="ml-4 text-sm text-gray-700 dark:text-gray-300">
+                    Changes at: {details.tithi.endTime.toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                    {details.tithi.hoursToEnd < 24 && (
+                      <span className="ml-2">
+                        (in {Math.floor(details.tithi.hoursToEnd)}h {Math.floor((details.tithi.hoursToEnd % 1) * 60)}m)
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="text-gray-900 dark:text-white">
-                <span className="font-semibold">Timings:</span>
+                <span className="font-semibold">Timings (Mumbai) :</span>
                 <div className="ml-4 text-sm">
                   <div className="text-gray-700 dark:text-gray-300">
                     Sunrise: {details.timings.sunrise}
@@ -150,7 +220,7 @@ const PanchangDetails = () => {
                 </div>
               </div>
             </div>
-
+  
             {/* Right Column */}
             <div className="space-y-2">
               <div>
@@ -178,6 +248,5 @@ const PanchangDetails = () => {
       </CardContent>
     </Card>
   );
-};
-
+}
 export default PanchangDetails;
