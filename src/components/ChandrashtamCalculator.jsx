@@ -88,15 +88,15 @@ const ChandrashtamCalculator = () => {
     <Card className="bg-white dark:bg-gray-800">
       <CardHeader>
         <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
-          Chandrashtam Details (Sidereal)
+          Chandrashtam Details
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Alert className="mb-6">
           <AlertDescription className="text-sm text-gray-700 dark:text-gray-300">
-            On Chandra Ashtama days, our mind is not in a balanced state to make correct decisions. 
-            The Moon will induce more negative thoughts in you, disturb your mind, confuse you, and overall add stress. 
-            Just by being aware of these days, you can save your mind from the negative effects of the moon.
+            On Chandra Ashtama days, the Moon will induce more negative thoughts your mind, confuse you, and overall add stress. 
+            <br></br>Just by being aware of these days, can save your mind from these negative effects.
+            <br></br>Check if your Rashi (Moon sign) is currently afflicted, if it is just relax knowing this is a cosmic game. 
           </AlertDescription>
         </Alert>
         
