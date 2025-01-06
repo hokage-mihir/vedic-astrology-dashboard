@@ -46,6 +46,12 @@ const ChandrashtamCalculator = () => {
     return `${days} ${daysText} (${remainingHours}h ${minutes}m)`;
   };
 
+  const getNextRashi = (currentRashi) => {
+    const currentIndex = rashiOrder.indexOf(currentRashi);
+    const nextIndex = (currentIndex + 1) % 12;
+    return rashiOrder[nextIndex];
+  };
+
   const calculatePositions = useCallback(() => {
     try {
       setLoading(true);
@@ -57,12 +63,19 @@ const ChandrashtamCalculator = () => {
       const afflictedRashi = Object.entries(chandrashtamMap).find(
         ([rashi, moonPosition]) => moonPosition === currentRashi
       )?.[0] || null;
+
+      // Calculate next affected Rashi
+      const nextMoonRashi = getNextRashi(currentRashi);
+      const nextAfflictedRashi = Object.entries(chandrashtamMap).find(
+        ([rashi, moonPosition]) => moonPosition === nextMoonRashi
+      )?.[0] || null;
       
       const timeLeft = calculateTimeLeft(moonPos.degrees_in_rashi, moonPos.speed);
       
       setMoonData({
         current_rashi: currentRashi,
         afflicted_rashi: afflictedRashi,
+        next_afflicted_rashi: nextAfflictedRashi,
         degrees_in_rashi: moonPos.degrees_in_rashi,
         time_left: timeLeft
       });
@@ -120,6 +133,8 @@ const ChandrashtamCalculator = () => {
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white">Currently Afflicted Rashi:</h3>
                 <p className="text-lg text-red-600 dark:text-red-400">{moonData.afflicted_rashi}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white mt-4">Next Afflicted Rashi:</h3>
+                <p className="text-lg text-orange-600 dark:text-orange-400">{moonData.next_afflicted_rashi}</p>
               </div>
             </div>
           </div>
