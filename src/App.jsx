@@ -9,9 +9,9 @@ function App() {
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-4 md:mb-8 text-gray-900 dark:text-white">
           Vedic Astrology Dashboard
         </h1>
-        <div className="flex flex-col gap-4 md:gap-6">
+        <div className="flex flex-col space-y-6">
           <ChandrashtamCalculator />
-          <div className="lg:grid lg:grid-cols-2 gap-4 md:gap-6">
+          <div className="flex flex-col space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
             <PanchangDetails />
             <NakshatraInfo />
           </div>
