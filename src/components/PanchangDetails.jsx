@@ -240,7 +240,7 @@ const PanchangDetails = () => {
             <div className="space-y-2">
               <div>
                 <span className="font-semibold text-red-600 dark:text-red-400">
-                  Rahu Kalam:
+                  Rahu Kalam (approximate):
                 </span>
                 <div className="text-red-600 dark:text-red-400 ml-4 text-sm">
                   {details.rahuKalam}
