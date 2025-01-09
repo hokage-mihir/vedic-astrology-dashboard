@@ -14,6 +14,15 @@ const tithiNames = [
   'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Purnima/Amavasya'
 ];
 
+const formatGregorianDate = (date) => {
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
 const PanchangDetails = () => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -119,6 +128,7 @@ const PanchangDetails = () => {
         const tithiDetails = calculateTithi(moonPos, sunPos);
 
         setDetails({
+          gregorianDate: formatGregorianDate(now),
           moonPosition: {
             rashi: rashiOrder[moonPos.rashi_number],
             degrees: moonPos.degrees_in_rashi.toFixed(2)
@@ -165,6 +175,11 @@ const PanchangDetails = () => {
         <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
           Daily Vedic Details
         </CardTitle>
+        {!loading && !error && details && (
+          <div className="text-lg text-gray-600 dark:text-gray-400">
+            {details.gregorianDate}
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         {loading && (
@@ -249,4 +264,5 @@ const PanchangDetails = () => {
     </Card>
   );
 }
+
 export default PanchangDetails;
