@@ -1,6 +1,6 @@
 import * as React from "react"
 import PropTypes from 'prop-types'
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 
 const Alert = React.forwardRef(({ className, ...props }, ref) => (
   <div

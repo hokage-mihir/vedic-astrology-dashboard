@@ -117,7 +117,8 @@ export const calculateTimeInRashi = (degreesInRashi, moonSpeed) => {
         
         const days = Math.floor(hours / 24);
         const remainingHours = hours % 24;
-        return `${days} days (${remainingHours}h ${minutes}m)`;
+        const daysText = days === 1 ? 'day' : 'days';
+        return `${days} ${daysText} ${remainingHours}h ${minutes}m`;
     } catch (error) {
         console.error('Error calculating time in rashi:', error);
         return 'Not available';

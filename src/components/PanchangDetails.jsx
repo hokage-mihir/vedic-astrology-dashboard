@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { calculateMoonPosition, calculateSunPosition } from '../lib/astro-calculator';
 
 const rashiOrder = [

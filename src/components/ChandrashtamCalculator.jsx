@@ -43,7 +43,7 @@ const ChandrashtamCalculator = () => {
     }
     
     const daysText = days === 1 ? 'day' : 'days';
-    return `${days} ${daysText} (${remainingHours}h ${minutes}m)`;
+    return `${days} ${daysText} ${remainingHours}h ${minutes}m`;
   };
 
   const getNextRashi = (currentRashi) => {
@@ -61,13 +61,13 @@ const ChandrashtamCalculator = () => {
       
       // Find which Rashi is afflicted when Moon is in current position
       const afflictedRashi = Object.entries(chandrashtamMap).find(
-        ([rashi, moonPosition]) => moonPosition === currentRashi
+        ([_rashi, moonPosition]) => moonPosition === currentRashi
       )?.[0] || null;
 
       // Calculate next affected Rashi
       const nextMoonRashi = getNextRashi(currentRashi);
       const nextAfflictedRashi = Object.entries(chandrashtamMap).find(
-        ([rashi, moonPosition]) => moonPosition === nextMoonRashi
+        ([_rashi, moonPosition]) => moonPosition === nextMoonRashi
       )?.[0] || null;
       
       const timeLeft = calculateTimeLeft(moonPos.degrees_in_rashi, moonPos.speed);
