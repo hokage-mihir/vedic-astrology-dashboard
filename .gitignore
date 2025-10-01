@@ -7,10 +7,18 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
 dist
 dist-ssr
 *.local
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Editor directories and files
 .vscode/*
@@ -23,5 +31,67 @@ dist-ssr
 *.sln
 *.sw?
 
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
 # Project documentation (private)
 project-updates.md
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Build artifacts
+coverage
+.nyc_output
+*.tsbuildinfo
+.turbo
+
+# IDE
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# PWA
+dev-dist/
+sw.js
+workbox-*.js
+
+# Icon generation
+public/icon-*.svg
+
+# Misc
+.cache
+.parcel-cache

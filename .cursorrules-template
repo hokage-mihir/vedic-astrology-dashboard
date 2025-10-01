@@ -1,0 +1,332 @@
+# Website Development Rules Template
+
+## 🔧 PROJECT CONFIGURATION (UPDATE THIS SECTION FOR EACH PROJECT)
+<!-- ================================================================ -->
+<!-- CUSTOMIZE ALL VALUES BELOW FOR YOUR SPECIFIC PROJECT -->
+<!-- ================================================================ -->
+
+### Project Details
+- **Project Name**: [Your Project Name]
+- **Website Type**: [Portfolio/E-commerce/Blog/Corporate/Local Business/Educational/etc.]
+- **Domain**: [yourdomain.com]
+- **Primary Goal**: [Main objective - showcase work/sell products/share content/etc.]
+
+### Technology Stack
+- **Frontend Framework**: [HTML/React/Vue/Angular/Next.js/etc.]
+- **CSS Framework**: [Bootstrap/Tailwind/Custom CSS/etc.]
+- **Backend**: [None/Node.js/PHP/Python/etc.]
+- **CMS**: [None/WordPress/Contentful/etc.]
+- **Build Tools**: [None/Webpack/Vite/etc.]
+
+### Industry/Niche Specifics
+- **Industry**: [Creative/Technology/Healthcare/Finance/etc.]
+- **Target Audience**: [Clients/Customers/Readers/etc.]
+- **Primary Keywords**: [keyword1, keyword2, keyword3]
+- **Competitor Analysis**: [Main competitors to consider]
+
+### SEO Configuration
+- **Google Analytics ID**: [G-XXXXXXXXXX or UA-XXXXXXXXX-X]
+- **Google Search Console**: [Yes/No - Domain verified]
+- **Sitemap URL**: [https://yourdomain.com/sitemap.xml]
+- **Robots.txt URL**: [https://yourdomain.com/robots.txt]
+
+### Content Strategy
+- **Content Length Targets**:
+  - Homepage: [X words]
+  - Service/Product Pages: [X words]
+  - Blog Posts: [X words]
+  - About Page: [X words]
+- **Update Frequency**: [Daily/Weekly/Monthly/etc.]
+
+### Performance Targets
+- **Core Web Vitals Goals**:
+  - LCP: < [2.5]s
+  - FID: < [100]ms
+  - CLS: < [0.1]
+  - TTFB: < [600]ms
+
+<!-- ================================================================ -->
+<!-- END OF PROJECT CONFIGURATION - DO NOT MODIFY BELOW THIS LINE -->
+<!-- ================================================================ -->
+
+## Core Development Principles
+
+### 1. Code Quality & Architecture
+- Write clean, semantic HTML with proper accessibility attributes
+- Use meaningful class names and component structure
+- Implement mobile-first responsive design
+- Ensure cross-browser compatibility
+- Follow modern web standards and best practices
+
+### 2. CSS & Styling Guidelines (Tailwind CSS Expert Integration)
+
+#### CSS Conflict Resolution & Architecture
+- **Specificity Management**: Always analyze existing CSS for potential conflicts before adding new styles
+- **Cascade Analysis**: Understand inheritance patterns and prevent unintended style overwrites
+- **Scoping Strategy**: Implement proper component isolation using CSS modules or Tailwind's layer system
+- **Legacy CSS Integration**: Safely integrate Tailwind with existing Bootstrap and custom CSS
+
+#### Before Writing Any CSS
+1. **Audit Existing Styles**: Scan project for existing CSS files, frameworks, and potential conflicts
+2. **Analyze Component Tree**: Understand parent-child relationships and inheritance patterns
+3. **Check Configuration**: Review current styling approach and suggest optimizations
+4. **Identify Patterns**: Look for repeated styling patterns that should be abstracted
+
+#### Code Quality Standards
+- **Semantic Naming**: Use meaningful class combinations and component names
+- **Responsive Design**: Mobile-first approach with proper breakpoint usage
+- **Accessibility**: Ensure WCAG compliance with proper contrast, focus states, screen reader support
+- **Performance**: Minimize bundle size, avoid unnecessary utilities, optimize for Core Web Vitals
+
+#### Component Architecture Patterns
+- **Variant Systems**: Use conditional styling for different states
+- **Compound Components**: Build complex UI patterns with proper style isolation
+- **Design Tokens**: Abstract colors, spacing, typography into reusable tokens
+- **Layer Management**: Proper use of CSS layers for organization
+
+### 3. SEO Optimization Guidelines (SEO Expert Integration)
+
+#### Initial Project Analysis Protocol
+Upon working on any file, immediately check for:
+- Meta tags implementation and quality
+- Google Analytics presence (GA4 or Universal Analytics)
+- Structured data (JSON-LD)
+- Open Graph tags
+- Canonical URLs
+- Image optimization status
+- Loading performance indicators
+- Mobile responsiveness
+
+#### Universal On-Page SEO Requirements
+
+**Meta Tags Template:**
+```html
+<!-- Primary Meta Tags -->
+<title>[Primary Keyword] - [Secondary Keyword] | [Project Name] (50-60 chars)</title>
+<meta name="description" content="[Action verb] [benefit]. [Feature/Service]. [Call-to-action]. (150-160 chars)">
+<meta name="keywords" content="[Primary Keywords from Project Configuration]">
+
+<!-- Viewport and Technical -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<link rel="canonical" href="https://[Domain from Project Configuration]/[page]">
+
+<!-- Indexing Control -->
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+```
+
+**Open Graph & Twitter Cards:**
+```html
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://[Domain from Project Configuration]/[page]">
+<meta property="og:title" content="[Title from Meta Tags]">
+<meta property="og:description" content="[Description from Meta Tags]">
+<meta property="og:image" content="https://[Domain from Project Configuration]/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://[Domain from Project Configuration]/[page]">
+<meta name="twitter:title" content="[Title from Meta Tags]">
+<meta name="twitter:description" content="[Description from Meta Tags]">
+<meta name="twitter:image" content="https://[Domain from Project Configuration]/twitter-image.jpg">
+```
+
+#### Industry-Specific SEO Optimization
+Based on the **Website Type** from Project Configuration:
+
+**Portfolio/Creative:**
+- ImageObject schema for portfolio pieces
+- Portfolio showcase optimization with proper alt text
+- Case study structure with detailed descriptions
+- Creative work metadata including techniques and mediums
+- Professional bio optimization with relevant keywords
+
+**E-commerce:**
+- Product schema markup
+- Review/Rating schemas
+- Price and availability markup
+- Category page optimization
+- Faceted navigation handling
+
+**Blog/Publishing:**
+- Article schema
+- Author markup
+- Content freshness signals
+- Category/tag optimization
+- Related posts structure
+
+**Local Business:**
+- LocalBusiness schema
+- NAP consistency (Name, Address, Phone)
+- Google My Business optimization tips
+- Local citation recommendations
+- Service area pages
+
+**Corporate/B2B:**
+- Organization schema
+- Service page optimization
+- White paper/resource optimization
+- LinkedIn integration suggestions
+
+#### Performance Optimization
+**Core Web Vitals Targets (from Project Configuration):**
+- **LCP**: < [Configured Value]s
+- **FID**: < [Configured Value]ms
+- **CLS**: < [Configured Value]
+- **TTFB**: < [Configured Value]ms
+
+**Image Optimization Protocol:**
+- Use WebP format with JPEG fallback
+- Implement responsive images with srcset
+- Lazy loading for below-fold images
+- Quality 80-85 for photos, 90-95 for graphics
+- Descriptive, keyword-relevant alt text
+- Descriptive file naming conventions
+
+### 4. Content Optimization Guidelines
+
+#### Universal Content SEO Rules
+1. **Title Structure**: Primary Keyword - Secondary | [Project Name]
+2. **URL Structure**: /category/descriptive-keyword-slug
+3. **Heading Hierarchy**: 
+   - One H1 per page (matches search intent)
+   - H2s for main sections
+   - H3s for subsections
+4. **Content Length**: Use targets from Project Configuration
+5. **Internal Linking**: 3-5 contextual links per 1000 words
+
+### 5. Google Analytics Integration
+
+#### Quick GA4 Setup Guide
+```html
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=[Google Analytics ID from Project Configuration]"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '[Google Analytics ID from Project Configuration]');
+</script>
+```
+
+#### Analytics Setup Checklist
+1. Verify GA4 property creation
+2. Implement basic tracking code
+3. Set up conversion events (form submissions, purchases, portfolio views)
+4. Enable enhanced measurement (scroll, outbound clicks, site search)
+5. Link to Google Search Console
+6. Set up custom events for important user interactions
+
+### 6. Technical SEO Foundations
+
+#### Robots.txt Configuration
+```
+User-agent: *
+Allow: /
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /private/
+Crawl-delay: 1
+
+# Block common development/sensitive paths
+Disallow: /api/private/
+Disallow: /*.json$
+Disallow: /*.xml$ 
+Allow: /sitemap.xml
+
+Sitemap: [Sitemap URL from Project Configuration]
+```
+
+#### Universal Structured Data Base
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://[Domain from Project Configuration]",
+  "name": "[Project Name from Project Configuration]",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://[Domain from Project Configuration]/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+```
+
+### 7. Problem-Solving Methodology
+
+#### When Styling Components:
+1. **Analyze Context**: Understand the component's purpose, parent containers, and usage patterns
+2. **Check Inheritance**: Identify inherited styles that might affect the component
+3. **Plan Responsive Strategy**: Design mobile-first with logical breakpoint progression
+4. **Implement Accessibility**: Include focus states, color contrast, and semantic markup
+5. **Test Across Browsers**: Consider browser-specific quirks and fallbacks
+6. **Optimize Performance**: Remove unused utilities, combine similar classes
+
+#### When Debugging CSS Issues:
+1. **Inspect Specificity**: Use browser dev tools to identify override sources
+2. **Check Cascade Order**: Verify CSS import order and layer priorities
+3. **Validate Syntax**: Ensure proper class names and combinations
+4. **Test Responsive**: Verify behavior across all breakpoints
+5. **Cross-browser Validation**: Test in multiple browsers and devices
+
+### 8. Quality Assurance Checklist
+
+Before delivering any solution:
+- [ ] No conflicts with existing CSS detected
+- [ ] Responsive design tested across all major breakpoints
+- [ ] Accessibility compliance verified (contrast, focus states, semantic markup)
+- [ ] Performance impact assessed (bundle size, render speed)
+- [ ] Cross-browser compatibility confirmed
+- [ ] Component reusability considered
+- [ ] Code maintainability optimized
+- [ ] Design system consistency maintained
+- [ ] Mobile-friendly test passes
+- [ ] All pages have unique titles and descriptions
+- [ ] Images are optimized and have alt text
+- [ ] HTTPS is properly implemented
+- [ ] Canonical URLs are set correctly
+
+### 9. Communication Style
+
+- **Explain Reasoning**: Always explain why specific approaches were chosen
+- **Highlight Conflicts**: Proactively identify and resolve potential issues
+- **Suggest Improvements**: Recommend optimizations for existing code
+- **Provide Alternatives**: Offer multiple solutions with trade-off explanations
+- **Performance Insights**: Include performance implications of choices
+- **Best Practices**: Share modern web development and SEO best practices contextually
+
+### 10. Implementation Priority Matrix
+
+#### Phase 1: Critical (Week 1)
+1. Fix robots.txt and sitemap
+2. Implement Google Analytics
+3. Add basic meta tags (title, description)
+4. Ensure mobile responsiveness
+5. Fix any crawl errors
+
+#### Phase 2: Important (Week 2-3)
+1. Implement structured data
+2. Optimize Core Web Vitals
+3. Add Open Graph/Twitter Cards
+4. Image optimization
+5. Internal linking structure
+
+#### Phase 3: Enhancement (Week 4+)
+1. Content optimization
+2. Schema markup expansion
+3. Advanced performance tuning
+4. A/B testing meta descriptions
+5. Featured snippet optimization
+
+## Remember
+
+- **Every website deserves good SEO** regardless of size
+- **Adapt but don't overwhelm** - provide actionable steps suitable for the user's technical level
+- **Performance is SEO** - fast sites rank better
+- **User experience is the ultimate goal** - improvements should always enhance UX
+- **Industry focus** - optimize based on the Website Type from Project Configuration
+
+When in doubt, provide options and let the user choose based on their specific needs and resources.

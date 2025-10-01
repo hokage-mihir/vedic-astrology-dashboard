@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { InfoTooltip } from "../components/ui/tooltip";
 import { calculateMoonPosition, AYANAMSA } from '../lib/astro-calculator';
 import { RASHI_ORDER, CHANDRASHTAM_MAP, getNextRashi } from '../lib/vedic-constants';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { useNotifications } from '../contexts/NotificationContext';
 import { Moon, AlertTriangle, Clock, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CosmicLoader from './CosmicLoader';
@@ -14,6 +15,8 @@ const ChandrashtamCalculator = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const prefersReducedMotion = useReducedMotion();
+  const { showNotification, notificationSettings } = useNotifications();
+  const previousAfflictedRashi = useRef(null);
 
   // Memoized function to calculate time left in current Rashi
   const calculateTimeLeft = useCallback((degreesInRashi, moonSpeed) => {
@@ -49,9 +52,36 @@ const ChandrashtamCalculator = () => {
       const nextAfflictedRashi = Object.entries(CHANDRASHTAM_MAP).find(
         ([_rashi, moonPosition]) => moonPosition === nextMoonRashi
       )?.[0] || null;
-      
+
       const timeLeft = calculateTimeLeft(moonPos.degrees_in_rashi, moonPos.speed);
-      
+
+      // Check if Chandrashtam period changed and send notification
+      if (previousAfflictedRashi.current !== null &&
+          previousAfflictedRashi.current !== afflictedRashi) {
+
+        // Chandrashtam period ended for previous rashi
+        if (notificationSettings.chandrashtamEnd) {
+          showNotification({
+            title: 'Chandrashtam Period Ended',
+            body: `The difficult period has ended for ${previousAfflictedRashi.current}. Mental clarity returning.`,
+            type: 'success',
+            duration: 8000
+          });
+        }
+
+        // New Chandrashtam period started
+        if (notificationSettings.chandrashtamStart && afflictedRashi) {
+          showNotification({
+            title: 'Chandrashtam Period Started',
+            body: `${afflictedRashi} is now experiencing Chandrashtam. Practice awareness and patience.`,
+            type: 'warning',
+            duration: 8000
+          });
+        }
+      }
+
+      previousAfflictedRashi.current = afflictedRashi;
+
       setMoonData({
         current_rashi: currentRashi,
         afflicted_rashi: afflictedRashi,
@@ -59,7 +89,7 @@ const ChandrashtamCalculator = () => {
         degrees_in_rashi: moonPos.degrees_in_rashi,
         time_left: timeLeft
       });
-      
+
       setError(null);
     } catch (err) {
       setError(`Calculation error: ${err.message}`);
@@ -67,7 +97,7 @@ const ChandrashtamCalculator = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [calculateTimeLeft, showNotification, notificationSettings]);
 
   useEffect(() => {
     calculatePositions();

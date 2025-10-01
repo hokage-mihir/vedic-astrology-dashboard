@@ -3,6 +3,7 @@ import ChandrashtamCalculator from './components/ChandrashtamCalculator'
 import ChandrashtamAnnualView from './components/ChandrashtamAnnualView'
 import NakshatraInfo from './components/NakshatraInfo'
 import PanchangDetails from './components/PanchangDetails'
+import { NotificationSettings } from './components/NotificationSettings'
 import { TimezoneSelector, LOCATIONS } from './components/TimezoneSelector'
 import { useReducedMotion } from './hooks/useReducedMotion'
 import { Sparkles } from 'lucide-react'
@@ -93,6 +94,9 @@ function App() {
         </motion.div>
 
         <div className="flex flex-col space-y-6">
+          {/* Notification Settings */}
+          <NotificationSettings />
+
           {/* Live Chandrashtam Calculator */}
           <ChandrashtamCalculator />
 

@@ -1,0 +1,304 @@
+# Vedic Astrology Dashboard Development Rules
+
+## 🔧 PROJECT CONFIGURATION
+<!-- ================================================================ -->
+<!-- CUSTOMIZED FOR VEDIC ASTROLOGY DASHBOARD PROJECT -->
+<!-- ================================================================ -->
+
+### Project Details
+- **Project Name**: Moon Mood (Vedic Astrology Dashboard)
+- **Website Type**: Educational/Spiritual Web Application
+- **Domain**: moonmood.xyz
+- **Primary Goal**: Provide real-time Vedic astrological insights including Chandrashtam (Moon's 8th house affliction), Nakshatra details, and daily Panchang information
+
+### Technology Stack
+- **Frontend Framework**: React 18.2.0 with Vite
+- **CSS Framework**: Tailwind CSS 3.4.0 with tailwind-merge and tailwindcss-animate
+- **Backend**: None (Client-side astronomical calculations)
+- **Astronomical Library**: astronomia 4.1.1
+- **Build Tools**: Vite 5.0.8, ESLint
+- **UI Components**: Custom shadcn-style components (Card, Alert)
+
+### Industry/Niche Specifics
+- **Industry**: Vedic Astrology / Spiritual Wellness / Mindfulness
+- **Target Audience**: Vedic astrology practitioners, spiritual seekers, individuals interested in lunar cycles and their effects
+- **Primary Keywords**: chandrashtam calculator, vedic astrology, moon position, nakshatra, panchang, tithi, rahu kalam, vedic calendar, moon sign affliction, ashtama chandra
+- **Core Concepts**:
+  - Chandrashtam (8th house affliction from Moon)
+  - Nakshatra (27 lunar mansions)
+  - Tithi (lunar day)
+  - Rashi (zodiac signs)
+  - Panchang (Hindu almanac)
+
+### Design Philosophy
+- **Visual Theme**: Celestial, mystical, cosmic aesthetics
+- **Color Palette Goals**:
+  - Deep purples, cosmic blues, celestial golds
+  - Dark mode optimized for spiritual/meditative experience
+  - High contrast for accessibility
+- **Typography**: Clean, readable fonts with spiritual elegance
+- **Animation Style**: Subtle, smooth, moon-phase inspired transitions
+
+### Content Strategy
+- **Content Length Targets**:
+  - Main Dashboard: Clear, concise information display
+  - Explanatory Text: 2-3 sentences per concept
+  - Help/Tooltips: 1-2 sentences
+- **Update Frequency**: Real-time calculations (60-second intervals)
+- **Educational Focus**: Help users understand astrological concepts without overwhelming them
+
+### Performance Targets
+- **Core Web Vitals Goals**:
+  - LCP: < 2.0s (fast calculation display)
+  - FID: < 50ms (responsive interactions)
+  - CLS: < 0.1 (stable layout)
+  - TTFB: < 400ms (instant astronomical calculations)
+- **Real-time Updates**: Efficient 60-second polling without performance degradation
+
+<!-- ================================================================ -->
+<!-- END OF PROJECT CONFIGURATION -->
+<!-- ================================================================ -->
+
+## Core Development Principles
+
+### 1. Astronomical Accuracy & Calculation Quality
+- Ensure precise astronomical calculations using astronomia library
+- Implement proper Ayanamsa corrections for sidereal calculations
+- Validate all astronomical data against known ephemeris
+- Handle edge cases in lunar/solar position calculations
+- Update calculations efficiently without blocking UI
+
+### 2. Code Quality & Architecture
+- Write clean, semantic React components with proper hooks usage
+- Use meaningful component and function names reflecting Vedic terminology
+- Implement mobile-first responsive design
+- Follow React best practices (proper useEffect dependencies, memoization where needed)
+- Ensure cross-browser compatibility
+- Handle loading and error states gracefully
+
+### 3. CSS & Styling Guidelines (Tailwind CSS)
+
+#### Tailwind Configuration
+- Use Tailwind's dark mode variant extensively (spiritual/meditative dark theme)
+- Leverage tailwind-merge for conditional class application
+- Use tailwindcss-animate for smooth transitions
+- Implement responsive breakpoints: sm, md, lg, xl
+
+#### Component Styling Patterns
+- **Cards**: Clean, elevated design with subtle shadows and dark mode support
+- **Typography**: Clear hierarchy with proper font weights and sizes
+- **Color System**:
+  - Primary: Celestial blues/purples for highlights
+  - Accent: Gold/amber for important information
+  - Alert/Warning: Red for Rahu Kalam, Chandrashtam afflictions
+  - Success/Info: Blue for positive information
+  - Neutral: Gray scale for general content
+- **Spacing**: Consistent spacing using Tailwind's spacing scale (space-y-4, gap-6, etc.)
+- **Responsive Design**: Grid and flex layouts that adapt gracefully to all screen sizes
+
+#### Beautification Priorities (from analysis)
+1. **Gradient backgrounds**: Celestial/cosmic gradients instead of flat colors
+2. **Icon integration**: Moon phases, zodiac symbols, star icons
+3. **Typography enhancement**: Consider decorative fonts for headings while maintaining readability
+4. **Animations**: Fade-ins, subtle pulsing for active states, smooth transitions
+5. **Card effects**: Hover states with glow effects (cosmic theme)
+6. **Visual separators**: Decorative dividers between sections
+7. **Loading states**: Cosmic-themed loaders (rotating moon, stars, etc.)
+
+### 4. Vedic Astrology Specific Guidelines
+
+#### Terminology & Translation
+- Use authentic Sanskrit/Vedic terms with English translations
+- Maintain consistency in Rashi names: Mesh, Vrishab, Mithun, Kark, Simha, Kanya, Tula, Vrischik, Dhanu, Makar, Kumbha, Meen
+- Provide clear explanations for technical terms (Chandrashtam, Nakshatra, Tithi, etc.)
+
+#### Data Presentation
+- **Current Status First**: Show what's happening now prominently
+- **Time-based Information**: Always display "time left" or "changes at" for transitioning events
+- **Visual Hierarchy**:
+  - Critical information (Chandrashtam affliction) → Red/prominent
+  - Current state → Primary colors
+  - Future state → Muted/secondary colors
+- **Explanatory Context**: Brief educational content to help users understand the significance
+
+#### Calculation Updates
+- Real-time updates every 60 seconds
+- Display calculation timestamps where relevant
+- Handle timezone considerations (currently Mumbai-based)
+- Smooth transitions when data updates (no jarring changes)
+
+### 5. User Experience Principles
+
+#### Mindful Design
+- Create a calming, meditative interface
+- Avoid overwhelming users with too much information at once
+- Use progressive disclosure (tooltips, expandable sections)
+- Respect the spiritual nature of the content
+
+#### Educational Approach
+- Explain "why" things matter (e.g., "Moon will induce more negative thoughts... just by being aware can save your mind")
+- Provide context for astrological events
+- Help users make practical use of the information
+
+#### Accessibility
+- Ensure sufficient color contrast for all text
+- Provide meaningful alt text for icons/images
+- Support keyboard navigation
+- Screen reader friendly content structure
+- Respect prefers-reduced-motion for animations
+
+### 6. Component Architecture Patterns
+
+#### State Management
+- Use useState for local component state
+- Use useEffect for calculations and intervals
+- Use useCallback for memoized functions (when needed)
+- Clean up intervals in useEffect return functions
+
+#### Data Flow
+```jsx
+// Pattern for astronomical calculations
+useEffect(() => {
+  const updateData = () => {
+    try {
+      const calculation = performAstronomicalCalculation();
+      setData(calculation);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  updateData();
+  const interval = setInterval(updateData, 60000); // 60-second updates
+  return () => clearInterval(interval);
+}, [dependencies]);
+```
+
+#### Loading & Error States
+- Always show loading state during initial calculation
+- Display friendly error messages
+- Never leave users with blank/broken UI
+
+### 7. Code Improvements & Refactoring Guidelines
+
+#### Immediate Code Quality Issues to Address
+- Replace `<br></br>` with proper Tailwind spacing utilities (space-y-2, mt-2, etc.)
+- Consider extracting repeated Rashi order arrays to shared constants
+- Centralize timezone handling (currently hardcoded to Mumbai)
+
+#### Future Enhancement Priorities
+1. **Visual Enhancements** (High Priority):
+   - Add moon phase visual indicator
+   - Implement gradient backgrounds
+   - Add zodiac/astrological icons
+   - Enhance animations and transitions
+
+2. **Functional Improvements** (Medium Priority):
+   - Timezone selector component
+   - Tooltip system for educational content
+   - Historical/future date viewing
+   - Share/export functionality
+
+3. **Performance Optimizations** (As Needed):
+   - Memoize expensive calculations
+   - Code splitting if bundle grows
+   - Optimize re-renders
+
+### 8. SEO Optimization Guidelines
+
+#### Meta Tags (when deploying)
+```html
+<title>Moon Mood - Vedic Astrology Dashboard | Chandrashtam & Panchang Calculator</title>
+<meta name="description" content="Real-time Vedic astrology insights with Chandrashtam calculator, Nakshatra details, and daily Panchang. Track lunar cycles and their spiritual effects.">
+<meta name="keywords" content="chandrashtam, vedic astrology, moon position, nakshatra, panchang, tithi, rahu kalam, vedic calendar, ashtama chandra">
+```
+
+#### Structured Data (future implementation)
+- WebApplication schema
+- Educational content markup
+- FAQ schema for common astrological questions
+
+### 9. Development Workflow
+
+#### Before Making Changes
+1. Read the current component implementation
+2. Understand the astronomical calculations involved
+3. Consider impact on user experience and spiritual context
+4. Test with real astronomical data
+5. Verify dark mode appearance
+
+#### Code Review Checklist
+- [ ] Astronomical calculations are accurate
+- [ ] Loading and error states handled
+- [ ] Responsive design works on mobile
+- [ ] Dark mode properly implemented
+- [ ] No console errors
+- [ ] Intervals properly cleaned up
+- [ ] Time displays are clear and formatted well
+- [ ] Vedic terminology is accurate
+- [ ] Educational content is helpful and clear
+
+### 10. Testing Considerations
+
+#### Manual Testing Focus
+- Test at different times to see live updates
+- Verify calculations against known ephemeris data
+- Test responsive breakpoints (mobile, tablet, desktop)
+- Verify dark mode throughout
+- Check edge cases (Rashi transitions, Tithi changes)
+
+#### Cross-Browser Testing
+- Chrome/Edge (Chromium)
+- Firefox
+- Safari (especially on iOS)
+- Mobile browsers
+
+### 11. Communication & Documentation
+
+#### When Explaining Changes
+- Reference Vedic astrological concepts clearly
+- Explain astronomical calculation details when relevant
+- Highlight visual/UX improvements with reasoning
+- Consider the spiritual/educational context
+
+#### Code Comments
+- Document complex astronomical calculations
+- Explain Vedic astrology logic (e.g., why Chandrashtam is 8th from Moon)
+- Note timezone assumptions
+- Reference formulas or sources for calculations
+
+## Remember
+
+- **Accuracy First**: Vedic astrology calculations must be precise
+- **Mindful Design**: Create a calming, spiritual interface
+- **Educational Purpose**: Help users understand and apply the information
+- **Performance Matters**: Real-time updates should be smooth and efficient
+- **Accessibility**: Make spiritual wisdom accessible to everyone
+- **Dark Mode**: Optimized for meditative, night-time use
+- **Mobile-First**: Many users will check on mobile devices throughout their day
+
+## Beautification Roadmap (from analysis)
+
+### Phase 1: Visual Polish (Week 1)
+1. Replace flat gray backgrounds with cosmic gradients
+2. Add subtle animations and transitions
+3. Implement card hover effects
+4. Improve typography hierarchy
+5. Add color theming (purples, golds, celestial blues)
+
+### Phase 2: Enhanced Features (Week 2-3)
+1. Add moon phase visual indicator
+2. Implement icon system for zodiac signs
+3. Create animated cosmic loader
+4. Add tooltips for educational content
+5. Improve spacing and layout
+
+### Phase 3: Advanced Functionality (Week 4+)
+1. Timezone selector
+2. Historical date viewing
+3. Export/share functionality
+4. Notification system for important transits
+5. Expanded educational content
+
+When implementing changes, always consider the spiritual and educational mission of helping users understand cosmic cycles and their effects on consciousness.

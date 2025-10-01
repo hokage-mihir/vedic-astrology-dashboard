@@ -151,7 +151,6 @@ export const calculateAllChandrashtamForYear = (year) => {
     const allPeriods = {};
 
     RASHI_ORDER.forEach(rashi => {
-        console.log(`Calculating Chandrashtam for ${rashi} in ${year}...`);
         allPeriods[rashi] = calculateChandrashtamForRashi(rashi, year);
     });
 
