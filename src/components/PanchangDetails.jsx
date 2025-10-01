@@ -1,18 +1,14 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { InfoTooltip } from "../components/ui/tooltip";
 import { calculateMoonPosition, calculateSunPosition } from '../lib/astro-calculator';
-
-const rashiOrder = [
-  'Mesh', 'Vrishab', 'Mithun', 'Kark', 
-  'Simha', 'Kanya', 'Tula', 'Vrischik', 
-  'Dhanu', 'Makar', 'Kumbha', 'Meen'
-];
-
-const tithiNames = [
-  'Pratipada', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami',
-  'Shashti', 'Saptami', 'Ashtami', 'Navami', 'Dashami',
-  'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Purnima/Amavasya'
-];
+import { RASHI_ORDER, TITHI_NAMES } from '../lib/vedic-constants';
+import { calculateSunTimes, formatTime, calculateRahuKalam } from '../lib/sun-calculator';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { Calendar, Sun, Moon, AlertCircle, Clock, Sunrise, Sunset } from 'lucide-react';
+import { motion } from 'framer-motion';
+import CosmicLoader from './CosmicLoader';
 
 const formatGregorianDate = (date) => {
   return date.toLocaleDateString('en-US', {
@@ -23,29 +19,11 @@ const formatGregorianDate = (date) => {
   });
 };
 
-const PanchangDetails = () => {
+const PanchangDetails = ({ location }) => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  //  Rahu Kalam calculation
-  const calculateRahuKalam = (date) => {
-    try {
-      const rahuPeriods = {
-        0: '4:30 PM - 6:00 PM',  // Sunday
-        1: '7:30 AM - 9:00 AM',  // Monday
-        2: '3:00 PM - 4:30 PM',  // Tuesday
-        3: '12:00 PM - 1:30 PM', // Wednesday
-        4: '1:30 PM - 3:00 PM',  // Thursday
-        5: '10:30 AM - 12:00 PM',// Friday
-        6: '9:00 AM - 10:30 AM'  // Saturday
-      };
-      return rahuPeriods[date.getDay()];
-    } catch (err) {
-      console.error('Error calculating Rahu Kalam:', err);
-      return 'Not available';
-    }
-  };
+  const prefersReducedMotion = useReducedMotion();
 
   const calculateTithiEndTime = (moonPos, sunPos) => {
     try {
@@ -88,11 +66,12 @@ const PanchangDetails = () => {
       let distance = moonLong - sunLong;
       if (distance < 0) distance += 360;
       
+      // Tithi calculation: each Tithi represents 12° of separation
       const tithiNumber = Math.floor(distance / 12);
       const paksha = tithiNumber >= 15 ? 'Krishna' : 'Shukla';
       const tithiIndex = tithiNumber % 15;
-      
-      let tithiName = tithiNames[tithiIndex];
+
+      let tithiName = TITHI_NAMES[tithiIndex];
       if (tithiIndex === 14) {
         tithiName = paksha === 'Shukla' ? 'Purnima' : 'Amavasya';
       }
@@ -120,21 +99,27 @@ const PanchangDetails = () => {
         const now = new Date();
         const moonPos = calculateMoonPosition();
         const sunPos = calculateSunPosition();
-        
+
         if (!moonPos || !sunPos) {
           throw new Error('Failed to calculate positions');
         }
+
+        // Calculate real sunrise/sunset using suncalc
+        const sunTimes = calculateSunTimes(location, now);
+
+        // Calculate Rahu Kalam based on real sunrise/sunset
+        const rahuKalam = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset);
 
         const tithiDetails = calculateTithi(moonPos, sunPos);
 
         setDetails({
           gregorianDate: formatGregorianDate(now),
           moonPosition: {
-            rashi: rashiOrder[moonPos.rashi_number],
+            rashi: RASHI_ORDER[moonPos.rashi_number],
             degrees: moonPos.degrees_in_rashi.toFixed(2)
           },
           sunPosition: {
-            rashi: rashiOrder[sunPos.rashi_number],
+            rashi: RASHI_ORDER[sunPos.rashi_number],
             degrees: sunPos.degrees_in_rashi.toFixed(2)
           },
           tithi: tithiDetails,
@@ -142,19 +127,15 @@ const PanchangDetails = () => {
             brahma: "4:24 AM - 5:12 AM",
             abhijeet: "11:48 AM - 12:36 PM"
           },
-          rahuKalam: calculateRahuKalam(now),
+          rahuKalam: rahuKalam.start && rahuKalam.end
+            ? `${formatTime(rahuKalam.start)} - ${formatTime(rahuKalam.end)}`
+            : 'Not available',
           timings: {
-            sunrise: new Date(now.setHours(6, 30, 0)).toLocaleTimeString([], { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            }),
-            sunset: new Date(now.setHours(18, 30, 0)).toLocaleTimeString([], { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            })
+            sunrise: formatTime(sunTimes.sunrise),
+            sunset: formatTime(sunTimes.sunset)
           }
         });
-        
+
         setError(null);
       } catch (err) {
         console.error('Error updating details:', err);
@@ -167,102 +148,184 @@ const PanchangDetails = () => {
     updateDetails();
     const interval = setInterval(updateDetails, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [location]);
 
   return (
-    <Card className="bg-white dark:bg-gray-800">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
-          Daily Vedic Details
-        </CardTitle>
-        {!loading && !error && details && (
-          <div className="text-lg text-gray-600 dark:text-gray-400">
-            {details.gregorianDate}
+    <motion.div
+      initial={!prefersReducedMotion ? { opacity: 0, y: 20 } : {}}
+      animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
+      transition={!prefersReducedMotion ? { duration: 0.5, delay: 0.3 } : { duration: 0 }}
+    >
+      <Card className="bg-white dark:bg-gray-800 border-cosmic-gold-200 dark:border-cosmic-gold-800 h-full">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-cosmic-gold-500" aria-label="Calendar icon" role="img" />
+            <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+              Daily Vedic Details
+            </CardTitle>
+            <InfoTooltip
+              content="Panchang provides essential Vedic calendar information including planetary positions, lunar day (Tithi), and auspicious timings"
+              side="right"
+            />
           </div>
-        )}
-      </CardHeader>
-      <CardContent>
-        {loading && (
-          <div className="text-center p-4 text-gray-600 dark:text-gray-400">
-            Calculating details...
-          </div>
-        )}
-        
-        {error && (
-          <div className="text-center p-4 text-red-600 dark:text-red-400">
-            {error}
-          </div>
-        )}
-  
-        {!loading && !error && details && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-            {/* Left Column */}
-            <div className="space-y-2">
-              <div className="text-gray-900 dark:text-white">
-                <span className="font-semibold">Moon:</span>{' '}
-                {details.moonPosition.rashi} ({details.moonPosition.degrees}°)
-              </div>
-              <div className="text-gray-900 dark:text-white">
-                <span className="font-semibold">Sun:</span>{' '}
-                {details.sunPosition.rashi} ({details.sunPosition.degrees}°)
-              </div>
-              <div className="text-gray-900 dark:text-white">
-                <span className="font-semibold">Tithi:</span>{' '}
-                {details.tithi.name} ({details.tithi.number}) - {details.tithi.paksha}
-                {details.tithi.endTime && (
-                  <div className="ml-4 text-sm text-gray-700 dark:text-gray-300">
-                    Changes at: {details.tithi.endTime.toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                    {details.tithi.hoursToEnd < 24 && (
-                      <span className="ml-2">
-                        (in {Math.floor(details.tithi.hoursToEnd)}h {Math.floor((details.tithi.hoursToEnd % 1) * 60)}m)
+          {!loading && !error && details && (
+            <motion.div
+              className="text-sm text-gray-600 dark:text-gray-400 mt-2"
+              initial={!prefersReducedMotion ? { opacity: 0 } : {}}
+              animate={!prefersReducedMotion ? { opacity: 1 } : {}}
+              transition={!prefersReducedMotion ? { delay: 0.4 } : { duration: 0 }}
+            >
+              {details.gregorianDate}
+            </motion.div>
+          )}
+        </CardHeader>
+        <CardContent>
+          {loading && <CosmicLoader text="Calculating details..." size={50} />}
+
+          {error && (
+            <motion.div
+              className="text-center p-4 text-red-600 dark:text-red-400"
+              initial={!prefersReducedMotion ? { opacity: 0 } : {}}
+              animate={!prefersReducedMotion ? { opacity: 1 } : {}}
+              transition={{ duration: 0 }}
+            >
+              <AlertCircle className="w-8 h-8 mx-auto mb-2" aria-label="Error icon" role="img" />
+              {error}
+            </motion.div>
+          )}
+
+          {!loading && !error && details && (
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+              initial={!prefersReducedMotion ? { opacity: 0 } : {}}
+              animate={!prefersReducedMotion ? { opacity: 1 } : {}}
+              transition={!prefersReducedMotion ? { delay: 0.2 } : { duration: 0 }}
+            >
+              {/* Left Column */}
+              <div className="space-y-4">
+                <div className="p-3 bg-gradient-to-br from-cosmic-blue-50 to-white dark:from-gray-700/50 dark:to-gray-800/50 rounded-lg border border-cosmic-blue-200 dark:border-cosmic-blue-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Moon className="w-4 h-4 text-cosmic-blue-500" aria-label="Moon icon" role="img" />
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">Moon Position</span>
+                    <InfoTooltip content="Current sidereal zodiac position of the Moon" side="top" />
+                  </div>
+                  <p className="text-lg font-semibold text-cosmic-blue-600 dark:text-cosmic-blue-400">
+                    {details.moonPosition.rashi} ({details.moonPosition.degrees}°)
+                  </p>
+                </div>
+
+                <div className="p-3 bg-gradient-to-br from-cosmic-gold-50 to-white dark:from-gray-700/50 dark:to-gray-800/50 rounded-lg border border-cosmic-gold-200 dark:border-cosmic-gold-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sun className="w-4 h-4 text-cosmic-gold-500" aria-label="Sun icon" role="img" />
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">Sun Position</span>
+                    <InfoTooltip content="Current sidereal zodiac position of the Sun" side="top" />
+                  </div>
+                  <p className="text-lg font-semibold text-cosmic-gold-600 dark:text-cosmic-gold-400">
+                    {details.sunPosition.rashi} ({details.sunPosition.degrees}°)
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className="w-4 h-4 text-cosmic-purple-500" aria-label="Calendar icon" role="img" />
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">Tithi</span>
+                    <InfoTooltip content="Lunar day in Vedic calendar, based on Moon-Sun angular distance" side="top" />
+                  </div>
+                  <p className="text-base text-gray-900 dark:text-white font-medium">
+                    {details.tithi.name} ({details.tithi.number}) - {details.tithi.paksha}
+                  </p>
+                  {details.tithi.endTime && (
+                    <div className="mt-2 text-xs text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                      <Clock className="w-3 h-3" aria-label="Clock icon" role="img" />
+                      <span>
+                        Changes at: {details.tithi.endTime.toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                        {details.tithi.hoursToEnd < 24 && (
+                          <span className="ml-1">
+                            (in {Math.floor(details.tithi.hoursToEnd)}h {Math.floor((details.tithi.hoursToEnd % 1) * 60)}m)
+                          </span>
+                        )}
                       </span>
-                    )}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">Timings ({location.name})</span>
                   </div>
-                )}
-              </div>
-              <div className="text-gray-900 dark:text-white">
-                <span className="font-semibold">Timings (Mumbai) :</span>
-                <div className="ml-4 text-sm">
-                  <div className="text-gray-700 dark:text-gray-300">
-                    Sunrise: {details.timings.sunrise}
-                  </div>
-                  <div className="text-gray-700 dark:text-gray-300">
-                    Sunset: {details.timings.sunset}
+                  <div className="space-y-1 text-sm">
+                    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                      <Sunrise className="w-4 h-4 text-orange-500" aria-label="Sunrise icon" role="img" />
+                      <span>Sunrise: {details.timings.sunrise}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                      <Sunset className="w-4 h-4 text-indigo-500" aria-label="Sunset icon" role="img" />
+                      <span>Sunset: {details.timings.sunset}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-  
-            {/* Right Column */}
-            <div className="space-y-2">
-              <div>
-                <span className="font-semibold text-red-600 dark:text-red-400">
-                  Rahu Kalam (approximate):
-                </span>
-                <div className="text-red-600 dark:text-red-400 ml-4 text-sm">
-                  {details.rahuKalam}
+
+              {/* Right Column */}
+              <div className="space-y-4">
+                <div className="p-4 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg border-2 border-red-300 dark:border-red-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" aria-label="Alert icon" role="img" />
+                    <span className="font-semibold text-red-600 dark:text-red-400">
+                      Rahu Kalam
+                    </span>
+                    <InfoTooltip
+                      content="Inauspicious time period ruled by Rahu. Best to avoid important activities during this time."
+                      side="left"
+                    />
+                  </div>
+                  <p className="text-sm text-red-700 dark:text-red-300 font-medium">
+                    {details.rahuKalam}
+                  </p>
+                  <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-1">
+                    (calculated for {location.name})
+                  </p>
+                </div>
+
+                <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-300 dark:border-green-800">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Clock className="w-5 h-5 text-green-600 dark:text-green-400" aria-label="Clock icon" role="img" />
+                    <span className="font-semibold text-gray-900 dark:text-white">Auspicious Muhurtas</span>
+                    <InfoTooltip
+                      content="Most favorable time periods for important activities and spiritual practices"
+                      side="left"
+                    />
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">Brahma Muhurta:</span>
+                      <p className="text-green-700 dark:text-green-300">{details.muhurtas.brahma}</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">Abhijeet Muhurta:</span>
+                      <p className="text-green-700 dark:text-green-300">{details.muhurtas.abhijeet}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="text-gray-900 dark:text-white">
-                <span className="font-semibold">Auspicious Muhurtas:</span>
-                <div className="ml-4 text-sm">
-                  <div className="text-gray-700 dark:text-gray-300">
-                    Brahma: {details.muhurtas.brahma}
-                  </div>
-                  <div className="text-gray-700 dark:text-gray-300">
-                    Abhijeet: {details.muhurtas.abhijeet}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+            </motion.div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
+
+PanchangDetails.propTypes = {
+  location: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    latitude: PropTypes.number.isRequired,
+    longitude: PropTypes.number.isRequired,
+    timezone: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 export default PanchangDetails;

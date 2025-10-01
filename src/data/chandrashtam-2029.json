@@ -1,0 +1,996 @@
+{
+  "year": 2029,
+  "generatedAt": "2025-10-01T03:52:00.466Z",
+  "data": {
+    "Mesh": [
+      {
+        "start": "2029-01-10T03:46:52.500Z",
+        "end": "2029-01-12T08:42:11.250Z",
+        "duration": 52.921875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-06T09:07:30.000Z",
+        "end": "2029-02-08T14:36:33.750Z",
+        "duration": 53.484375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-05T15:35:37.500Z",
+        "end": "2029-03-07T20:08:26.250Z",
+        "duration": 52.546875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-02T00:32:48.750Z",
+        "end": "2029-04-04T03:15:56.250Z",
+        "duration": 50.71875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-29T11:11:15.000Z",
+        "end": "2029-05-01T12:35:37.500Z",
+        "duration": 49.40625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-26T21:41:15.000Z",
+        "end": "2029-05-28T22:57:11.250Z",
+        "duration": 49.265625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-23T06:27:11.250Z",
+        "end": "2029-06-25T08:39:22.500Z",
+        "duration": 50.203125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-20T13:00:56.250Z",
+        "end": "2029-07-22T16:26:15.000Z",
+        "duration": 51.421875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-16T18:24:22.500Z",
+        "end": "2029-08-18T22:23:26.250Z",
+        "duration": 51.984375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-13T00:35:37.500Z",
+        "end": "2029-09-15T03:49:41.250Z",
+        "duration": 51.234375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-10T09:07:30.000Z",
+        "end": "2029-10-12T10:43:07.500Z",
+        "duration": 49.59375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-06T19:54:22.500Z",
+        "end": "2029-11-08T20:05:37.500Z",
+        "duration": 48.1875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-04T07:06:33.750Z",
+        "end": "2029-12-06T07:09:22.500Z",
+        "duration": 48.046875,
+        "incomplete": false
+      }
+    ],
+    "Vrishab": [
+      {
+        "start": "2029-01-12T08:45:00.000Z",
+        "end": "2029-01-14T15:35:37.500Z",
+        "duration": 54.84375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-08T14:39:22.500Z",
+        "end": "2029-02-10T22:26:15.000Z",
+        "duration": 55.78125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-07T20:11:15.000Z",
+        "end": "2029-03-10T04:00:56.250Z",
+        "duration": 55.828125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-04T03:18:45.000Z",
+        "end": "2029-04-06T09:58:07.500Z",
+        "duration": 54.65625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-01T12:38:26.250Z",
+        "end": "2029-05-03T17:39:22.500Z",
+        "duration": 53.015625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-28T23:00:00.000Z",
+        "end": "2029-05-31T02:56:15.000Z",
+        "duration": 51.9375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-25T08:42:11.250Z",
+        "end": "2029-06-27T12:35:37.500Z",
+        "duration": 51.890625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-22T16:29:03.750Z",
+        "end": "2029-07-24T21:18:45.000Z",
+        "duration": 52.828125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-18T22:26:15.000Z",
+        "end": "2029-08-21T04:15:00.000Z",
+        "duration": 53.8125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-15T03:52:30.000Z",
+        "end": "2029-09-17T09:49:41.250Z",
+        "duration": 53.953125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-12T10:45:56.250Z",
+        "end": "2029-10-14T15:38:26.250Z",
+        "duration": 52.875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-08T20:08:26.250Z",
+        "end": "2029-11-10T23:14:03.750Z",
+        "duration": 51.09375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-06T07:12:11.250Z",
+        "end": "2029-12-08T09:04:41.250Z",
+        "duration": 49.875,
+        "incomplete": false
+      }
+    ],
+    "Mithun": [
+      {
+        "start": "2029-01-14T15:38:26.250Z",
+        "end": "2029-01-17T00:46:52.500Z",
+        "duration": 57.140625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-10T22:29:03.750Z",
+        "end": "2029-02-13T08:16:52.500Z",
+        "duration": 57.796875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-10T04:03:45.000Z",
+        "end": "2029-03-12T14:25:18.750Z",
+        "duration": 58.359375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-06T10:00:56.250Z",
+        "end": "2029-04-08T20:08:26.250Z",
+        "duration": 58.125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-03T17:42:11.250Z",
+        "end": "2029-05-06T02:36:33.750Z",
+        "duration": 56.90625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-31T02:59:03.750Z",
+        "end": "2029-06-02T10:31:52.500Z",
+        "duration": 55.546875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-27T12:38:26.250Z",
+        "end": "2029-06-29T19:26:15.000Z",
+        "duration": 54.796875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-24T21:21:33.750Z",
+        "end": "2029-07-27T04:15:00.000Z",
+        "duration": 54.890625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-21T04:17:48.750Z",
+        "end": "2029-08-23T11:56:15.000Z",
+        "duration": 55.640625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-17T09:52:30.000Z",
+        "end": "2029-09-19T18:13:07.500Z",
+        "duration": 56.34375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-14T15:41:15.000Z",
+        "end": "2029-10-16T23:47:48.750Z",
+        "duration": 56.109375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-10T23:16:52.500Z",
+        "end": "2029-11-13T06:07:30.000Z",
+        "duration": 54.84375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-08T09:07:30.000Z",
+        "end": "2029-12-10T14:19:41.250Z",
+        "duration": 53.203125,
+        "incomplete": false
+      }
+    ],
+    "Kark": [
+      {
+        "start": "2029-01-17T00:49:41.250Z",
+        "end": "2029-01-19T12:15:56.250Z",
+        "duration": 59.4375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-13T08:19:41.250Z",
+        "end": "2029-02-15T19:45:56.250Z",
+        "duration": 59.4375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-12T14:28:07.500Z",
+        "end": "2029-03-15T02:16:52.500Z",
+        "duration": 59.8125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-08T20:11:15.000Z",
+        "end": "2029-04-11T08:14:03.750Z",
+        "duration": 60.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-06T02:39:22.500Z",
+        "end": "2029-05-08T14:25:18.750Z",
+        "duration": 59.765625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-02T10:34:41.250Z",
+        "end": "2029-06-04T21:30:00.000Z",
+        "duration": 58.921875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-29T19:29:03.750Z",
+        "end": "2029-07-02T05:30:56.250Z",
+        "duration": 58.03125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-27T04:17:48.750Z",
+        "end": "2029-07-29T13:48:45.000Z",
+        "duration": 57.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-23T11:59:03.750Z",
+        "end": "2029-08-25T21:38:26.250Z",
+        "duration": 57.65625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-19T18:15:56.250Z",
+        "end": "2029-09-22T04:26:15.000Z",
+        "duration": 58.171875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-16T23:50:37.500Z",
+        "end": "2029-10-19T10:26:15.000Z",
+        "duration": 58.59375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-13T06:10:18.750Z",
+        "end": "2029-11-15T16:23:26.250Z",
+        "duration": 58.21875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-10T14:22:30.000Z",
+        "end": "2029-12-12T23:25:18.750Z",
+        "duration": 57.046875,
+        "incomplete": false
+      }
+    ],
+    "Simha": [
+      {
+        "start": "2029-01-19T12:18:45.000Z",
+        "end": "2029-01-22T00:52:30.000Z",
+        "duration": 60.5625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-15T19:48:45.000Z",
+        "end": "2029-02-18T08:22:30.000Z",
+        "duration": 60.5625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-15T02:19:41.250Z",
+        "end": "2029-03-17T14:53:26.250Z",
+        "duration": 60.5625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-11T08:16:52.500Z",
+        "end": "2029-04-13T20:53:26.250Z",
+        "duration": 60.609375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-08T14:28:07.500Z",
+        "end": "2029-05-11T03:07:30.000Z",
+        "duration": 60.65625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-04T21:32:48.750Z",
+        "end": "2029-06-07T10:03:45.000Z",
+        "duration": 60.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-02T05:33:45.000Z",
+        "end": "2029-07-04T17:45:00.000Z",
+        "duration": 60.1875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-29T13:51:33.750Z",
+        "end": "2029-08-01T01:43:07.500Z",
+        "duration": 59.859375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-25T21:41:15.000Z",
+        "end": "2029-08-28T09:21:33.750Z",
+        "duration": 59.671875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-22T04:29:03.750Z",
+        "end": "2029-09-24T16:17:48.750Z",
+        "duration": 59.8125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-19T10:29:03.750Z",
+        "end": "2029-10-21T22:31:52.500Z",
+        "duration": 60.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-15T16:26:15.000Z",
+        "end": "2029-11-18T04:40:18.750Z",
+        "duration": 60.234375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-12T23:28:07.500Z",
+        "end": "2029-12-15T11:22:30.000Z",
+        "duration": 59.90625,
+        "incomplete": false
+      }
+    ],
+    "Kanya": [
+      {
+        "start": "2029-01-22T00:55:18.750Z",
+        "end": "2029-01-24T12:27:11.250Z",
+        "duration": 59.53125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-18T08:25:18.750Z",
+        "end": "2029-02-20T20:39:22.500Z",
+        "duration": 60.234375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-17T14:56:15.000Z",
+        "end": "2029-03-20T03:21:33.750Z",
+        "duration": 60.421875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-13T20:56:15.000Z",
+        "end": "2029-04-16T09:13:07.500Z",
+        "duration": 60.28125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-11T03:10:18.750Z",
+        "end": "2029-05-13T15:13:07.500Z",
+        "duration": 60.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-07T10:06:33.750Z",
+        "end": "2029-06-09T22:06:33.750Z",
+        "duration": 60,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-04T17:47:48.750Z",
+        "end": "2029-07-07T05:56:15.000Z",
+        "duration": 60.140625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-01T01:45:56.250Z",
+        "end": "2029-08-03T14:11:15.000Z",
+        "duration": 60.421875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-28T09:24:22.500Z",
+        "end": "2029-08-30T22:06:33.750Z",
+        "duration": 60.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-24T16:20:37.500Z",
+        "end": "2029-09-27T05:05:37.500Z",
+        "duration": 60.75,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-21T22:34:41.250Z",
+        "end": "2029-10-24T11:16:52.500Z",
+        "duration": 60.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-18T04:43:07.500Z",
+        "end": "2029-11-20T17:25:18.750Z",
+        "duration": 60.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-15T11:25:18.750Z",
+        "end": "2029-12-18T00:10:18.750Z",
+        "duration": 60.75,
+        "incomplete": false
+      }
+    ],
+    "Tula": [
+      {
+        "start": "2029-01-24T12:30:00.000Z",
+        "end": "2029-01-26T20:59:03.750Z",
+        "duration": 56.484375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-20T20:42:11.250Z",
+        "end": "2029-02-23T06:30:00.000Z",
+        "duration": 57.796875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-20T03:24:22.500Z",
+        "end": "2029-03-22T14:16:52.500Z",
+        "duration": 58.875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-16T09:15:56.250Z",
+        "end": "2029-04-18T20:22:30.000Z",
+        "duration": 59.109375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-13T15:15:56.250Z",
+        "end": "2029-05-16T01:57:11.250Z",
+        "duration": 58.6875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-09T22:09:22.500Z",
+        "end": "2029-06-12T08:22:30.000Z",
+        "duration": 58.21875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-07T05:59:03.750Z",
+        "end": "2029-07-09T16:09:22.500Z",
+        "duration": 58.171875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-03T14:14:03.750Z",
+        "end": "2029-08-06T00:55:18.750Z",
+        "duration": 58.6875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-30T22:09:22.500Z",
+        "end": "2029-09-02T09:41:15.000Z",
+        "duration": 59.53125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-27T05:08:26.250Z",
+        "end": "2029-09-29T17:22:30.000Z",
+        "duration": 60.234375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-24T11:19:41.250Z",
+        "end": "2029-10-26T23:45:00.000Z",
+        "duration": 60.421875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-20T17:28:07.500Z",
+        "end": "2029-11-23T05:33:45.000Z",
+        "duration": 60.09375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-18T00:13:07.500Z",
+        "end": "2029-12-20T12:01:52.500Z",
+        "duration": 59.8125,
+        "incomplete": false
+      }
+    ],
+    "Vrischik": [
+      {
+        "start": "2028-12-31T12:32:48.750Z",
+        "end": "2029-01-01T16:00:56.250Z",
+        "duration": 27.46875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-01-26T21:01:52.500Z",
+        "end": "2029-01-29T01:48:45.000Z",
+        "duration": 52.78125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-23T06:32:48.750Z",
+        "end": "2029-02-25T12:27:11.250Z",
+        "duration": 53.90625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-22T14:19:41.250Z",
+        "end": "2029-03-24T21:52:30.000Z",
+        "duration": 55.546875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-18T20:25:18.750Z",
+        "end": "2029-04-21T05:02:48.750Z",
+        "duration": 56.625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-16T02:00:00.000Z",
+        "end": "2029-05-18T10:40:18.750Z",
+        "duration": 56.671875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-12T08:25:18.750Z",
+        "end": "2029-06-14T16:23:26.250Z",
+        "duration": 55.96875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-09T16:12:11.250Z",
+        "end": "2029-07-11T23:28:07.500Z",
+        "duration": 55.265625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-06T00:58:07.500Z",
+        "end": "2029-08-08T08:16:52.500Z",
+        "duration": 55.3125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-02T09:44:03.750Z",
+        "end": "2029-09-04T17:53:26.250Z",
+        "duration": 56.15625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-29T17:25:18.750Z",
+        "end": "2029-10-02T02:56:15.000Z",
+        "duration": 57.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-26T23:47:48.750Z",
+        "end": "2029-10-29T10:17:48.750Z",
+        "duration": 58.5,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-23T05:36:33.750Z",
+        "end": "2029-11-25T16:09:22.500Z",
+        "duration": 58.546875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-20T12:04:41.250Z",
+        "end": "2029-12-22T21:55:18.750Z",
+        "duration": 57.84375,
+        "incomplete": false
+      }
+    ],
+    "Dhanu": [
+      {
+        "start": "2029-01-01T16:03:45.000Z",
+        "end": "2029-01-03T19:06:33.750Z",
+        "duration": 51.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-01-29T01:51:33.750Z",
+        "end": "2029-01-31T03:49:41.250Z",
+        "duration": 49.96875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-25T12:30:00.000Z",
+        "end": "2029-02-27T14:36:33.750Z",
+        "duration": 50.109375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-24T21:55:18.750Z",
+        "end": "2029-03-27T01:23:26.250Z",
+        "duration": 51.46875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-21T05:05:37.500Z",
+        "end": "2029-04-23T10:15:00.000Z",
+        "duration": 53.15625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-18T10:43:07.500Z",
+        "end": "2029-05-20T16:48:45.000Z",
+        "duration": 54.09375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-14T16:26:15.000Z",
+        "end": "2029-06-16T22:12:11.250Z",
+        "duration": 53.765625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-11T23:30:56.250Z",
+        "end": "2029-07-14T04:20:37.500Z",
+        "duration": 52.828125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-08T08:19:41.250Z",
+        "end": "2029-08-10T12:18:45.000Z",
+        "duration": 51.984375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-04T17:56:15.000Z",
+        "end": "2029-09-06T22:06:33.750Z",
+        "duration": 52.171875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-02T02:59:03.750Z",
+        "end": "2029-10-04T08:22:30.000Z",
+        "duration": 53.390625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-29T10:20:37.500Z",
+        "end": "2029-10-31T17:22:30.000Z",
+        "duration": 55.03125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-25T16:12:11.250Z",
+        "end": "2029-11-28T00:10:18.750Z",
+        "duration": 55.96875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-22T21:58:07.500Z",
+        "end": "2029-12-25T05:39:22.500Z",
+        "duration": 55.6875,
+        "incomplete": false
+      }
+    ],
+    "Makar": [
+      {
+        "start": "2029-01-03T19:09:22.500Z",
+        "end": "2029-01-05T21:30:00.000Z",
+        "duration": 50.34375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-01-31T03:52:30.000Z",
+        "end": "2029-02-02T04:40:18.750Z",
+        "duration": 48.796875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-27T14:39:22.500Z",
+        "end": "2029-03-01T14:28:07.500Z",
+        "duration": 47.8125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-27T01:26:15.000Z",
+        "end": "2029-03-29T01:40:18.750Z",
+        "duration": 48.234375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-23T10:17:48.750Z",
+        "end": "2029-04-25T12:01:52.500Z",
+        "duration": 49.734375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-20T16:51:33.750Z",
+        "end": "2029-05-22T20:11:15.000Z",
+        "duration": 51.328125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-16T22:15:00.000Z",
+        "end": "2029-06-19T02:08:26.250Z",
+        "duration": 51.890625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-14T04:23:26.250Z",
+        "end": "2029-07-16T07:34:41.250Z",
+        "duration": 51.1875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-10T12:21:33.750Z",
+        "end": "2029-08-12T14:19:41.250Z",
+        "duration": 49.96875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-06T22:09:22.500Z",
+        "end": "2029-09-08T23:19:41.250Z",
+        "duration": 49.171875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-04T08:25:18.750Z",
+        "end": "2029-10-06T09:58:07.500Z",
+        "duration": 49.546875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-31T17:25:18.750Z",
+        "end": "2029-11-02T20:30:56.250Z",
+        "duration": 51.09375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-28T00:13:07.500Z",
+        "end": "2029-11-30T05:02:48.750Z",
+        "duration": 52.828125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-25T05:42:11.250Z",
+        "end": "2029-12-27T11:08:26.250Z",
+        "duration": 53.4375,
+        "incomplete": false
+      }
+    ],
+    "Kumbha": [
+      {
+        "start": "2029-01-05T21:32:48.750Z",
+        "end": "2029-01-08T00:10:18.750Z",
+        "duration": 50.625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-02T04:43:07.500Z",
+        "end": "2029-02-04T05:59:03.750Z",
+        "duration": 49.265625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-01T14:30:56.250Z",
+        "end": "2029-03-03T14:05:37.500Z",
+        "duration": 47.578125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-29T01:43:07.500Z",
+        "end": "2029-03-31T00:35:37.500Z",
+        "duration": 46.875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-25T12:04:41.250Z",
+        "end": "2029-04-27T11:39:22.500Z",
+        "duration": 47.578125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-22T20:14:03.750Z",
+        "end": "2029-05-24T21:18:45.000Z",
+        "duration": 49.078125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-19T02:11:15.000Z",
+        "end": "2029-06-21T04:37:30.000Z",
+        "duration": 50.4375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-16T07:37:30.000Z",
+        "end": "2029-07-18T10:12:11.250Z",
+        "duration": 50.578125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-12T14:22:30.000Z",
+        "end": "2029-08-14T15:55:18.750Z",
+        "duration": 49.546875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-08T23:22:30.000Z",
+        "end": "2029-09-10T23:28:07.500Z",
+        "duration": 48.09375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-06T10:00:56.250Z",
+        "end": "2029-10-08T09:30:00.000Z",
+        "duration": 47.484375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-02T20:33:45.000Z",
+        "end": "2029-11-04T20:42:11.250Z",
+        "duration": 48.140625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-30T05:05:37.500Z",
+        "end": "2029-12-02T06:58:07.500Z",
+        "duration": 49.875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-27T11:11:15.000Z",
+        "end": "2029-12-29T14:36:33.750Z",
+        "duration": 51.421875,
+        "incomplete": false
+      }
+    ],
+    "Meen": [
+      {
+        "start": "2029-01-08T00:13:07.500Z",
+        "end": "2029-01-10T03:44:03.750Z",
+        "duration": 51.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-02-04T06:01:52.500Z",
+        "end": "2029-02-06T09:04:41.250Z",
+        "duration": 51.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-03T14:08:26.250Z",
+        "end": "2029-03-05T15:32:48.750Z",
+        "duration": 49.40625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-03-31T00:38:26.250Z",
+        "end": "2029-04-02T00:30:00.000Z",
+        "duration": 47.859375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-04-27T11:42:11.250Z",
+        "end": "2029-04-29T11:08:26.250Z",
+        "duration": 47.4375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-05-24T21:21:33.750Z",
+        "end": "2029-05-26T21:38:26.250Z",
+        "duration": 48.28125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-06-21T04:40:18.750Z",
+        "end": "2029-06-23T06:24:22.500Z",
+        "duration": 49.734375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-07-18T10:15:00.000Z",
+        "end": "2029-07-20T12:58:07.500Z",
+        "duration": 50.71875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-08-14T15:58:07.500Z",
+        "end": "2029-08-16T18:21:33.750Z",
+        "duration": 50.390625,
+        "incomplete": false
+      },
+      {
+        "start": "2029-09-10T23:30:56.250Z",
+        "end": "2029-09-13T00:32:48.750Z",
+        "duration": 49.03125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-10-08T09:32:48.750Z",
+        "end": "2029-10-10T09:04:41.250Z",
+        "duration": 47.53125,
+        "incomplete": false
+      },
+      {
+        "start": "2029-11-04T20:45:00.000Z",
+        "end": "2029-11-06T19:51:33.750Z",
+        "duration": 47.109375,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-02T07:00:56.250Z",
+        "end": "2029-12-04T07:03:45.000Z",
+        "duration": 48.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2029-12-29T14:39:22.500Z",
+        "end": "2029-12-31T18:29:59.000Z",
+        "duration": 51.843472222222225,
+        "incomplete": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,1002 @@
+{
+  "year": 2028,
+  "generatedAt": "2025-10-01T03:52:00.372Z",
+  "data": {
+    "Mesh": [
+      {
+        "start": "2028-01-20T17:59:03.750Z",
+        "end": "2028-01-23T03:01:52.500Z",
+        "duration": 57.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-17T00:15:56.250Z",
+        "end": "2028-02-19T08:45:00.000Z",
+        "duration": 56.484375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-15T08:42:11.250Z",
+        "end": "2028-03-17T15:38:26.250Z",
+        "duration": 54.9375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-11T18:41:15.000Z",
+        "end": "2028-04-14T00:15:56.250Z",
+        "duration": 53.578125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-09T04:37:30.000Z",
+        "end": "2028-05-11T09:41:15.000Z",
+        "duration": 53.0625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-05T13:00:56.250Z",
+        "end": "2028-06-07T18:35:37.500Z",
+        "duration": 53.578125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-02T19:26:15.000Z",
+        "end": "2028-07-05T01:57:11.250Z",
+        "duration": 54.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-30T00:55:18.750Z",
+        "end": "2028-08-01T07:57:11.250Z",
+        "duration": 55.03125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-26T07:00:56.250Z",
+        "end": "2028-08-28T13:31:52.500Z",
+        "duration": 54.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-22T15:10:18.750Z",
+        "end": "2028-09-24T20:11:15.000Z",
+        "duration": 53.015625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-20T01:17:48.750Z",
+        "end": "2028-10-22T04:48:45.000Z",
+        "duration": 51.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-16T11:56:15.000Z",
+        "end": "2028-11-18T14:50:37.500Z",
+        "duration": 50.90625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-13T21:04:41.250Z",
+        "end": "2028-12-16T00:44:03.750Z",
+        "duration": 51.65625,
+        "incomplete": false
+      }
+    ],
+    "Vrishab": [
+      {
+        "start": "2028-01-23T03:04:41.250Z",
+        "end": "2028-01-25T14:22:30.000Z",
+        "duration": 59.296875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-19T08:47:48.750Z",
+        "end": "2028-02-21T20:19:41.250Z",
+        "duration": 59.53125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-17T15:41:15.000Z",
+        "end": "2028-03-20T02:33:45.000Z",
+        "duration": 58.875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-14T00:18:45.000Z",
+        "end": "2028-04-16T09:58:07.500Z",
+        "duration": 57.65625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-11T09:44:03.750Z",
+        "end": "2028-05-13T18:24:22.500Z",
+        "duration": 56.671875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-07T18:38:26.250Z",
+        "end": "2028-06-10T03:01:52.500Z",
+        "duration": 56.390625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-05T02:00:00.000Z",
+        "end": "2028-07-07T10:51:33.750Z",
+        "duration": 56.859375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-01T08:00:00.000Z",
+        "end": "2028-08-03T17:30:56.250Z",
+        "duration": 57.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-28T13:34:41.250Z",
+        "end": "2028-08-30T23:19:41.250Z",
+        "duration": 57.75,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-24T20:14:03.750Z",
+        "end": "2028-09-27T05:16:52.500Z",
+        "duration": 57.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-22T04:51:33.750Z",
+        "end": "2028-10-24T12:30:00.000Z",
+        "duration": 55.640625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-18T14:53:26.250Z",
+        "end": "2028-11-20T21:18:45.000Z",
+        "duration": 54.421875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-16T00:46:52.500Z",
+        "end": "2028-12-18T06:52:30.000Z",
+        "duration": 54.09375,
+        "incomplete": false
+      }
+    ],
+    "Mithun": [
+      {
+        "start": "2027-12-31T12:32:48.750Z",
+        "end": "2027-12-31T20:22:30.000Z",
+        "duration": 7.828125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-01-25T14:25:18.750Z",
+        "end": "2028-01-28T03:04:41.250Z",
+        "duration": 60.65625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-21T20:22:30.000Z",
+        "end": "2028-02-24T09:13:07.500Z",
+        "duration": 60.84375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-20T02:36:33.750Z",
+        "end": "2028-03-22T15:30:00.000Z",
+        "duration": 60.890625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-16T10:00:56.250Z",
+        "end": "2028-04-18T22:26:15.000Z",
+        "duration": 60.421875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-13T18:27:11.250Z",
+        "end": "2028-05-16T06:13:07.500Z",
+        "duration": 59.765625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-10T03:04:41.250Z",
+        "end": "2028-06-12T14:16:52.500Z",
+        "duration": 59.203125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-07T10:54:22.500Z",
+        "end": "2028-07-09T22:03:45.000Z",
+        "duration": 59.15625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-03T17:33:45.000Z",
+        "end": "2028-08-06T05:00:00.000Z",
+        "duration": 59.4375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-30T23:22:30.000Z",
+        "end": "2028-09-02T11:08:26.250Z",
+        "duration": 59.765625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-27T05:19:41.250Z",
+        "end": "2028-09-29T17:08:26.250Z",
+        "duration": 59.8125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-24T12:32:48.750Z",
+        "end": "2028-10-26T23:42:11.250Z",
+        "duration": 59.15625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-20T21:21:33.750Z",
+        "end": "2028-11-23T07:29:03.750Z",
+        "duration": 58.125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-18T06:55:18.750Z",
+        "end": "2028-12-20T16:09:22.500Z",
+        "duration": 57.234375,
+        "incomplete": false
+      }
+    ],
+    "Kark": [
+      {
+        "start": "2027-12-31T20:25:18.750Z",
+        "end": "2028-01-03T09:15:56.250Z",
+        "duration": 60.84375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-01-28T03:07:30.000Z",
+        "end": "2028-01-30T15:58:07.500Z",
+        "duration": 60.84375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-24T09:15:56.250Z",
+        "end": "2028-02-26T22:00:56.250Z",
+        "duration": 60.75,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-22T15:32:48.750Z",
+        "end": "2028-03-25T04:15:00.000Z",
+        "duration": 60.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-18T22:29:03.750Z",
+        "end": "2028-04-21T11:11:15.000Z",
+        "duration": 60.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-16T06:15:56.250Z",
+        "end": "2028-05-18T18:55:18.750Z",
+        "duration": 60.65625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-12T14:19:41.250Z",
+        "end": "2028-06-15T02:56:15.000Z",
+        "duration": 60.609375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-09T22:06:33.750Z",
+        "end": "2028-07-12T10:37:30.000Z",
+        "duration": 60.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-06T05:02:48.750Z",
+        "end": "2028-08-08T17:33:45.000Z",
+        "duration": 60.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-02T11:11:15.000Z",
+        "end": "2028-09-04T23:50:37.500Z",
+        "duration": 60.65625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-29T17:11:15.000Z",
+        "end": "2028-10-02T05:53:26.250Z",
+        "duration": 60.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-26T23:45:00.000Z",
+        "end": "2028-10-29T12:27:11.250Z",
+        "duration": 60.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-23T07:31:52.500Z",
+        "end": "2028-11-25T19:54:22.500Z",
+        "duration": 60.375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-20T16:12:11.250Z",
+        "end": "2028-12-23T04:03:45.000Z",
+        "duration": 59.859375,
+        "incomplete": false
+      }
+    ],
+    "Simha": [
+      {
+        "start": "2028-01-03T09:18:45.000Z",
+        "end": "2028-01-05T20:16:52.500Z",
+        "duration": 58.96875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-01-30T16:00:56.250Z",
+        "end": "2028-02-02T03:41:15.000Z",
+        "duration": 59.671875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-26T22:03:45.000Z",
+        "end": "2028-02-29T09:41:15.000Z",
+        "duration": 59.625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-25T04:17:48.750Z",
+        "end": "2028-03-27T15:30:00.000Z",
+        "duration": 59.203125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-21T11:14:03.750Z",
+        "end": "2028-04-23T22:09:22.500Z",
+        "duration": 58.921875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-18T18:58:07.500Z",
+        "end": "2028-05-21T06:01:52.500Z",
+        "duration": 59.0625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-15T02:59:03.750Z",
+        "end": "2028-06-17T14:30:56.250Z",
+        "duration": 59.53125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-12T10:40:18.750Z",
+        "end": "2028-07-14T22:48:45.000Z",
+        "duration": 60.140625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-08T17:36:33.750Z",
+        "end": "2028-08-11T06:04:41.250Z",
+        "duration": 60.46875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-04T23:53:26.250Z",
+        "end": "2028-09-07T12:18:45.000Z",
+        "duration": 60.421875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-02T05:56:15.000Z",
+        "end": "2028-10-04T18:10:18.750Z",
+        "duration": 60.234375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-29T12:30:00.000Z",
+        "end": "2028-11-01T00:35:37.500Z",
+        "duration": 60.09375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-25T19:57:11.250Z",
+        "end": "2028-11-28T08:08:26.250Z",
+        "duration": 60.1875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-23T04:06:33.750Z",
+        "end": "2028-12-25T16:31:52.500Z",
+        "duration": 60.421875,
+        "incomplete": false
+      }
+    ],
+    "Kanya": [
+      {
+        "start": "2028-01-05T20:19:41.250Z",
+        "end": "2028-01-08T03:35:37.500Z",
+        "duration": 55.265625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-02T03:44:03.750Z",
+        "end": "2028-02-04T12:35:37.500Z",
+        "duration": 56.859375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-29T09:44:03.750Z",
+        "end": "2028-03-02T19:20:37.500Z",
+        "duration": 57.609375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-27T15:32:48.750Z",
+        "end": "2028-03-30T00:52:30.000Z",
+        "duration": 57.328125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-23T22:12:11.250Z",
+        "end": "2028-04-26T06:52:30.000Z",
+        "duration": 56.671875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-21T06:04:41.250Z",
+        "end": "2028-05-23T14:22:30.000Z",
+        "duration": 56.296875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-17T14:33:45.000Z",
+        "end": "2028-06-19T23:14:03.750Z",
+        "duration": 56.671875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-14T22:51:33.750Z",
+        "end": "2028-07-17T08:25:18.750Z",
+        "duration": 57.5625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-11T06:07:30.000Z",
+        "end": "2028-08-13T16:43:07.500Z",
+        "duration": 58.59375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-07T12:21:33.750Z",
+        "end": "2028-09-09T23:33:45.000Z",
+        "duration": 59.203125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-04T18:13:07.500Z",
+        "end": "2028-10-07T05:16:52.500Z",
+        "duration": 59.0625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-01T00:38:26.250Z",
+        "end": "2028-11-03T11:11:15.000Z",
+        "duration": 58.546875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-28T08:11:15.000Z",
+        "end": "2028-11-30T18:30:00.000Z",
+        "duration": 58.3125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-25T16:34:41.250Z",
+        "end": "2028-12-28T03:18:45.000Z",
+        "duration": 58.734375,
+        "incomplete": false
+      }
+    ],
+    "Tula": [
+      {
+        "start": "2028-01-08T03:38:26.250Z",
+        "end": "2028-01-10T07:06:33.750Z",
+        "duration": 51.46875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-04T12:38:26.250Z",
+        "end": "2028-02-06T17:42:11.250Z",
+        "duration": 53.0625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-02T19:23:26.250Z",
+        "end": "2028-03-05T02:05:37.500Z",
+        "duration": 54.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-30T00:55:18.750Z",
+        "end": "2028-04-01T08:11:15.000Z",
+        "duration": 55.265625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-26T06:55:18.750Z",
+        "end": "2028-04-28T13:37:30.000Z",
+        "duration": 54.703125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-23T14:25:18.750Z",
+        "end": "2028-05-25T20:14:03.750Z",
+        "duration": 53.8125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-19T23:16:52.500Z",
+        "end": "2028-06-22T04:40:18.750Z",
+        "duration": 53.390625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-17T08:28:07.500Z",
+        "end": "2028-07-19T14:25:18.750Z",
+        "duration": 53.953125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-13T16:45:56.250Z",
+        "end": "2028-08-16T00:04:41.250Z",
+        "duration": 55.3125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-09T23:36:33.750Z",
+        "end": "2028-09-12T08:14:03.750Z",
+        "duration": 56.625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-07T05:19:41.250Z",
+        "end": "2028-10-09T14:30:56.250Z",
+        "duration": 57.1875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-03T11:14:03.750Z",
+        "end": "2028-11-05T20:00:00.000Z",
+        "duration": 56.765625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-30T18:32:48.750Z",
+        "end": "2028-12-03T02:30:56.250Z",
+        "duration": 55.96875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-28T03:21:33.750Z",
+        "end": "2028-12-30T11:02:48.750Z",
+        "duration": 55.6875,
+        "incomplete": false
+      }
+    ],
+    "Vrischik": [
+      {
+        "start": "2028-01-10T07:09:22.500Z",
+        "end": "2028-01-12T07:54:22.500Z",
+        "duration": 48.75,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-06T17:45:00.000Z",
+        "end": "2028-02-08T19:20:37.500Z",
+        "duration": 49.59375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-05T02:08:26.250Z",
+        "end": "2028-03-07T05:33:45.000Z",
+        "duration": 51.421875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-01T08:14:03.750Z",
+        "end": "2028-04-03T13:06:33.750Z",
+        "duration": 52.875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-28T13:40:18.750Z",
+        "end": "2028-04-30T18:41:15.000Z",
+        "duration": 53.015625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-25T20:16:52.500Z",
+        "end": "2028-05-28T00:21:33.750Z",
+        "duration": 52.078125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-22T04:43:07.500Z",
+        "end": "2028-06-24T07:45:56.250Z",
+        "duration": 51.046875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-19T14:28:07.500Z",
+        "end": "2028-07-21T17:11:15.000Z",
+        "duration": 50.71875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-16T00:07:30.000Z",
+        "end": "2028-08-18T03:35:37.500Z",
+        "duration": 51.46875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-12T08:16:52.500Z",
+        "end": "2028-09-14T13:23:26.250Z",
+        "duration": 53.109375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-09T14:33:45.000Z",
+        "end": "2028-10-11T21:07:30.000Z",
+        "duration": 54.5625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-05T20:02:48.750Z",
+        "end": "2028-11-08T02:53:26.250Z",
+        "duration": 54.84375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-03T02:33:45.000Z",
+        "end": "2028-12-05T08:28:07.500Z",
+        "duration": 53.90625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-30T11:05:37.500Z",
+        "end": "2028-12-31T18:29:59.000Z",
+        "duration": 31.40597222222222,
+        "incomplete": true
+      }
+    ],
+    "Dhanu": [
+      {
+        "start": "2028-01-12T07:57:11.250Z",
+        "end": "2028-01-14T07:48:45.000Z",
+        "duration": 47.859375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-08T19:23:26.250Z",
+        "end": "2028-02-10T18:55:18.750Z",
+        "duration": 47.53125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-07T05:36:33.750Z",
+        "end": "2028-03-09T06:13:07.500Z",
+        "duration": 48.609375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-03T13:09:22.500Z",
+        "end": "2028-04-05T15:32:48.750Z",
+        "duration": 50.390625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-30T18:44:03.750Z",
+        "end": "2028-05-02T22:12:11.250Z",
+        "duration": 51.46875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-28T00:24:22.500Z",
+        "end": "2028-05-30T03:35:37.500Z",
+        "duration": 51.1875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-24T07:48:45.000Z",
+        "end": "2028-06-26T09:44:03.750Z",
+        "duration": 49.921875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-21T17:14:03.750Z",
+        "end": "2028-07-23T18:01:52.500Z",
+        "duration": 48.796875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-18T03:38:26.250Z",
+        "end": "2028-08-20T04:15:00.000Z",
+        "duration": 48.609375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-14T13:26:15.000Z",
+        "end": "2028-09-16T15:01:52.500Z",
+        "duration": 49.59375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-11T21:10:18.750Z",
+        "end": "2028-10-14T00:30:00.000Z",
+        "duration": 51.328125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-08T02:56:15.000Z",
+        "end": "2028-11-10T07:29:03.750Z",
+        "duration": 52.546875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-05T08:30:56.250Z",
+        "end": "2028-12-07T12:55:18.750Z",
+        "duration": 52.40625,
+        "incomplete": false
+      }
+    ],
+    "Makar": [
+      {
+        "start": "2028-01-14T07:51:33.750Z",
+        "end": "2028-01-16T08:36:33.750Z",
+        "duration": 48.75,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-10T18:58:07.500Z",
+        "end": "2028-02-12T18:21:33.750Z",
+        "duration": 47.390625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-09T06:15:56.250Z",
+        "end": "2028-03-11T05:36:33.750Z",
+        "duration": 47.34375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-05T15:35:37.500Z",
+        "end": "2028-04-07T16:09:22.500Z",
+        "duration": 48.5625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-02T22:15:00.000Z",
+        "end": "2028-05-05T00:24:22.500Z",
+        "duration": 50.15625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-30T03:38:26.250Z",
+        "end": "2028-06-01T06:24:22.500Z",
+        "duration": 50.765625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-26T09:46:52.500Z",
+        "end": "2028-06-28T11:47:48.750Z",
+        "duration": 50.015625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-23T18:04:41.250Z",
+        "end": "2028-07-25T18:35:37.500Z",
+        "duration": 48.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-20T04:17:48.750Z",
+        "end": "2028-08-22T03:41:15.000Z",
+        "duration": 47.390625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-16T15:04:41.250Z",
+        "end": "2028-09-18T14:28:07.500Z",
+        "duration": 47.390625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-14T00:32:48.750Z",
+        "end": "2028-10-16T01:09:22.500Z",
+        "duration": 48.609375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-10T07:31:52.500Z",
+        "end": "2028-11-12T09:52:30.000Z",
+        "duration": 50.34375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-07T12:58:07.500Z",
+        "end": "2028-12-09T16:06:33.750Z",
+        "duration": 51.140625,
+        "incomplete": false
+      }
+    ],
+    "Kumbha": [
+      {
+        "start": "2028-01-16T08:39:22.500Z",
+        "end": "2028-01-18T11:45:00.000Z",
+        "duration": 51.09375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-12T18:24:22.500Z",
+        "end": "2028-02-14T19:34:41.250Z",
+        "duration": 49.171875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-11T05:39:22.500Z",
+        "end": "2028-03-13T05:45:00.000Z",
+        "duration": 48.09375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-07T16:12:11.250Z",
+        "end": "2028-04-09T16:34:41.250Z",
+        "duration": 48.375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-05T00:27:11.250Z",
+        "end": "2028-05-07T02:02:48.750Z",
+        "duration": 49.59375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-01T06:27:11.250Z",
+        "end": "2028-06-03T09:15:56.250Z",
+        "duration": 50.8125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-28T11:50:37.500Z",
+        "end": "2028-06-30T14:50:37.500Z",
+        "duration": 51,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-25T18:38:26.250Z",
+        "end": "2028-07-27T20:30:56.250Z",
+        "duration": 49.875,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-22T03:44:03.750Z",
+        "end": "2028-08-24T04:00:56.250Z",
+        "duration": 48.28125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-18T14:30:56.250Z",
+        "end": "2028-09-20T13:45:56.250Z",
+        "duration": 47.25,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-16T01:12:11.250Z",
+        "end": "2028-10-18T00:41:15.000Z",
+        "duration": 47.484375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-12T09:55:18.750Z",
+        "end": "2028-11-14T10:48:45.000Z",
+        "duration": 48.890625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-09T16:09:22.500Z",
+        "end": "2028-12-11T18:32:48.750Z",
+        "duration": 50.390625,
+        "incomplete": false
+      }
+    ],
+    "Meen": [
+      {
+        "start": "2028-01-18T11:47:48.750Z",
+        "end": "2028-01-20T17:56:15.000Z",
+        "duration": 54.140625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-02-14T19:37:30.000Z",
+        "end": "2028-02-17T00:13:07.500Z",
+        "duration": 52.59375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-03-13T05:47:48.750Z",
+        "end": "2028-03-15T08:39:22.500Z",
+        "duration": 50.859375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-04-09T16:37:30.000Z",
+        "end": "2028-04-11T18:38:26.250Z",
+        "duration": 50.015625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-05-07T02:05:37.500Z",
+        "end": "2028-05-09T04:34:41.250Z",
+        "duration": 50.484375,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-03T09:18:45.000Z",
+        "end": "2028-06-05T12:58:07.500Z",
+        "duration": 51.65625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-06-30T14:53:26.250Z",
+        "end": "2028-07-02T19:23:26.250Z",
+        "duration": 52.5,
+        "incomplete": false
+      },
+      {
+        "start": "2028-07-27T20:33:45.000Z",
+        "end": "2028-07-30T00:52:30.000Z",
+        "duration": 52.3125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-08-24T04:03:45.000Z",
+        "end": "2028-08-26T06:58:07.500Z",
+        "duration": 50.90625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-09-20T13:48:45.000Z",
+        "end": "2028-09-22T15:07:30.000Z",
+        "duration": 49.3125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-10-18T00:44:03.750Z",
+        "end": "2028-10-20T01:15:00.000Z",
+        "duration": 48.515625,
+        "incomplete": false
+      },
+      {
+        "start": "2028-11-14T10:51:33.750Z",
+        "end": "2028-11-16T11:53:26.250Z",
+        "duration": 49.03125,
+        "incomplete": false
+      },
+      {
+        "start": "2028-12-11T18:35:37.500Z",
+        "end": "2028-12-13T21:01:52.500Z",
+        "duration": 50.4375,
+        "incomplete": false
+      }
+    ]
+  }
+}
