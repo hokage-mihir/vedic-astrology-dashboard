@@ -56,7 +56,6 @@ const MoonPhase = memo(({ phase, size = 80 }) => {
             cy="50"
             r="45"
             fill="#f3f4f6"
-            className="dark:fill-gray-200"
           />
 
           {/* Shadow overlay */}
@@ -75,7 +74,6 @@ const MoonPhase = memo(({ phase, size = 80 }) => {
               rx="45"
               ry="45"
               fill="#1f2937"
-              className="dark:fill-gray-800"
               clipPath="url(#moonClip)"
             />
           ) : (
@@ -86,7 +84,6 @@ const MoonPhase = memo(({ phase, size = 80 }) => {
               rx="45"
               ry="45"
               fill="#1f2937"
-              className="dark:fill-gray-800"
               clipPath="url(#moonClip)"
             />
           )}
@@ -126,10 +123,10 @@ const MoonPhase = memo(({ phase, size = 80 }) => {
       </motion.div>
 
       <div className="text-center">
-        <p className="text-sm font-medium text-gray-900 dark:text-white">
+        <p className="text-sm font-medium text-gray-900">
           {phaseName}
         </p>
-        <p className="text-xs text-gray-600 dark:text-gray-400">
+        <p className="text-xs text-gray-600">
           {illumination.toFixed(0)}% illuminated
         </p>
       </div>

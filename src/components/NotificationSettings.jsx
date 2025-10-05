@@ -49,7 +49,7 @@ export function NotificationSettings() {
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-800 border-cosmic-purple-200 dark:border-cosmic-purple-800">
+    <Card className="bg-white border-cosmic-purple-200">
       <CardHeader>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -57,7 +57,7 @@ export function NotificationSettings() {
         >
           <div className="flex items-center gap-2">
             <Settings className="w-5 h-5 text-cosmic-purple-500" aria-label="Settings icon" />
-            <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+            <CardTitle className="text-lg md:text-xl font-bold text-gray-900">
               Notification Settings
             </CardTitle>
           </div>
@@ -82,7 +82,7 @@ export function NotificationSettings() {
           >
             <CardContent className="space-y-4">
               {/* Browser Notifications */}
-              <div className="flex items-center justify-between p-3 bg-cosmic-purple-50 dark:bg-cosmic-purple-900/20 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-cosmic-purple-50 rounded-lg">
                 <div className="flex items-center gap-3">
                   {browserNotificationsEnabled ? (
                     <Bell className="w-5 h-5 text-cosmic-purple-500" />
@@ -90,8 +90,8 @@ export function NotificationSettings() {
                     <BellOff className="w-5 h-5 text-gray-400" />
                   )}
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Browser Notifications</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                    <p className="font-medium text-gray-900">Browser Notifications</p>
+                    <p className="text-xs text-gray-600">
                       Get notified even when tab is not active
                     </p>
                   </div>
@@ -101,7 +101,7 @@ export function NotificationSettings() {
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     notificationSettings.browserNotifications
                       ? 'bg-cosmic-purple-500'
-                      : 'bg-gray-300 dark:bg-gray-600'
+                      : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -113,10 +113,10 @@ export function NotificationSettings() {
               </div>
 
               {/* Chandrashtam Start Notifications */}
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">Chandrashtam Start</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                  <p className="font-medium text-gray-900">Chandrashtam Start</p>
+                  <p className="text-xs text-gray-600">
                     Alert when a new period begins
                   </p>
                 </div>
@@ -125,7 +125,7 @@ export function NotificationSettings() {
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     notificationSettings.chandrashtamStart
                       ? 'bg-cosmic-purple-500'
-                      : 'bg-gray-300 dark:bg-gray-600'
+                      : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -137,10 +137,10 @@ export function NotificationSettings() {
               </div>
 
               {/* Chandrashtam End Notifications */}
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">Chandrashtam End</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                  <p className="font-medium text-gray-900">Chandrashtam End</p>
+                  <p className="text-xs text-gray-600">
                     Alert when a period ends
                   </p>
                 </div>
@@ -149,7 +149,7 @@ export function NotificationSettings() {
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     notificationSettings.chandrashtamEnd
                       ? 'bg-cosmic-purple-500'
-                      : 'bg-gray-300 dark:bg-gray-600'
+                      : 'bg-gray-300'
                   }`}
                 >
                   <span

@@ -26,7 +26,7 @@ const Tooltip = ({ children, content, side = "top" }) => {
       {isVisible && (
         <div
           className={cn(
-            "absolute z-50 px-3 py-2 text-sm text-white bg-gray-900 dark:bg-gray-700 rounded-lg shadow-lg",
+            "absolute z-50 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg",
             "whitespace-normal max-w-xs break-words",
             "animate-in fade-in-0 zoom-in-95",
             side === "top" && "bottom-full left-1/2 -translate-x-1/2 mb-2",
@@ -38,7 +38,7 @@ const Tooltip = ({ children, content, side = "top" }) => {
           {content}
           <div
             className={cn(
-              "absolute w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45",
+              "absolute w-2 h-2 bg-gray-900 rotate-45",
               side === "top" && "bottom-[-4px] left-1/2 -translate-x-1/2",
               side === "bottom" && "top-[-4px] left-1/2 -translate-x-1/2",
               side === "left" && "right-[-4px] top-1/2 -translate-y-1/2",
@@ -82,7 +82,7 @@ TooltipContent.propTypes = {
 const InfoTooltip = React.memo(({ content, side = "top" }) => {
   return (
     <Tooltip content={content} side={side}>
-      <Info className="w-4 h-4 text-blue-500 dark:text-blue-400 cursor-help hover:text-blue-600 dark:hover:text-blue-300 transition-colors" />
+      <Info className="w-4 h-4 text-blue-500 cursor-help hover:text-blue-600 transition-colors" />
     </Tooltip>
   )
 });

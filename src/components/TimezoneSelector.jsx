@@ -37,12 +37,12 @@ const TimezoneSelector = ({ onLocationChange }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-cosmic-purple-200 dark:border-cosmic-purple-800">
+    <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-cosmic-purple-200">
       <MapPin className="w-5 h-5 text-cosmic-purple-500" aria-label="Location icon" role="img" />
       <select
         value={selectedLocation.name}
         onChange={handleChange}
-        className="bg-transparent border-none outline-none text-gray-900 dark:text-white font-medium cursor-pointer"
+        className="bg-transparent border-none outline-none text-gray-900 font-medium cursor-pointer"
         aria-label="Select location"
       >
         {LOCATIONS.map((location) => (

@@ -11,11 +11,11 @@ const CosmicLoader = memo(({ size = 60, text = "Calculating..." }) => {
     return (
       <div className="flex flex-col items-center justify-center gap-4 p-6">
         <div className="relative" style={{ width: size, height: size }}>
-          <div className="absolute inset-0 rounded-full border-4 border-gray-300 dark:border-gray-600" />
+          <div className="absolute inset-0 rounded-full border-4 border-gray-300" />
           <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500" />
         </div>
         {text && (
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <p className="text-sm font-medium text-gray-700">
             {text}
           </p>
         )}
@@ -100,7 +100,7 @@ const CosmicLoader = memo(({ size = 60, text = "Calculating..." }) => {
       {/* Loading text */}
       {text && (
         <motion.p
-          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="text-sm font-medium text-gray-700"
           animate={{
             opacity: [0.5, 1, 0.5]
           }}

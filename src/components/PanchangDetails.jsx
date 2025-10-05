@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { InfoTooltip } from "../components/ui/tooltip";
@@ -6,7 +6,7 @@ import { calculateMoonPosition, calculateSunPosition } from '../lib/astro-calcul
 import { RASHI_ORDER, TITHI_NAMES } from '../lib/vedic-constants';
 import { calculateSunTimes, formatTime, calculateRahuKalam } from '../lib/sun-calculator';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { Calendar, Sun, Moon, AlertCircle, Clock, Sunrise, Sunset } from 'lucide-react';
+import { Calendar, Sun, Moon, AlertCircle, Clock, Sunrise, Sunset, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CosmicLoader from './CosmicLoader';
 
@@ -23,29 +23,69 @@ const PanchangDetails = ({ location }) => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const prefersReducedMotion = useReducedMotion();
 
-  const calculateTithiEndTime = (moonPos, sunPos) => {
+  // Helper to check if selected date is today
+  const isToday = (date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
+  // Helper to get start of day for a date
+  const getStartOfDay = (date) => {
+    const newDate = new Date(date);
+    newDate.setHours(0, 0, 0, 0);
+    return newDate;
+  };
+
+  // Navigate to previous day (min: today)
+  const handlePreviousDay = () => {
+    const today = getStartOfDay(new Date());
+    const prevDay = new Date(selectedDate);
+    prevDay.setDate(prevDay.getDate() - 1);
+    if (prevDay >= today) {
+      setSelectedDate(prevDay);
+    }
+  };
+
+  // Navigate to next day (max: today + 4 days)
+  const handleNextDay = () => {
+    const maxDate = getStartOfDay(new Date());
+    maxDate.setDate(maxDate.getDate() + 4);
+    const nextDay = new Date(selectedDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const nextDayStart = getStartOfDay(nextDay);
+    if (nextDayStart <= maxDate) {
+      setSelectedDate(nextDay);
+    }
+  };
+
+  // Jump to today
+  const handleToday = () => {
+    setSelectedDate(new Date());
+  };
+
+  const calculateTithiEndTime = (moonPos, sunPos, baseDate) => {
     try {
       if (!moonPos || !sunPos) return null;
-      
+
       const moonLong = moonPos.longitude;
       const sunLong = sunPos.longitude;
       let distance = moonLong - sunLong;
       if (distance < 0) distance += 360;
-      
+
       const currentTithiStartDegree = Math.floor(distance / 12) * 12;
       const degreesToNextTithi = (currentTithiStartDegree + 12) - distance;
-      
+
       // Use speed from positions
       const relativeSpeed = Math.abs(moonPos.speed - sunPos.speed);
       if (relativeSpeed === 0) return null; // Avoid division by zero
-      
+
       const hoursToNextTithi = (degreesToNextTithi / relativeSpeed) * 24;
-      
-      const now = new Date();
-      const endTime = new Date(now.getTime() + hoursToNextTithi * 60 * 60 * 1000);
-      
+
+      const endTime = new Date(baseDate.getTime() + hoursToNextTithi * 60 * 60 * 1000);
+
       return {
         time: endTime,
         hours: hoursToNextTithi
@@ -56,16 +96,16 @@ const PanchangDetails = ({ location }) => {
     }
   };
   
-  const calculateTithi = (moonPos, sunPos) => {
+  const calculateTithi = (moonPos, sunPos, baseDate) => {
     try {
       if (!moonPos || !sunPos) throw new Error('Invalid position data');
-  
+
       const moonLong = moonPos.longitude;
       const sunLong = sunPos.longitude;
-      
+
       let distance = moonLong - sunLong;
       if (distance < 0) distance += 360;
-      
+
       // Tithi calculation: each Tithi represents 12° of separation
       const tithiNumber = Math.floor(distance / 12);
       const paksha = tithiNumber >= 15 ? 'Krishna' : 'Shukla';
@@ -75,10 +115,10 @@ const PanchangDetails = ({ location }) => {
       if (tithiIndex === 14) {
         tithiName = paksha === 'Shukla' ? 'Purnima' : 'Amavasya';
       }
-      
+
       // Calculate end time only if we have valid positions
-      const endTimeInfo = calculateTithiEndTime(moonPos, sunPos);
-      
+      const endTimeInfo = calculateTithiEndTime(moonPos, sunPos, baseDate);
+
       return {
         name: tithiName,
         number: tithiIndex + 1,
@@ -96,24 +136,23 @@ const PanchangDetails = ({ location }) => {
     const updateDetails = () => {
       try {
         setLoading(true);
-        const now = new Date();
-        const moonPos = calculateMoonPosition();
-        const sunPos = calculateSunPosition();
+        const moonPos = calculateMoonPosition(selectedDate);
+        const sunPos = calculateSunPosition(selectedDate);
 
         if (!moonPos || !sunPos) {
           throw new Error('Failed to calculate positions');
         }
 
         // Calculate real sunrise/sunset using suncalc
-        const sunTimes = calculateSunTimes(location, now);
+        const sunTimes = calculateSunTimes(location, selectedDate);
 
         // Calculate Rahu Kalam based on real sunrise/sunset
         const rahuKalam = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset);
 
-        const tithiDetails = calculateTithi(moonPos, sunPos);
+        const tithiDetails = calculateTithi(moonPos, sunPos, selectedDate);
 
         setDetails({
-          gregorianDate: formatGregorianDate(now),
+          gregorianDate: formatGregorianDate(selectedDate),
           moonPosition: {
             rashi: RASHI_ORDER[moonPos.rashi_number],
             degrees: moonPos.degrees_in_rashi.toFixed(2)
@@ -146,9 +185,17 @@ const PanchangDetails = ({ location }) => {
     };
 
     updateDetails();
-    const interval = setInterval(updateDetails, 60000);
-    return () => clearInterval(interval);
-  }, [location]);
+
+    // Only auto-refresh if viewing today
+    let interval;
+    if (isToday(selectedDate)) {
+      interval = setInterval(updateDetails, 60000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [location, selectedDate]);
 
   return (
     <motion.div
@@ -156,11 +203,11 @@ const PanchangDetails = ({ location }) => {
       animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
       transition={!prefersReducedMotion ? { duration: 0.5, delay: 0.3 } : { duration: 0 }}
     >
-      <Card className="bg-white dark:bg-gray-800 border-cosmic-gold-200 dark:border-cosmic-gold-800 h-full">
+      <Card className="bg-white border-cosmic-gold-200 h-full">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <Calendar className="w-6 h-6 text-cosmic-gold-500" aria-label="Calendar icon" role="img" />
-            <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+            <CardTitle className="text-lg md:text-xl font-bold text-gray-900">
               Daily Vedic Details
             </CardTitle>
             <InfoTooltip
@@ -168,23 +215,59 @@ const PanchangDetails = ({ location }) => {
               side="right"
             />
           </div>
-          {!loading && !error && details && (
-            <motion.div
-              className="text-sm text-gray-600 dark:text-gray-400 mt-2"
-              initial={!prefersReducedMotion ? { opacity: 0 } : {}}
-              animate={!prefersReducedMotion ? { opacity: 1 } : {}}
-              transition={!prefersReducedMotion ? { delay: 0.4 } : { duration: 0 }}
+
+          {/* Date Navigation */}
+          <div className="flex items-center justify-between mt-3 gap-2">
+            <button
+              onClick={handlePreviousDay}
+              disabled={isToday(selectedDate)}
+              className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Previous day"
             >
-              {details.gregorianDate}
-            </motion.div>
-          )}
+              <ChevronLeft className="w-5 h-5 text-gray-700" />
+            </button>
+
+            <div className="flex items-center gap-2">
+              {!isToday(selectedDate) && (
+                <button
+                  onClick={handleToday}
+                  className="px-3 py-1 text-xs font-medium bg-cosmic-gold-100 text-cosmic-gold-700 rounded-lg hover:bg-cosmic-gold-200 transition-colors"
+                >
+                  Today
+                </button>
+              )}
+              {!loading && !error && details && (
+                <motion.div
+                  className="text-sm text-gray-700 font-medium text-center"
+                  initial={!prefersReducedMotion ? { opacity: 0 } : {}}
+                  animate={!prefersReducedMotion ? { opacity: 1 } : {}}
+                  transition={!prefersReducedMotion ? { delay: 0.2 } : { duration: 0 }}
+                >
+                  {details.gregorianDate}
+                </motion.div>
+              )}
+            </div>
+
+            <button
+              onClick={handleNextDay}
+              disabled={(() => {
+                const maxDate = getStartOfDay(new Date());
+                maxDate.setDate(maxDate.getDate() + 4);
+                return getStartOfDay(selectedDate) >= maxDate;
+              })()}
+              className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Next day"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-700" />
+            </button>
+          </div>
         </CardHeader>
         <CardContent>
           {loading && <CosmicLoader text="Calculating details..." size={50} />}
 
           {error && (
             <motion.div
-              className="text-center p-4 text-red-600 dark:text-red-400"
+              className="text-center p-4 text-red-600"
               initial={!prefersReducedMotion ? { opacity: 0 } : {}}
               animate={!prefersReducedMotion ? { opacity: 1 } : {}}
               transition={{ duration: 0 }}
@@ -203,24 +286,24 @@ const PanchangDetails = ({ location }) => {
             >
               {/* Left Column */}
               <div className="space-y-4">
-                <div className="p-3 bg-gradient-to-br from-cosmic-blue-50 to-white dark:from-gray-700/50 dark:to-gray-800/50 rounded-lg border border-cosmic-blue-200 dark:border-cosmic-blue-800">
+                <div className="p-3 bg-gradient-to-br from-cosmic-blue-50 to-white rounded-lg border border-cosmic-blue-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Moon className="w-4 h-4 text-cosmic-blue-500" aria-label="Moon icon" role="img" />
-                    <span className="font-semibold text-gray-900 dark:text-white text-sm">Moon Position</span>
+                    <span className="font-semibold text-gray-900 text-sm">Moon Position</span>
                     <InfoTooltip content="Current sidereal zodiac position of the Moon" side="top" />
                   </div>
-                  <p className="text-lg font-semibold text-cosmic-blue-600 dark:text-cosmic-blue-400">
+                  <p className="text-lg font-semibold text-cosmic-blue-600">
                     {details.moonPosition.rashi} ({details.moonPosition.degrees}°)
                   </p>
                 </div>
 
-                <div className="p-3 bg-gradient-to-br from-cosmic-gold-50 to-white dark:from-gray-700/50 dark:to-gray-800/50 rounded-lg border border-cosmic-gold-200 dark:border-cosmic-gold-800">
+                <div className="p-3 bg-gradient-to-br from-cosmic-gold-50 to-white rounded-lg border border-cosmic-gold-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Sun className="w-4 h-4 text-cosmic-gold-500" aria-label="Sun icon" role="img" />
-                    <span className="font-semibold text-gray-900 dark:text-white text-sm">Sun Position</span>
+                    <span className="font-semibold text-gray-900 text-sm">Sun Position</span>
                     <InfoTooltip content="Current sidereal zodiac position of the Sun" side="top" />
                   </div>
-                  <p className="text-lg font-semibold text-cosmic-gold-600 dark:text-cosmic-gold-400">
+                  <p className="text-lg font-semibold text-cosmic-gold-600">
                     {details.sunPosition.rashi} ({details.sunPosition.degrees}°)
                   </p>
                 </div>
@@ -228,14 +311,14 @@ const PanchangDetails = ({ location }) => {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-4 h-4 text-cosmic-purple-500" aria-label="Calendar icon" role="img" />
-                    <span className="font-semibold text-gray-900 dark:text-white text-sm">Tithi</span>
+                    <span className="font-semibold text-gray-900 text-sm">Tithi</span>
                     <InfoTooltip content="Lunar day in Vedic calendar, based on Moon-Sun angular distance" side="top" />
                   </div>
-                  <p className="text-base text-gray-900 dark:text-white font-medium">
+                  <p className="text-base text-gray-900 font-medium">
                     {details.tithi.name} ({details.tithi.number}) - {details.tithi.paksha}
                   </p>
                   {details.tithi.endTime && (
-                    <div className="mt-2 text-xs text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                    <div className="mt-2 text-xs text-gray-700 flex items-center gap-1">
                       <Clock className="w-3 h-3" aria-label="Clock icon" role="img" />
                       <span>
                         Changes at: {details.tithi.endTime.toLocaleTimeString([], {
@@ -254,14 +337,14 @@ const PanchangDetails = ({ location }) => {
 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="font-semibold text-gray-900 dark:text-white text-sm">Timings ({location.name})</span>
+                    <span className="font-semibold text-gray-900 text-sm">Timings ({location.name})</span>
                   </div>
                   <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                    <div className="flex items-center gap-2 text-gray-700">
                       <Sunrise className="w-4 h-4 text-orange-500" aria-label="Sunrise icon" role="img" />
                       <span>Sunrise: {details.timings.sunrise}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                    <div className="flex items-center gap-2 text-gray-700">
                       <Sunset className="w-4 h-4 text-indigo-500" aria-label="Sunset icon" role="img" />
                       <span>Sunset: {details.timings.sunset}</span>
                     </div>
@@ -271,10 +354,10 @@ const PanchangDetails = ({ location }) => {
 
               {/* Right Column */}
               <div className="space-y-4">
-                <div className="p-4 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg border-2 border-red-300 dark:border-red-800">
+                <div className="p-4 bg-gradient-to-br from-red-50 to-orange-50 rounded-lg border-2 border-red-300">
                   <div className="flex items-center gap-2 mb-2">
-                    <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" aria-label="Alert icon" role="img" />
-                    <span className="font-semibold text-red-600 dark:text-red-400">
+                    <AlertCircle className="w-5 h-5 text-red-600" aria-label="Alert icon" role="img" />
+                    <span className="font-semibold text-red-600">
                       Rahu Kalam
                     </span>
                     <InfoTooltip
@@ -282,18 +365,18 @@ const PanchangDetails = ({ location }) => {
                       side="left"
                     />
                   </div>
-                  <p className="text-sm text-red-700 dark:text-red-300 font-medium">
+                  <p className="text-sm text-red-700 font-medium">
                     {details.rahuKalam}
                   </p>
-                  <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-1">
+                  <p className="text-xs text-red-600/70 mt-1">
                     (calculated for {location.name})
                   </p>
                 </div>
 
-                <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-300 dark:border-green-800">
+                <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-300">
                   <div className="flex items-center gap-2 mb-3">
-                    <Clock className="w-5 h-5 text-green-600 dark:text-green-400" aria-label="Clock icon" role="img" />
-                    <span className="font-semibold text-gray-900 dark:text-white">Auspicious Muhurtas</span>
+                    <Clock className="w-5 h-5 text-green-600" aria-label="Clock icon" role="img" />
+                    <span className="font-semibold text-gray-900">Auspicious Muhurtas</span>
                     <InfoTooltip
                       content="Most favorable time periods for important activities and spiritual practices"
                       side="left"
@@ -301,12 +384,12 @@ const PanchangDetails = ({ location }) => {
                   </div>
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Brahma Muhurta:</span>
-                      <p className="text-green-700 dark:text-green-300">{details.muhurtas.brahma}</p>
+                      <span className="font-medium text-gray-700">Brahma Muhurta:</span>
+                      <p className="text-green-700">{details.muhurtas.brahma}</p>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Abhijeet Muhurta:</span>
-                      <p className="text-green-700 dark:text-green-300">{details.muhurtas.abhijeet}</p>
+                      <span className="font-medium text-gray-700">Abhijeet Muhurta:</span>
+                      <p className="text-green-700">{details.muhurtas.abhijeet}</p>
                     </div>
                   </div>
                 </div>
@@ -328,4 +411,4 @@ PanchangDetails.propTypes = {
   }).isRequired,
 };
 
-export default PanchangDetails;
+export default memo(PanchangDetails);

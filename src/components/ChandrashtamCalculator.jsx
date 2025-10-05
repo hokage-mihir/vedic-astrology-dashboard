@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { InfoTooltip } from "../components/ui/tooltip";
@@ -6,7 +6,7 @@ import { calculateMoonPosition, AYANAMSA } from '../lib/astro-calculator';
 import { RASHI_ORDER, CHANDRASHTAM_MAP, getNextRashi } from '../lib/vedic-constants';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { useNotifications } from '../contexts/NotificationContext';
-import { Moon, AlertTriangle, Clock, Sparkles } from 'lucide-react';
+import { Moon, AlertTriangle, Clock, Sparkles, CalendarDays } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CosmicLoader from './CosmicLoader';
 
@@ -113,11 +113,11 @@ const ChandrashtamCalculator = () => {
       animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
       transition={!prefersReducedMotion ? { duration: 0.5 } : { duration: 0 }}
     >
-      <Card className="bg-white dark:bg-gray-800 border-cosmic-purple-200 dark:border-cosmic-purple-800">
+      <Card className="bg-white border-cosmic-purple-200">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Moon className="w-6 h-6 text-cosmic-purple-500" aria-label="Moon icon" role="img" />
-            <CardTitle className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+            <CardTitle className="text-lg md:text-xl font-bold text-gray-900">
               Chandrashtam Details
             </CardTitle>
             <InfoTooltip
@@ -127,9 +127,9 @@ const ChandrashtamCalculator = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <Alert className="mb-6 bg-cosmic-purple-50 dark:bg-cosmic-purple-900/20 border-cosmic-purple-200 dark:border-cosmic-purple-800">
-            <AlertTriangle className="w-4 h-4 text-cosmic-purple-600 dark:text-cosmic-purple-400" aria-label="Alert icon" role="img" />
-            <AlertDescription className="text-sm text-gray-700 dark:text-gray-300 ml-6">
+          <Alert className="mb-6 bg-cosmic-purple-50 border-cosmic-purple-200">
+            <AlertTriangle className="w-4 h-4 text-cosmic-purple-600" aria-label="Alert icon" role="img" />
+            <AlertDescription className="text-sm text-gray-700 ml-6">
               On Chandra Ashtama days, the Moon will induce more negative thoughts in your mind, confuse you, and overall add stress.
               <span className="block mt-2">Just by being aware of these days can save your mind from these negative effects.</span>
               <span className="block mt-2">Check if your Rashi (Moon sign) is currently afflicted. If it is, just relax knowing this is a cosmic game.</span>
@@ -147,12 +147,12 @@ const ChandrashtamCalculator = () => {
             >
               {/* Decorative separator */}
               <div className="flex items-center gap-4">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-cosmic-purple-300 dark:via-cosmic-purple-700 to-transparent" />
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-cosmic-purple-300 to-transparent" />
                 <Sparkles className="w-4 h-4 text-cosmic-gold-500" aria-label="Sparkles icon" role="img" />
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-cosmic-purple-300 dark:via-cosmic-purple-700 to-transparent" />
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-cosmic-purple-300 to-transparent" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 bg-gradient-to-br from-cosmic-purple-50 to-cosmic-blue-50 dark:from-gray-700/50 dark:to-gray-800/50 rounded-lg border border-cosmic-purple-200 dark:border-cosmic-purple-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 bg-gradient-to-br from-cosmic-purple-50 to-cosmic-blue-50 rounded-lg border border-cosmic-purple-200">
                 <motion.div
                   initial={!prefersReducedMotion ? { x: -20, opacity: 0 } : {}}
                   animate={!prefersReducedMotion ? { x: 0, opacity: 1 } : {}}
@@ -160,17 +160,17 @@ const ChandrashtamCalculator = () => {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Moon className="w-5 h-5 text-cosmic-blue-500" aria-label="Moon icon" role="img" />
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Current Moon Position</h3>
+                    <h3 className="font-semibold text-gray-900">Current Moon Position</h3>
                     <InfoTooltip
                       content="The current sidereal zodiac sign (Rashi) where the Moon is transiting"
                       side="top"
                     />
                   </div>
-                  <p className="text-2xl font-bold text-cosmic-blue-600 dark:text-cosmic-blue-400">{moonData.current_rashi}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="text-2xl font-bold text-cosmic-blue-600">{moonData.current_rashi}</p>
+                  <p className="text-sm text-gray-600 mt-1">
                     {moonData.degrees_in_rashi.toFixed(2)}° in sign
                   </p>
-                  <div className="flex items-center gap-1 mt-2 text-sm text-cosmic-purple-600 dark:text-cosmic-purple-400">
+                  <div className="flex items-center gap-1 mt-2 text-sm text-cosmic-purple-600">
                     <Clock className="w-4 h-4" aria-label="Clock icon" role="img" />
                     <span>Time left: {moonData.time_left}</span>
                   </div>
@@ -185,21 +185,37 @@ const ChandrashtamCalculator = () => {
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <AlertTriangle className="w-5 h-5 text-red-500" aria-label="Warning icon" role="img" />
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Currently Afflicted Rashi</h3>
+                      <h3 className="font-semibold text-gray-900">Currently Afflicted Rashi</h3>
                       <InfoTooltip
                         content="The Moon sign experiencing Chandrashtam (8th house affliction) right now"
                         side="top"
                       />
                     </div>
-                    <p className="text-2xl font-bold text-red-600 dark:text-red-400">{moonData.afflicted_rashi}</p>
+                    <p className="text-2xl font-bold text-red-600">{moonData.afflicted_rashi}</p>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Next Afflicted Rashi</h3>
-                    <p className="text-lg font-semibold text-orange-600 dark:text-orange-400">{moonData.next_afflicted_rashi}</p>
+                    <h3 className="font-semibold text-gray-900 mb-2">Next Afflicted Rashi</h3>
+                    <p className="text-lg font-semibold text-orange-600">{moonData.next_afflicted_rashi}</p>
                   </div>
                 </motion.div>
               </div>
+
+              {/* Link to Annual Calendar */}
+              <motion.div
+                initial={!prefersReducedMotion ? { opacity: 0, y: 10 } : {}}
+                animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
+                transition={!prefersReducedMotion ? { delay: 0.5 } : { duration: 0 }}
+                className="mt-4 text-center"
+              >
+                <a
+                  href="#annual-calendar"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-cosmic-purple-700 bg-cosmic-purple-50 hover:bg-cosmic-purple-100 rounded-lg transition-colors duration-200"
+                >
+                  <CalendarDays className="w-4 h-4" />
+                  View Annual Chandrashtam Calendar
+                </a>
+              </motion.div>
             </motion.div>
           )}
         </CardContent>
@@ -208,4 +224,4 @@ const ChandrashtamCalculator = () => {
   );
 };
 
-export default ChandrashtamCalculator;
+export default memo(ChandrashtamCalculator);

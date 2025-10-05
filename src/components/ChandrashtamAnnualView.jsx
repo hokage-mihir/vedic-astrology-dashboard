@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { InfoTooltip } from './ui/tooltip';
@@ -8,19 +8,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import CosmicLoader from './CosmicLoader';
 
-// Import the data directly
-import chandrashtamData2025 from '../data/chandrashtam-2025.json';
-import chandrashtamData2026 from '../data/chandrashtam-2026.json';
-import chandrashtamData2027 from '../data/chandrashtam-2027.json';
-import chandrashtamData2028 from '../data/chandrashtam-2028.json';
-import chandrashtamData2029 from '../data/chandrashtam-2029.json';
-
-const DATA_MAP = {
-  2025: chandrashtamData2025,
-  2026: chandrashtamData2026,
-  2027: chandrashtamData2027,
-  2028: chandrashtamData2028,
-  2029: chandrashtamData2029,
+// Lazy load data only when needed
+const loadYearData = async (year) => {
+  switch(year) {
+    case 2025:
+      return (await import('../data/chandrashtam-2025.json')).default;
+    case 2026:
+      return (await import('../data/chandrashtam-2026.json')).default;
+    case 2027:
+      return (await import('../data/chandrashtam-2027.json')).default;
+    case 2028:
+      return (await import('../data/chandrashtam-2028.json')).default;
+    case 2029:
+      return (await import('../data/chandrashtam-2029.json')).default;
+    default:
+      throw new Error(`No data available for year ${year}`);
+  }
 };
 
 const ChandrashtamAnnualView = ({ year = 2025 }) => {
@@ -32,41 +35,46 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
   const prefersReducedMotion = useReducedMotion();
 
   // Available years
-  const availableYears = Object.keys(DATA_MAP).map(Number).sort();
+  const availableYears = [2025, 2026, 2027, 2028, 2029];
 
   // Load and process pre-calculated data
   useEffect(() => {
-    try {
-      const rawData = DATA_MAP[selectedYear];
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const rawData = await loadYearData(selectedYear);
 
-      if (!rawData) {
-        console.error(`No data available for year ${selectedYear}`);
+        if (!rawData) {
+          console.error(`No data available for year ${selectedYear}`);
+          setLoading(false);
+          return;
+        }
+
+        // Convert ISO strings back to Date objects
+        const converted = {};
+        Object.keys(rawData.data).forEach(rashi => {
+          converted[rashi] = rawData.data[rashi].map(period => ({
+            start: new Date(period.start),
+            end: new Date(period.end),
+            duration: period.duration,
+            incomplete: period.incomplete
+          }));
+        });
+
+        setChandrashtamData({
+          year: rawData.year,
+          generatedAt: rawData.generatedAt,
+          data: converted
+        });
         setLoading(false);
-        return;
+      } catch (error) {
+        console.error('Error loading pre-calculated data:', error);
+        setChandrashtamData(null);
+        setLoading(false);
       }
+    };
 
-      // Convert ISO strings back to Date objects
-      const converted = {};
-      Object.keys(rawData.data).forEach(rashi => {
-        converted[rashi] = rawData.data[rashi].map(period => ({
-          start: new Date(period.start),
-          end: new Date(period.end),
-          duration: period.duration,
-          incomplete: period.incomplete
-        }));
-      });
-
-      setChandrashtamData({
-        year: rawData.year,
-        generatedAt: rawData.generatedAt,
-        data: converted
-      });
-      setLoading(false);
-    } catch (error) {
-      console.error('Error loading pre-calculated data:', error);
-      setChandrashtamData(null);
-      setLoading(false);
-    }
+    loadData();
   }, [selectedYear]);
 
   const periods = chandrashtamData?.data[selectedRashi] || [];
@@ -128,7 +136,7 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-center text-gray-600 dark:text-gray-400">
+          <p className="text-center text-gray-600">
             No pre-calculated data available for {year}
           </p>
         </CardContent>
@@ -143,7 +151,7 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-800">
+    <Card className="bg-white">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -161,13 +169,13 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
         {/* Year and Rashi Selectors */}
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+            <label className="text-sm font-medium text-gray-700 mb-2 block">
               Year:
             </label>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-cosmic-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-cosmic-blue-500 focus:border-transparent"
             >
               {availableYears.map(yr => (
                 <option key={yr} value={yr}>{yr}</option>
@@ -175,13 +183,13 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
             </select>
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+            <label className="text-sm font-medium text-gray-700 mb-2 block">
               Your Rashi:
             </label>
             <select
               value={selectedRashi}
               onChange={(e) => setSelectedRashi(e.target.value)}
-              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-cosmic-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-cosmic-purple-500 focus:border-transparent"
             >
               {RASHI_ORDER.map(rashi => (
                 <option key={rashi} value={rashi}>{rashi}</option>
@@ -192,23 +200,23 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
 
         {/* Stats Summary */}
         <div className="mt-4 grid grid-cols-3 gap-3">
-          <div className="bg-cosmic-purple-50 dark:bg-cosmic-purple-900/20 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-cosmic-purple-600 dark:text-cosmic-purple-400">
+          <div className="bg-cosmic-purple-50 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-cosmic-purple-600">
               {stats.totalPeriods}
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Total Periods</div>
+            <div className="text-xs text-gray-600">Total Periods</div>
           </div>
-          <div className="bg-cosmic-blue-50 dark:bg-cosmic-blue-900/20 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-cosmic-blue-600 dark:text-cosmic-blue-400">
+          <div className="bg-cosmic-blue-50 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-cosmic-blue-600">
               {Math.round(stats.totalHours / 24)}
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Total Days</div>
+            <div className="text-xs text-gray-600">Total Days</div>
           </div>
-          <div className="bg-cosmic-gold-50 dark:bg-cosmic-gold-900/20 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-cosmic-gold-600 dark:text-cosmic-gold-400">
+          <div className="bg-cosmic-gold-50 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-cosmic-gold-600">
               {formatDuration(stats.avgDuration)}
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Avg Duration</div>
+            <div className="text-xs text-gray-600">Avg Duration</div>
           </div>
         </div>
       </CardHeader>
@@ -217,7 +225,7 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {Object.keys(periodsByMonth).sort((a, b) => a - b).map(month => (
             <div key={month} className="border-l-4 border-cosmic-purple-400 pl-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 mb-2">
                 {getMonthName(parseInt(month))} {selectedYear}
               </h3>
               <div className="space-y-2">
@@ -227,7 +235,7 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
                     initial={!prefersReducedMotion ? { opacity: 0, x: -10 } : {}}
                     animate={!prefersReducedMotion ? { opacity: 1, x: 0 } : {}}
                     transition={!prefersReducedMotion ? { delay: idx * 0.05 } : { duration: 0 }}
-                    className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3"
+                    className="bg-gray-50/50 rounded-lg p-3"
                   >
                     <div
                       className="flex items-center justify-between cursor-pointer"
@@ -235,14 +243,14 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          <span className="text-sm font-medium text-gray-900">
                             {formatDate(period.start)}
                           </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          <span className="text-xs text-gray-500">
                             {formatTime(period.start)}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        <div className="text-xs text-gray-600 mt-1">
                           Duration: {formatDuration(period.duration)}
                         </div>
                       </div>
@@ -262,22 +270,22 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                          <div className="mt-3 pt-3 border-t border-gray-200">
                             <div className="grid grid-cols-2 gap-2 text-xs">
                               <div>
-                                <span className="text-gray-500 dark:text-gray-400">Start:</span>
-                                <div className="font-medium text-gray-900 dark:text-white">
+                                <span className="text-gray-500">Start:</span>
+                                <div className="font-medium text-gray-900">
                                   {formatDate(period.start)} at {formatTime(period.start)}
                                 </div>
                               </div>
                               <div>
-                                <span className="text-gray-500 dark:text-gray-400">End:</span>
-                                <div className="font-medium text-gray-900 dark:text-white">
+                                <span className="text-gray-500">End:</span>
+                                <div className="font-medium text-gray-900">
                                   {formatDate(period.end)} at {formatTime(period.end)}
                                 </div>
                               </div>
                             </div>
-                            <div className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+                            <div className="mt-2 text-xs text-amber-600">
                               ⚠️ Avoid important activities during this period
                             </div>
                           </div>
@@ -291,7 +299,7 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
           ))}
         </div>
 
-        <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
+        <div className="mt-4 text-xs text-gray-500 text-center">
           Data generated: {new Date(chandrashtamData.generatedAt).toLocaleString()}
         </div>
       </CardContent>
@@ -303,4 +311,4 @@ ChandrashtamAnnualView.propTypes = {
   year: PropTypes.number
 };
 
-export default ChandrashtamAnnualView;
+export default memo(ChandrashtamAnnualView);

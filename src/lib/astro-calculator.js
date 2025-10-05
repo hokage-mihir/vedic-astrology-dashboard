@@ -18,9 +18,9 @@ const calculateAyanamsa = (jd) => {
 };
 
 // Helper to get cache key rounded to minute
-const getCacheKey = (prefix) => {
-    const now = Date.now();
-    const roundedTime = Math.floor(now / CACHE_DURATION);
+const getCacheKey = (prefix, date = null) => {
+    const timeToUse = date ? date.getTime() : Date.now();
+    const roundedTime = Math.floor(timeToUse / CACHE_DURATION);
     return `${prefix}_${roundedTime}`;
 };
 
@@ -37,16 +37,17 @@ const cleanOldCache = () => {
     }
 };
 
-export const calculateMoonPosition = () => {
+export const calculateMoonPosition = (date = null) => {
+    const dateToUse = date || new Date();
+
     // Check cache first
-    const cacheKey = getCacheKey('moon');
+    const cacheKey = getCacheKey('moon', dateToUse);
     if (calculationCache.has(cacheKey)) {
         return calculationCache.get(cacheKey);
     }
 
     try {
-        const now = new Date();
-        const jd = julian.DateToJD(now);
+        const jd = julian.DateToJD(dateToUse);
 
         // Get Moon's position
         const moon = moonposition.position(jd);
@@ -60,7 +61,7 @@ export const calculateMoonPosition = () => {
         const degreesInRashi = siderealLongitude % 30;
 
         // Calculate Moon's daily motion
-        const nextDay = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const nextDay = new Date(dateToUse.getTime() + 24 * 60 * 60 * 1000);
         const nextJd = julian.DateToJD(nextDay);
         const nextMoon = moonposition.position(nextJd);
         const nextLongitude = normalize360(nextMoon.lon * 180 / Math.PI);
@@ -86,16 +87,17 @@ export const calculateMoonPosition = () => {
     }
 };
 
-export const calculateSunPosition = () => {
+export const calculateSunPosition = (date = null) => {
+    const dateToUse = date || new Date();
+
     // Check cache first
-    const cacheKey = getCacheKey('sun');
+    const cacheKey = getCacheKey('sun', dateToUse);
     if (calculationCache.has(cacheKey)) {
         return calculationCache.get(cacheKey);
     }
 
     try {
-        const now = new Date();
-        const jd = julian.DateToJD(now);
+        const jd = julian.DateToJD(dateToUse);
 
         // More accurate solar calculation
         const T = (jd - 2451545.0) / 36525;
