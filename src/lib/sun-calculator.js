@@ -54,14 +54,16 @@ export const calculateRahuKalam = (sunrise, sunset, dayOfWeek = new Date().getDa
   const segment = dayDuration / 8; // Divide day into 8 segments
 
   // Rahu Kalam segment based on day of week (traditional calculation)
+  // Mnemonic: "Mother Saw Father Wearing The Turban Suddenly"
+  // (M-onday, S-aturday, F-riday, W-ednesday, T-hursday, T-uesday, S-unday)
   const rahuKalamSegments = {
-    0: 7, // Sunday - 7th segment
-    1: 1, // Monday - 1st segment
-    2: 6, // Tuesday - 6th segment
-    3: 4, // Wednesday - 4th segment
-    4: 5, // Thursday - 5th segment
-    5: 3, // Friday - 3rd segment
-    6: 2, // Saturday - 2nd segment
+    0: 8, // Sunday - 8th segment
+    1: 2, // Monday - 2nd segment
+    2: 7, // Tuesday - 7th segment
+    3: 5, // Wednesday - 5th segment
+    4: 6, // Thursday - 6th segment
+    5: 4, // Friday - 4th segment
+    6: 3, // Saturday - 3rd segment
   };
 
   const segmentNumber = rahuKalamSegments[dayOfWeek];

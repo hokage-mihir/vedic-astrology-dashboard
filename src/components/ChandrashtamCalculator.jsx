@@ -1,22 +1,26 @@
 import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
-import { InfoTooltip } from "../components/ui/tooltip";
-import { calculateMoonPosition, AYANAMSA } from '../lib/astro-calculator';
+import { ImprovedTooltip } from "../components/ui/improved-tooltip";
+import { calculateMoonPosition } from '../lib/astro-calculator';
 import { RASHI_ORDER, CHANDRASHTAM_MAP, getNextRashi } from '../lib/vedic-constants';
+import { RASHI_SYMBOLS } from '../lib/rashi-symbols';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { useNotifications } from '../contexts/NotificationContext';
 import { Moon, AlertTriangle, Clock, Sparkles, CalendarDays } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CosmicLoader from './CosmicLoader';
+import ProgressRing from './ProgressRing';
+import MoonPhase from './MoonPhase';
 
 const ChandrashtamCalculator = () => {
   const [moonData, setMoonData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
   const prefersReducedMotion = useReducedMotion();
   const { showNotification, notificationSettings } = useNotifications();
   const previousAfflictedRashi = useRef(null);
+  const previousUserRashiStatus = useRef(null); // Track if user's Rashi was afflicted
 
   // Memoized function to calculate time left in current Rashi
   const calculateTimeLeft = useCallback((degreesInRashi, moonSpeed) => {
@@ -44,43 +48,52 @@ const ChandrashtamCalculator = () => {
 
       // Find which Rashi is afflicted when Moon is in current position
       const afflictedRashi = Object.entries(CHANDRASHTAM_MAP).find(
-        ([_rashi, moonPosition]) => moonPosition === currentRashi
+        ([, moonPosition]) => moonPosition === currentRashi
       )?.[0] || null;
 
       // Calculate next affected Rashi
       const nextMoonRashi = getNextRashi(currentRashi);
       const nextAfflictedRashi = Object.entries(CHANDRASHTAM_MAP).find(
-        ([_rashi, moonPosition]) => moonPosition === nextMoonRashi
+        ([, moonPosition]) => moonPosition === nextMoonRashi
       )?.[0] || null;
 
       const timeLeft = calculateTimeLeft(moonPos.degrees_in_rashi, moonPos.speed);
 
-      // Check if Chandrashtam period changed and send notification
-      if (previousAfflictedRashi.current !== null &&
-          previousAfflictedRashi.current !== afflictedRashi) {
+      // Get user's selected Rashi from localStorage
+      const userMoonRashi = localStorage.getItem('userMoonRashi') || RASHI_ORDER[0];
 
-        // Chandrashtam period ended for previous rashi
-        if (notificationSettings.chandrashtamEnd) {
-          showNotification({
-            title: 'Chandrashtam Period Ended',
-            body: `The difficult period has ended for ${previousAfflictedRashi.current}. Mental clarity returning.`,
-            type: 'success',
-            duration: 8000
-          });
-        }
+      // Check if user's Rashi is currently afflicted
+      const isUserRashiAfflicted = (afflictedRashi === userMoonRashi);
 
-        // New Chandrashtam period started
-        if (notificationSettings.chandrashtamStart && afflictedRashi) {
-          showNotification({
-            title: 'Chandrashtam Period Started',
-            body: `${afflictedRashi} is now experiencing Chandrashtam. Practice awareness and patience.`,
-            type: 'warning',
-            duration: 8000
-          });
+      // Send personalized notifications only for user's Rashi
+      if (previousUserRashiStatus.current !== null &&
+          previousUserRashiStatus.current !== isUserRashiAfflicted) {
+
+        if (isUserRashiAfflicted) {
+          // User's Rashi just became afflicted
+          if (notificationSettings.chandrashtamStart) {
+            showNotification({
+              title: '⚠️ Your Chandrashtam Started',
+              body: `${userMoonRashi} is now experiencing Chandrashtam. Practice awareness and patience during this period.`,
+              type: 'warning',
+              duration: 10000
+            });
+          }
+        } else {
+          // User's Rashi is no longer afflicted
+          if (notificationSettings.chandrashtamEnd) {
+            showNotification({
+              title: '✓ Your Chandrashtam Ended',
+              body: `The difficult period has ended for ${userMoonRashi}. Mental clarity returning!`,
+              type: 'success',
+              duration: 8000
+            });
+          }
         }
       }
 
       previousAfflictedRashi.current = afflictedRashi;
+      previousUserRashiStatus.current = isUserRashiAfflicted;
 
       setMoonData({
         current_rashi: currentRashi,
@@ -89,10 +102,7 @@ const ChandrashtamCalculator = () => {
         degrees_in_rashi: moonPos.degrees_in_rashi,
         time_left: timeLeft
       });
-
-      setError(null);
     } catch (err) {
-      setError(`Calculation error: ${err.message}`);
       console.error('Error:', err);
     } finally {
       setLoading(false);
@@ -120,10 +130,7 @@ const ChandrashtamCalculator = () => {
             <CardTitle className="text-lg md:text-xl font-bold text-gray-900">
               Chandrashtam Details
             </CardTitle>
-            <InfoTooltip
-              content="Chandrashtam occurs when the Moon transits the 8th house from your Moon sign, creating mental and emotional challenges. Awareness helps mitigate negative effects."
-              side="right"
-            />
+            <ImprovedTooltip term="chandrashtam" />
           </div>
         </CardHeader>
         <CardContent>
@@ -152,27 +159,45 @@ const ChandrashtamCalculator = () => {
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-cosmic-purple-300 to-transparent" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 bg-gradient-to-br from-cosmic-purple-50 to-cosmic-blue-50 rounded-lg border border-cosmic-purple-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gradient-to-br from-cosmic-purple-50 to-cosmic-blue-50 rounded-lg border border-cosmic-purple-200">
                 <motion.div
                   initial={!prefersReducedMotion ? { x: -20, opacity: 0 } : {}}
                   animate={!prefersReducedMotion ? { x: 0, opacity: 1 } : {}}
                   transition={!prefersReducedMotion ? { delay: 0.3 } : { duration: 0 }}
+                  className="flex flex-col items-center text-center"
                 >
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-2 mb-3">
                     <Moon className="w-5 h-5 text-cosmic-blue-500" aria-label="Moon icon" role="img" />
                     <h3 className="font-semibold text-gray-900">Current Moon Position</h3>
-                    <InfoTooltip
-                      content="The current sidereal zodiac sign (Rashi) where the Moon is transiting"
-                      side="top"
-                    />
+                    <ImprovedTooltip term="rashi" />
                   </div>
-                  <p className="text-2xl font-bold text-cosmic-blue-600">{moonData.current_rashi}</p>
+
+                  <p className="text-2xl font-bold text-cosmic-blue-600 mt-2">
+                    {RASHI_SYMBOLS[moonData.current_rashi]} {moonData.current_rashi}
+                  </p>
                   <p className="text-sm text-gray-600 mt-1">
                     {moonData.degrees_in_rashi.toFixed(2)}° in sign
                   </p>
-                  <div className="flex items-center gap-1 mt-2 text-sm text-cosmic-purple-600">
-                    <Clock className="w-4 h-4" aria-label="Clock icon" role="img" />
-                    <span>Time left: {moonData.time_left}</span>
+
+                  {/* Countdown Timer with Progress Ring */}
+                  <div className="my-6 flex flex-col items-center">
+                    <div className="relative">
+                      <ProgressRing
+                        progress={(moonData.degrees_in_rashi / 30) * 100}
+                        size={140}
+                        strokeWidth={10}
+                        showLabel={false}
+                      />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cosmic-purple-600 to-cosmic-blue-600 bg-clip-text text-transparent text-center leading-tight">
+                          {moonData.time_left}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-600 flex items-center gap-1 mt-3">
+                      <Clock className="w-3 h-3" />
+                      <span>until next Rashi</span>
+                    </div>
                   </div>
                 </motion.div>
 
@@ -186,17 +211,18 @@ const ChandrashtamCalculator = () => {
                     <div className="flex items-center gap-2 mb-2">
                       <AlertTriangle className="w-5 h-5 text-red-500" aria-label="Warning icon" role="img" />
                       <h3 className="font-semibold text-gray-900">Currently Afflicted Rashi</h3>
-                      <InfoTooltip
-                        content="The Moon sign experiencing Chandrashtam (8th house affliction) right now"
-                        side="top"
-                      />
+                      <ImprovedTooltip term="rashi" />
                     </div>
-                    <p className="text-2xl font-bold text-red-600">{moonData.afflicted_rashi}</p>
+                    <p className="text-2xl font-bold text-red-600">
+                      {RASHI_SYMBOLS[moonData.afflicted_rashi]} {moonData.afflicted_rashi}
+                    </p>
                   </div>
 
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-2">Next Afflicted Rashi</h3>
-                    <p className="text-lg font-semibold text-orange-600">{moonData.next_afflicted_rashi}</p>
+                    <p className="text-lg font-semibold text-orange-600">
+                      {RASHI_SYMBOLS[moonData.next_afflicted_rashi]} {moonData.next_afflicted_rashi}
+                    </p>
                   </div>
                 </motion.div>
               </div>

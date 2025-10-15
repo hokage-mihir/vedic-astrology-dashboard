@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { InfoTooltip } from './ui/tooltip';
+import { ImprovedTooltip } from './ui/improved-tooltip';
 import { Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import { RASHI_ORDER } from '../lib/vedic-constants';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -159,10 +159,7 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
             <CardTitle className="text-lg md:text-xl">
               Chandrashtam Calendar
             </CardTitle>
-            <InfoTooltip
-              content="Pre-calculated Chandrashtam periods for the entire year. Select your Rashi to see all afflicted days."
-              side="right"
-            />
+            <ImprovedTooltip term="chandrashtam" />
           </div>
         </div>
 

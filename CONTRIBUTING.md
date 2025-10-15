@@ -46,7 +46,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 ### Setup Development Environment
 
 ```bash
-git clone https://github.com/your-username/vedic-astrology-dashboard.git
+git clone https://github.com/hokage-mihir/vedic-astrology-dashboard.git
 cd vedic-astrology-dashboard
 npm install
 npm run dev

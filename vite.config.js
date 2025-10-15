@@ -8,6 +8,18 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-astro': ['astronomia', 'suncalc'],
+          'vendor-ui': ['lucide-react', 'clsx', 'tailwind-merge'],
+        }
+      }
+    }
+  },
   plugins: [
     react(),
     VitePWA({

@@ -1,7 +1,7 @@
 import { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
-import { InfoTooltip } from "../components/ui/tooltip";
+import { ImprovedTooltip } from "../components/ui/improved-tooltip";
 import { calculateMoonPosition, calculateSunPosition } from '../lib/astro-calculator';
 import { RASHI_ORDER, TITHI_NAMES } from '../lib/vedic-constants';
 import { calculateSunTimes, formatTime, calculateRahuKalam } from '../lib/sun-calculator';
@@ -146,8 +146,8 @@ const PanchangDetails = ({ location }) => {
         // Calculate real sunrise/sunset using suncalc
         const sunTimes = calculateSunTimes(location, selectedDate);
 
-        // Calculate Rahu Kalam based on real sunrise/sunset
-        const rahuKalam = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset);
+        // Calculate Rahu Kalam based on real sunrise/sunset and selected date's day of week
+        const rahuKalam = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset, selectedDate.getDay());
 
         const tithiDetails = calculateTithi(moonPos, sunPos, selectedDate);
 
@@ -210,10 +210,7 @@ const PanchangDetails = ({ location }) => {
             <CardTitle className="text-lg md:text-xl font-bold text-gray-900">
               Daily Vedic Details
             </CardTitle>
-            <InfoTooltip
-              content="Panchang provides essential Vedic calendar information including planetary positions, lunar day (Tithi), and auspicious timings"
-              side="right"
-            />
+            <ImprovedTooltip term="tithi" />
           </div>
 
           {/* Date Navigation */}
@@ -290,7 +287,7 @@ const PanchangDetails = ({ location }) => {
                   <div className="flex items-center gap-2 mb-2">
                     <Moon className="w-4 h-4 text-cosmic-blue-500" aria-label="Moon icon" role="img" />
                     <span className="font-semibold text-gray-900 text-sm">Moon Position</span>
-                    <InfoTooltip content="Current sidereal zodiac position of the Moon" side="top" />
+                    <ImprovedTooltip term="rashi" />
                   </div>
                   <p className="text-lg font-semibold text-cosmic-blue-600">
                     {details.moonPosition.rashi} ({details.moonPosition.degrees}°)
@@ -301,7 +298,7 @@ const PanchangDetails = ({ location }) => {
                   <div className="flex items-center gap-2 mb-2">
                     <Sun className="w-4 h-4 text-cosmic-gold-500" aria-label="Sun icon" role="img" />
                     <span className="font-semibold text-gray-900 text-sm">Sun Position</span>
-                    <InfoTooltip content="Current sidereal zodiac position of the Sun" side="top" />
+                    <ImprovedTooltip term="rashi" />
                   </div>
                   <p className="text-lg font-semibold text-cosmic-gold-600">
                     {details.sunPosition.rashi} ({details.sunPosition.degrees}°)
@@ -312,7 +309,7 @@ const PanchangDetails = ({ location }) => {
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-4 h-4 text-cosmic-purple-500" aria-label="Calendar icon" role="img" />
                     <span className="font-semibold text-gray-900 text-sm">Tithi</span>
-                    <InfoTooltip content="Lunar day in Vedic calendar, based on Moon-Sun angular distance" side="top" />
+                    <ImprovedTooltip term="tithi" />
                   </div>
                   <p className="text-base text-gray-900 font-medium">
                     {details.tithi.name} ({details.tithi.number}) - {details.tithi.paksha}
@@ -360,10 +357,7 @@ const PanchangDetails = ({ location }) => {
                     <span className="font-semibold text-red-600">
                       Rahu Kalam
                     </span>
-                    <InfoTooltip
-                      content="Inauspicious time period ruled by Rahu. Best to avoid important activities during this time."
-                      side="left"
-                    />
+                    <ImprovedTooltip term="rahuKalam" />
                   </div>
                   <p className="text-sm text-red-700 font-medium">
                     {details.rahuKalam}
@@ -377,10 +371,7 @@ const PanchangDetails = ({ location }) => {
                   <div className="flex items-center gap-2 mb-3">
                     <Clock className="w-5 h-5 text-green-600" aria-label="Clock icon" role="img" />
                     <span className="font-semibold text-gray-900">Auspicious Muhurtas</span>
-                    <InfoTooltip
-                      content="Most favorable time periods for important activities and spiritual practices"
-                      side="left"
-                    />
+                    <ImprovedTooltip term="muhurta" />
                   </div>
                   <div className="space-y-2 text-sm">
                     <div>

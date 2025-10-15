@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import PropTypes from 'prop-types';
 
 const iconMap = {
   success: CheckCircle,
@@ -59,6 +60,16 @@ export function Toast({ toast, onClose }) {
   );
 }
 
+Toast.propTypes = {
+  toast: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
+    title: PropTypes.string,
+    description: PropTypes.string,
+  }).isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
 export function ToastContainer({ toasts, onClose }) {
   return (
     <div
@@ -75,3 +86,15 @@ export function ToastContainer({ toasts, onClose }) {
     </div>
   );
 }
+
+ToastContainer.propTypes = {
+  toasts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
+      title: PropTypes.string,
+      description: PropTypes.string,
+    })
+  ).isRequired,
+  onClose: PropTypes.func.isRequired,
+};

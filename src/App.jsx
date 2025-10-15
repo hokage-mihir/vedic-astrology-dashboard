@@ -1,10 +1,15 @@
-import { useState, lazy, Suspense } from 'react'
+import { useState, lazy, Suspense, useEffect } from 'react'
 import ChandrashtamCalculator from './components/ChandrashtamCalculator'
 import NakshatraInfo from './components/NakshatraInfo'
 import PanchangDetails from './components/PanchangDetails'
-import { NotificationSettings } from './components/NotificationSettings'
-import { TimezoneSelector, LOCATIONS } from './components/TimezoneSelector'
+import { NotificationSettings } from './components/NotificationSettingsNoHover'
+import { LocationRashiBar } from './components/LocationRashiBar'
+import WelcomeBanner from './components/WelcomeBanner'
+import OfflineIndicator from './components/OfflineIndicator'
 import { useReducedMotion } from './hooks/useReducedMotion'
+import ErrorBoundary from './components/ErrorBoundary'
+import { calculateMoonPosition } from './lib/astro-calculator'
+import { RASHI_ORDER } from './lib/vedic-constants'
 import { Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import CosmicLoader from './components/CosmicLoader'
@@ -16,10 +21,28 @@ function App() {
   const prefersReducedMotion = useReducedMotion();
   const [currentLocation, setCurrentLocation] = useState(() => {
     const saved = localStorage.getItem('selectedLocation');
-    return saved ? JSON.parse(saved) : LOCATIONS[0];
+    return saved ? JSON.parse(saved) : { name: 'Mumbai', latitude: 19.0760, longitude: 72.8777, timezone: 'Asia/Kolkata' };
   });
+  const [currentMoonRashi, setCurrentMoonRashi] = useState('');
+
+  // Get current moon position for status card
+  useEffect(() => {
+    const updateMoonRashi = () => {
+      const moonPos = calculateMoonPosition();
+      if (moonPos) {
+        setCurrentMoonRashi(RASHI_ORDER[moonPos.rashi_number]);
+      }
+    };
+    updateMoonRashi();
+    const interval = setInterval(updateMoonRashi, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-4 relative overflow-hidden">
+      {/* Offline Indicator */}
+      <OfflineIndicator />
+
       {/* Animated background elements */}
       {!prefersReducedMotion && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -86,34 +109,55 @@ function App() {
           </div>
         </motion.div>
 
-        {/* Location Selector */}
+        {/* Welcome Banner for First-Time Users */}
+        <WelcomeBanner />
+
+        {/* Location & Rashi Selector Bar */}
         <motion.div
           initial={!prefersReducedMotion ? { opacity: 0, y: 10 } : {}}
           animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
           transition={!prefersReducedMotion ? { duration: 0.5, delay: 0.3 } : { duration: 0 }}
-          className="flex justify-center mb-6"
+          className="mb-6"
         >
-          <TimezoneSelector onLocationChange={setCurrentLocation} />
+          {currentMoonRashi && (
+            <LocationRashiBar
+              onLocationChange={setCurrentLocation}
+              currentMoonRashi={currentMoonRashi}
+            />
+          )}
         </motion.div>
 
         <div className="flex flex-col space-y-6">
           {/* Notification Settings */}
-          <NotificationSettings />
+          <ErrorBoundary message="Unable to load notification settings. Please refresh the page.">
+            <NotificationSettings />
+          </ErrorBoundary>
 
           {/* Live Chandrashtam Calculator */}
-          <ChandrashtamCalculator />
+          <ErrorBoundary
+            title="Calculation Error"
+            message="Unable to calculate Chandrashtam positions. Please check your internet connection and try again."
+          >
+            <ChandrashtamCalculator />
+          </ErrorBoundary>
 
           {/* Panchang and Nakshatra Info */}
           <div className="flex flex-col space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
-            <PanchangDetails location={currentLocation} />
-            <NakshatraInfo />
+            <ErrorBoundary message="Unable to load Panchang details.">
+              <PanchangDetails location={currentLocation} />
+            </ErrorBoundary>
+            <ErrorBoundary message="Unable to load Nakshatra information.">
+              <NakshatraInfo />
+            </ErrorBoundary>
           </div>
 
           {/* Annual Chandrashtam Calendar */}
           <div id="annual-calendar">
-            <Suspense fallback={<CosmicLoader text="Loading calendar..." size={50} />}>
-              <ChandrashtamAnnualView year={2025} />
-            </Suspense>
+            <ErrorBoundary message="Unable to load annual calendar data.">
+              <Suspense fallback={<CosmicLoader text="Loading calendar..." size={50} />}>
+                <ChandrashtamAnnualView year={2025} />
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </div>
 

@@ -5,7 +5,41 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'dev-dist', 'node_modules'] },
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.node,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'commonjs',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      'no-unused-vars': 'warn',
+    },
+  },
+  {
+    files: ['src/test/**/*.js', 'vitest.config.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+        ...globals.vitest,
+        vi: 'readonly',
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      'no-unused-vars': 'warn',
+    },
+  },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {

@@ -1,7 +1,7 @@
 import { useState, useEffect, memo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
-import { InfoTooltip } from "../components/ui/tooltip";
+import { ImprovedTooltip } from "../components/ui/improved-tooltip";
 import { calculateMoonPosition } from '../lib/astro-calculator';
 import { getNakshatraInfo } from '../lib/vedic-constants';
 import { useReducedMotion } from '../hooks/useReducedMotion';
@@ -54,10 +54,7 @@ const NakshatraInfo = () => {
             <CardTitle className="text-lg md:text-xl font-bold text-gray-900">
               Nakshatra Details
             </CardTitle>
-            <InfoTooltip
-              content="Nakshatras are the 27 lunar mansions in Vedic astrology. Each represents unique cosmic energies and influences."
-              side="right"
-            />
+            <ImprovedTooltip term="nakshatra" />
           </div>
         </CardHeader>
         <CardContent>
@@ -84,10 +81,7 @@ const NakshatraInfo = () => {
                   <div className="flex items-center gap-2 mb-1">
                     <Sparkles className="w-4 h-4 text-cosmic-gold-500" aria-label="Sparkles icon" role="img" />
                     <h3 className="font-semibold text-gray-900">Current Nakshatra</h3>
-                    <InfoTooltip
-                      content="The lunar mansion where the Moon is currently transiting"
-                      side="top"
-                    />
+                    <ImprovedTooltip term="nakshatra" />
                   </div>
                   <p className="text-2xl font-bold text-cosmic-gold-600">{nakshatraInfo.name}</p>
                 </div>
@@ -95,10 +89,7 @@ const NakshatraInfo = () => {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-gray-900 text-sm">Pada (Quarter)</h3>
-                    <InfoTooltip
-                      content="Each Nakshatra is divided into 4 padas (quarters), representing different sub-energies"
-                      side="top"
-                    />
+                    <ImprovedTooltip term="nakshatra" />
                   </div>
                   <p className="text-lg text-cosmic-purple-600 font-semibold">{nakshatraInfo.pada}/4</p>
                 </div>
@@ -121,10 +112,7 @@ const NakshatraInfo = () => {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-gray-900 text-sm">Planetary Ruler</h3>
-                    <InfoTooltip
-                      content="The planet that governs this Nakshatra's energy and influences"
-                      side="top"
-                    />
+                    <ImprovedTooltip term="nakshatra" />
                   </div>
                   <p className="text-cosmic-blue-600 font-semibold">{nakshatraInfo.ruler}</p>
                 </div>

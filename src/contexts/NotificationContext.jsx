@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { ToastContainer } from '@/components/ui/toast';
+import PropTypes from 'prop-types';
 
 const NotificationContext = createContext(null);
 
@@ -14,7 +15,6 @@ export function NotificationProvider({ children }) {
       chandrashtamStart: true,
       chandrashtamEnd: true,
       browserNotifications: false,
-      soundEnabled: false,
     };
   });
 
@@ -118,6 +118,10 @@ export function NotificationProvider({ children }) {
     </NotificationContext.Provider>
   );
 }
+
+NotificationProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export function useNotifications() {
   const context = useContext(NotificationContext);

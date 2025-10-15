@@ -42,7 +42,6 @@ console.log('Generating PWA icons...');
 
 sizes.forEach(size => {
   const svg = generateSVG(size);
-  const filename = `icon-${size}x${size}.png`;
   const svgFilename = `icon-${size}x${size}.svg`;
 
   // Save as SVG (can be used directly or converted to PNG later)
