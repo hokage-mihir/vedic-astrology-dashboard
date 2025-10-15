@@ -6,6 +6,7 @@ import { NotificationSettings } from './components/NotificationSettingsNoHover'
 import { LocationRashiBar } from './components/LocationRashiBar'
 import WelcomeBanner from './components/WelcomeBanner'
 import OfflineIndicator from './components/OfflineIndicator'
+import InstallPrompt from './components/InstallPrompt'
 import { useReducedMotion } from './hooks/useReducedMotion'
 import ErrorBoundary from './components/ErrorBoundary'
 import { calculateMoonPosition } from './lib/astro-calculator'
@@ -56,13 +57,21 @@ function App() {
 
   // If simplified view, show the simplified landing page
   if (view === 'simplified') {
-    return <SimplifiedLandingPage onShowAdvanced={handleShowAdvanced} />;
+    return (
+      <>
+        <SimplifiedLandingPage onShowAdvanced={handleShowAdvanced} />
+        <InstallPrompt />
+      </>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-4 relative overflow-hidden">
       {/* Offline Indicator */}
       <OfflineIndicator />
+
+      {/* Install Prompt */}
+      <InstallPrompt />
 
       {/* View Toggle */}
       <motion.div
