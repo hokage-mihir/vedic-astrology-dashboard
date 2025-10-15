@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
-import { MapPin, Moon, ChevronDown } from 'lucide-react';
+import { MapPin, Moon, ChevronDown, Search } from 'lucide-react';
 import { RASHI_ORDER } from '../lib/vedic-constants.js';
 import { RASHI_SYMBOLS } from '../lib/rashi-symbols.js';
 import LOCATIONS from '../data/locations';
@@ -11,7 +11,7 @@ export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
     const saved = localStorage.getItem('selectedLocation');
     return saved ? JSON.parse(saved) : LOCATIONS[0]; // Default to first location (Accra alphabetically)
   });
-  
+
   const [selectedRashi, setSelectedRashi] = useState(() => {
     const saved = localStorage.getItem('selectedRashi');
     return saved || '';
@@ -19,6 +19,8 @@ export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
 
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [isRashiOpen, setIsRashiOpen] = useState(false);
+  const [locationSearch, setLocationSearch] = useState('');
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem('selectedLocation', JSON.stringify(selectedLocation));
@@ -37,12 +39,26 @@ export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
     setIsLocationOpen(false);
+    setLocationSearch('');
   };
 
   const handleRashiSelect = (rashi) => {
     setSelectedRashi(rashi);
     setIsRashiOpen(false);
   };
+
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (isLocationOpen && searchInputRef.current) {
+      setTimeout(() => searchInputRef.current?.focus(), 100);
+    }
+  }, [isLocationOpen]);
+
+  // Filter locations based on search
+  const filteredLocations = LOCATIONS.filter(location =>
+    location.name.toLowerCase().includes(locationSearch.toLowerCase()) ||
+    (location.country && location.country.toLowerCase().includes(locationSearch.toLowerCase()))
+  );
 
   return (
     <motion.div
@@ -71,21 +87,45 @@ export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
             </button>
             
             {isLocationOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 sm:max-h-60 overflow-auto">
-                {LOCATIONS.map((city) => (
-                  <button
-                    key={city.name}
-                    onClick={() => handleLocationSelect(city)}
-                    className={`w-full px-3 sm:px-4 py-2.5 sm:py-2 text-left hover:bg-cosmic-purple-50 focus:bg-cosmic-purple-50 focus:outline-none transition-colors ${
-                      selectedLocation.name === city.name ? 'bg-cosmic-purple-100 text-cosmic-purple-700' : 'text-gray-900'
-                    }`}
-                  >
-                    <div className="text-sm sm:text-base font-medium">{city.name}{city.country && <span className="text-xs ml-2 text-gray-500">({city.country})</span>}</div>
-                    <div className="text-xs text-gray-500">
-                      {city.latitude.toFixed(2)}°, {city.longitude.toFixed(2)}°
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                {/* Search Input */}
+                <div className="sticky top-0 bg-white border-b border-gray-200 p-2 sm:p-3">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      value={locationSearch}
+                      onChange={(e) => setLocationSearch(e.target.value)}
+                      placeholder="Search city or country..."
+                      className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cosmic-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Location List */}
+                <div className="max-h-40 sm:max-h-52 overflow-auto">
+                  {filteredLocations.length > 0 ? (
+                    filteredLocations.map((city) => (
+                      <button
+                        key={city.name}
+                        onClick={() => handleLocationSelect(city)}
+                        className={`w-full px-3 sm:px-4 py-2.5 sm:py-2 text-left hover:bg-cosmic-purple-50 focus:bg-cosmic-purple-50 focus:outline-none transition-colors ${
+                          selectedLocation.name === city.name ? 'bg-cosmic-purple-100 text-cosmic-purple-700' : 'text-gray-900'
+                        }`}
+                      >
+                        <div className="text-sm sm:text-base font-medium">{city.name}{city.country && <span className="text-xs ml-2 text-gray-500">({city.country})</span>}</div>
+                        <div className="text-xs text-gray-500">
+                          {city.latitude.toFixed(2)}°, {city.longitude.toFixed(2)}°
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-3 sm:px-4 py-4 text-center text-sm text-gray-500">
+                      No locations found
                     </div>
-                  </button>
-                ))}
+                  )}
+                </div>
               </div>
             )}
           </div>
