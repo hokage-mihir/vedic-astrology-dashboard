@@ -10,15 +10,21 @@ import { useReducedMotion } from './hooks/useReducedMotion'
 import ErrorBoundary from './components/ErrorBoundary'
 import { calculateMoonPosition } from './lib/astro-calculator'
 import { RASHI_ORDER } from './lib/vedic-constants'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, Heart, Home, BarChart3 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import CosmicLoader from './components/CosmicLoader'
+import SimplifiedLandingPage from './components/SimplifiedLandingPage'
 
 // Lazy load Annual Calendar (only loads when scrolled into view)
 const ChandrashtamAnnualView = lazy(() => import('./components/ChandrashtamAnnualView'))
 
 function App() {
   const prefersReducedMotion = useReducedMotion();
+  const [view, setView] = useState(() => {
+    // Check if user has a preference stored
+    const savedView = localStorage.getItem('preferredView');
+    return savedView || 'simplified'; // Default to simplified view
+  });
   const [currentLocation, setCurrentLocation] = useState(() => {
     const saved = localStorage.getItem('selectedLocation');
     return saved ? JSON.parse(saved) : { name: 'Mumbai', latitude: 19.0760, longitude: 72.8777, timezone: 'Asia/Kolkata' };
@@ -38,10 +44,58 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleShowAdvanced = () => {
+    setView('advanced');
+    localStorage.setItem('preferredView', 'advanced');
+  };
+
+  const handleShowSimplified = () => {
+    setView('simplified');
+    localStorage.setItem('preferredView', 'simplified');
+  };
+
+  // If simplified view, show the simplified landing page
+  if (view === 'simplified') {
+    return <SimplifiedLandingPage onShowAdvanced={handleShowAdvanced} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-4 relative overflow-hidden">
       {/* Offline Indicator */}
       <OfflineIndicator />
+
+      {/* View Toggle */}
+      <motion.div
+        initial={!prefersReducedMotion ? { opacity: 0, y: -20 } : {}}
+        animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
+        transition={!prefersReducedMotion ? { duration: 0.6 } : { duration: 0 }}
+        className="flex justify-center mb-4"
+      >
+        <div className="bg-white rounded-full shadow-md p-1 flex gap-1">
+          <button
+            onClick={handleShowSimplified}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+              view === 'simplified'
+                ? 'bg-cosmic-purple-600 text-white'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            }`}
+          >
+            <Home className="w-4 h-4" />
+            Simple
+          </button>
+          <button
+            onClick={handleShowAdvanced}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+              view === 'advanced'
+                ? 'bg-cosmic-purple-600 text-white'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            Advanced
+          </button>
+        </div>
+      </motion.div>
 
       {/* Animated background elements */}
       {!prefersReducedMotion && (
@@ -170,6 +224,19 @@ function App() {
         >
           <p>Calculations based on Vedic sidereal zodiac • Updates every minute</p>
           <p className="mt-1">Timings are approximate and for reference only</p>
+          <p className="mt-3 flex items-center justify-center gap-1">
+            Made with 
+            <Heart className="w-3 h-3 text-red-500 fill-current animate-pulse" aria-label="Heart icon" />
+            by 
+            <a 
+              href="https://mihirchavan.in" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-cosmic-purple-600 hover:text-cosmic-purple-700 font-medium transition-colors"
+            >
+              Hokage Mihir
+            </a>
+          </p>
         </motion.footer>
       </div>
     </div>

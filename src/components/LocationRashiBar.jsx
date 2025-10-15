@@ -4,24 +4,7 @@ import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { RASHI_ORDER, CHANDRASHTAM_MAP } from '../lib/vedic-constants';
 import { RASHI_SYMBOLS } from '../lib/rashi-symbols';
-
-const LOCATIONS = [
-  { name: 'Mumbai', latitude: 19.0760, longitude: 72.8777, timezone: 'Asia/Kolkata' },
-  { name: 'Delhi', latitude: 28.6139, longitude: 77.2090, timezone: 'Asia/Kolkata' },
-  { name: 'Bangalore', latitude: 12.9716, longitude: 77.5946, timezone: 'Asia/Kolkata' },
-  { name: 'Chennai', latitude: 13.0827, longitude: 80.2707, timezone: 'Asia/Kolkata' },
-  { name: 'Kolkata', latitude: 22.5726, longitude: 88.3639, timezone: 'Asia/Kolkata' },
-  { name: 'Hyderabad', latitude: 17.3850, longitude: 78.4867, timezone: 'Asia/Kolkata' },
-  { name: 'Pune', latitude: 18.5204, longitude: 73.8567, timezone: 'Asia/Kolkata' },
-  { name: 'Ahmedabad', latitude: 23.0225, longitude: 72.5714, timezone: 'Asia/Kolkata' },
-  { name: 'Jaipur', latitude: 26.9124, longitude: 75.7873, timezone: 'Asia/Kolkata' },
-  { name: 'Varanasi', latitude: 25.3176, longitude: 82.9739, timezone: 'Asia/Kolkata' },
-  { name: 'New York', latitude: 40.7128, longitude: -74.0060, timezone: 'America/New_York' },
-  { name: 'London', latitude: 51.5074, longitude: -0.1278, timezone: 'Europe/London' },
-  { name: 'Dubai', latitude: 25.2048, longitude: 55.2708, timezone: 'Asia/Dubai' },
-  { name: 'Singapore', latitude: 1.3521, longitude: 103.8198, timezone: 'Asia/Singapore' },
-  { name: 'Sydney', latitude: -33.8688, longitude: 151.2093, timezone: 'Australia/Sydney' },
-];
+import LOCATIONS from '../data/locations';
 
 const LocationRashiBar = ({ onLocationChange, currentMoonRashi }) => {
   const [selectedLocation, setSelectedLocation] = useState(() => {
@@ -190,4 +173,5 @@ LocationRashiBar.propTypes = {
   currentMoonRashi: PropTypes.string.isRequired,
 };
 
-export { LocationRashiBar, LOCATIONS };
+export { LocationRashiBar };
+export { LOCATIONS };

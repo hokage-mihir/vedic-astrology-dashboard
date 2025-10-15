@@ -1,0 +1,128 @@
+/**
+ * Comprehensive list of locations for Vedic astrology calculations
+ * Includes major cities from India and capital cities worldwide
+ */
+
+export const LOCATIONS = [
+  // === INDIA - Major Cities ===
+  { name: 'Mumbai', latitude: 19.0760, longitude: 72.8777, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Delhi', latitude: 28.6139, longitude: 77.2090, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Bangalore', latitude: 12.9716, longitude: 77.5946, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Chennai', latitude: 13.0827, longitude: 80.2707, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Kolkata', latitude: 22.5726, longitude: 88.3639, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Hyderabad', latitude: 17.3850, longitude: 78.4867, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Pune', latitude: 18.5204, longitude: 73.8567, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Ahmedabad', latitude: 23.0225, longitude: 72.5714, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Jaipur', latitude: 26.9124, longitude: 75.7873, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Varanasi', latitude: 25.3176, longitude: 82.9739, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Lucknow', latitude: 26.8467, longitude: 80.9462, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Chandigarh', latitude: 30.7333, longitude: 76.7794, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Goa', latitude: 15.2993, longitude: 74.1240, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Kochi', latitude: 9.9312, longitude: 76.2673, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Mysore', latitude: 12.2958, longitude: 76.6394, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Amritsar', latitude: 31.6340, longitude: 74.8723, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Surat', latitude: 21.1702, longitude: 72.8311, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Indore', latitude: 22.7196, longitude: 75.8577, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Bhopal', latitude: 23.2599, longitude: 77.4126, timezone: 'Asia/Kolkata', country: 'India' },
+  { name: 'Visakhapatnam', latitude: 17.6868, longitude: 83.2185, timezone: 'Asia/Kolkata', country: 'India' },
+
+  // === ASIA - Capital Cities ===
+  { name: 'Tokyo', latitude: 35.6762, longitude: 139.6503, timezone: 'Asia/Tokyo', country: 'Japan' },
+  { name: 'Beijing', latitude: 39.9042, longitude: 116.4074, timezone: 'Asia/Shanghai', country: 'China' },
+  { name: 'Seoul', latitude: 37.5665, longitude: 126.9780, timezone: 'Asia/Seoul', country: 'South Korea' },
+  { name: 'Bangkok', latitude: 13.7563, longitude: 100.5018, timezone: 'Asia/Bangkok', country: 'Thailand' },
+  { name: 'Singapore', latitude: 1.3521, longitude: 103.8198, timezone: 'Asia/Singapore', country: 'Singapore' },
+  { name: 'Kuala Lumpur', latitude: 3.1390, longitude: 101.6869, timezone: 'Asia/Kuala_Lumpur', country: 'Malaysia' },
+  { name: 'Jakarta', latitude: -6.2088, longitude: 106.8456, timezone: 'Asia/Jakarta', country: 'Indonesia' },
+  { name: 'Manila', latitude: 14.5995, longitude: 120.9842, timezone: 'Asia/Manila', country: 'Philippines' },
+  { name: 'Hanoi', latitude: 21.0285, longitude: 105.8542, timezone: 'Asia/Ho_Chi_Minh', country: 'Vietnam' },
+  { name: 'Dhaka', latitude: 23.8103, longitude: 90.4125, timezone: 'Asia/Dhaka', country: 'Bangladesh' },
+  { name: 'Kathmandu', latitude: 27.7172, longitude: 85.3240, timezone: 'Asia/Kathmandu', country: 'Nepal' },
+  { name: 'Colombo', latitude: 6.9271, longitude: 79.8612, timezone: 'Asia/Colombo', country: 'Sri Lanka' },
+  { name: 'Islamabad', latitude: 33.6844, longitude: 73.0479, timezone: 'Asia/Karachi', country: 'Pakistan' },
+  { name: 'Kabul', latitude: 34.5553, longitude: 69.2075, timezone: 'Asia/Kabul', country: 'Afghanistan' },
+  { name: 'Tehran', latitude: 35.6892, longitude: 51.3890, timezone: 'Asia/Tehran', country: 'Iran' },
+  { name: 'Baghdad', latitude: 33.3152, longitude: 44.3661, timezone: 'Asia/Baghdad', country: 'Iraq' },
+  { name: 'Riyadh', latitude: 24.7136, longitude: 46.6753, timezone: 'Asia/Riyadh', country: 'Saudi Arabia' },
+  { name: 'Dubai', latitude: 25.2048, longitude: 55.2708, timezone: 'Asia/Dubai', country: 'UAE' },
+  { name: 'Jerusalem', latitude: 31.7683, longitude: 35.2137, timezone: 'Asia/Jerusalem', country: 'Israel' },
+  { name: 'Ankara', latitude: 39.9334, longitude: 32.8597, timezone: 'Europe/Istanbul', country: 'Turkey' },
+
+  // === EUROPE - Capital Cities ===
+  { name: 'London', latitude: 51.5074, longitude: -0.1278, timezone: 'Europe/London', country: 'UK' },
+  { name: 'Paris', latitude: 48.8566, longitude: 2.3522, timezone: 'Europe/Paris', country: 'France' },
+  { name: 'Berlin', latitude: 52.5200, longitude: 13.4050, timezone: 'Europe/Berlin', country: 'Germany' },
+  { name: 'Rome', latitude: 41.9028, longitude: 12.4964, timezone: 'Europe/Rome', country: 'Italy' },
+  { name: 'Madrid', latitude: 40.4168, longitude: -3.7038, timezone: 'Europe/Madrid', country: 'Spain' },
+  { name: 'Amsterdam', latitude: 52.3676, longitude: 4.9041, timezone: 'Europe/Amsterdam', country: 'Netherlands' },
+  { name: 'Brussels', latitude: 50.8503, longitude: 4.3517, timezone: 'Europe/Brussels', country: 'Belgium' },
+  { name: 'Vienna', latitude: 48.2082, longitude: 16.3738, timezone: 'Europe/Vienna', country: 'Austria' },
+  { name: 'Zurich', latitude: 47.3769, longitude: 8.5417, timezone: 'Europe/Zurich', country: 'Switzerland' },
+  { name: 'Stockholm', latitude: 59.3293, longitude: 18.0686, timezone: 'Europe/Stockholm', country: 'Sweden' },
+  { name: 'Oslo', latitude: 59.9139, longitude: 10.7522, timezone: 'Europe/Oslo', country: 'Norway' },
+  { name: 'Copenhagen', latitude: 55.6761, longitude: 12.5683, timezone: 'Europe/Copenhagen', country: 'Denmark' },
+  { name: 'Helsinki', latitude: 60.1695, longitude: 24.9354, timezone: 'Europe/Helsinki', country: 'Finland' },
+  { name: 'Warsaw', latitude: 52.2297, longitude: 21.0122, timezone: 'Europe/Warsaw', country: 'Poland' },
+  { name: 'Prague', latitude: 50.0755, longitude: 14.4378, timezone: 'Europe/Prague', country: 'Czech Republic' },
+  { name: 'Budapest', latitude: 47.4979, longitude: 19.0402, timezone: 'Europe/Budapest', country: 'Hungary' },
+  { name: 'Athens', latitude: 37.9838, longitude: 23.7275, timezone: 'Europe/Athens', country: 'Greece' },
+  { name: 'Lisbon', latitude: 38.7223, longitude: -9.1393, timezone: 'Europe/Lisbon', country: 'Portugal' },
+  { name: 'Dublin', latitude: 53.3498, longitude: -6.2603, timezone: 'Europe/Dublin', country: 'Ireland' },
+  { name: 'Moscow', latitude: 55.7558, longitude: 37.6173, timezone: 'Europe/Moscow', country: 'Russia' },
+  { name: 'Kiev', latitude: 50.4501, longitude: 30.5234, timezone: 'Europe/Kiev', country: 'Ukraine' },
+  { name: 'Bucharest', latitude: 44.4268, longitude: 26.1025, timezone: 'Europe/Bucharest', country: 'Romania' },
+
+  // === ITALY - Additional Cities (including Siena) ===
+  { name: 'Milan', latitude: 45.4642, longitude: 9.1900, timezone: 'Europe/Rome', country: 'Italy' },
+  { name: 'Venice', latitude: 45.4408, longitude: 12.3155, timezone: 'Europe/Rome', country: 'Italy' },
+  { name: 'Florence', latitude: 43.7696, longitude: 11.2558, timezone: 'Europe/Rome', country: 'Italy' },
+  { name: 'Siena', latitude: 43.3188, longitude: 11.3308, timezone: 'Europe/Rome', country: 'Italy' },
+  { name: 'Naples', latitude: 40.8518, longitude: 14.2681, timezone: 'Europe/Rome', country: 'Italy' },
+  { name: 'Turin', latitude: 45.0703, longitude: 7.6869, timezone: 'Europe/Rome', country: 'Italy' },
+
+  // === NORTH AMERICA - Capital & Major Cities ===
+  { name: 'New York', latitude: 40.7128, longitude: -74.0060, timezone: 'America/New_York', country: 'USA' },
+  { name: 'Los Angeles', latitude: 34.0522, longitude: -118.2437, timezone: 'America/Los_Angeles', country: 'USA' },
+  { name: 'Chicago', latitude: 41.8781, longitude: -87.6298, timezone: 'America/Chicago', country: 'USA' },
+  { name: 'Washington DC', latitude: 38.9072, longitude: -77.0369, timezone: 'America/New_York', country: 'USA' },
+  { name: 'San Francisco', latitude: 37.7749, longitude: -122.4194, timezone: 'America/Los_Angeles', country: 'USA' },
+  { name: 'Seattle', latitude: 47.6062, longitude: -122.3321, timezone: 'America/Los_Angeles', country: 'USA' },
+  { name: 'Boston', latitude: 42.3601, longitude: -71.0589, timezone: 'America/New_York', country: 'USA' },
+  { name: 'Miami', latitude: 25.7617, longitude: -80.1918, timezone: 'America/New_York', country: 'USA' },
+  { name: 'Toronto', latitude: 43.6532, longitude: -79.3832, timezone: 'America/Toronto', country: 'Canada' },
+  { name: 'Vancouver', latitude: 49.2827, longitude: -123.1207, timezone: 'America/Vancouver', country: 'Canada' },
+  { name: 'Montreal', latitude: 45.5017, longitude: -73.5673, timezone: 'America/Montreal', country: 'Canada' },
+  { name: 'Ottawa', latitude: 45.4215, longitude: -75.6972, timezone: 'America/Toronto', country: 'Canada' },
+  { name: 'Mexico City', latitude: 19.4326, longitude: -99.1332, timezone: 'America/Mexico_City', country: 'Mexico' },
+
+  // === SOUTH AMERICA - Capital Cities ===
+  { name: 'Buenos Aires', latitude: -34.6037, longitude: -58.3816, timezone: 'America/Argentina/Buenos_Aires', country: 'Argentina' },
+  { name: 'Brasília', latitude: -15.8267, longitude: -47.9218, timezone: 'America/Sao_Paulo', country: 'Brazil' },
+  { name: 'São Paulo', latitude: -23.5505, longitude: -46.6333, timezone: 'America/Sao_Paulo', country: 'Brazil' },
+  { name: 'Rio de Janeiro', latitude: -22.9068, longitude: -43.1729, timezone: 'America/Sao_Paulo', country: 'Brazil' },
+  { name: 'Santiago', latitude: -33.4489, longitude: -70.6693, timezone: 'America/Santiago', country: 'Chile' },
+  { name: 'Lima', latitude: -12.0464, longitude: -77.0428, timezone: 'America/Lima', country: 'Peru' },
+  { name: 'Bogotá', latitude: 4.7110, longitude: -74.0721, timezone: 'America/Bogota', country: 'Colombia' },
+  { name: 'Caracas', latitude: 10.4806, longitude: -66.9036, timezone: 'America/Caracas', country: 'Venezuela' },
+
+  // === OCEANIA - Capital & Major Cities ===
+  { name: 'Sydney', latitude: -33.8688, longitude: 151.2093, timezone: 'Australia/Sydney', country: 'Australia' },
+  { name: 'Melbourne', latitude: -37.8136, longitude: 144.9631, timezone: 'Australia/Melbourne', country: 'Australia' },
+  { name: 'Brisbane', latitude: -27.4698, longitude: 153.0251, timezone: 'Australia/Brisbane', country: 'Australia' },
+  { name: 'Perth', latitude: -31.9505, longitude: 115.8605, timezone: 'Australia/Perth', country: 'Australia' },
+  { name: 'Canberra', latitude: -35.2809, longitude: 149.1300, timezone: 'Australia/Sydney', country: 'Australia' },
+  { name: 'Auckland', latitude: -36.8485, longitude: 174.7633, timezone: 'Pacific/Auckland', country: 'New Zealand' },
+  { name: 'Wellington', latitude: -41.2865, longitude: 174.7762, timezone: 'Pacific/Auckland', country: 'New Zealand' },
+
+  // === AFRICA - Capital Cities ===
+  { name: 'Cairo', latitude: 30.0444, longitude: 31.2357, timezone: 'Africa/Cairo', country: 'Egypt' },
+  { name: 'Nairobi', latitude: -1.2864, longitude: 36.8172, timezone: 'Africa/Nairobi', country: 'Kenya' },
+  { name: 'Lagos', latitude: 6.5244, longitude: 3.3792, timezone: 'Africa/Lagos', country: 'Nigeria' },
+  { name: 'Johannesburg', latitude: -26.2041, longitude: 28.0473, timezone: 'Africa/Johannesburg', country: 'South Africa' },
+  { name: 'Cape Town', latitude: -33.9249, longitude: 18.4241, timezone: 'Africa/Johannesburg', country: 'South Africa' },
+  { name: 'Accra', latitude: 5.6037, longitude: -0.1870, timezone: 'Africa/Accra', country: 'Ghana' },
+  { name: 'Addis Ababa', latitude: 9.0320, longitude: 38.7469, timezone: 'Africa/Addis_Ababa', country: 'Ethiopia' },
+  { name: 'Casablanca', latitude: 33.5731, longitude: -7.5898, timezone: 'Africa/Casablanca', country: 'Morocco' },
+].sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
+
+export default LOCATIONS;

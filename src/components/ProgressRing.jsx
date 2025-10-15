@@ -8,7 +8,8 @@ const ProgressRing = memo(({
   strokeWidth = 8,
   showLabel = true,
   label = '',
-  subLabel = ''
+  subLabel = '',
+  statusColor = 'default'
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -46,24 +47,45 @@ const ProgressRing = memo(({
         {/* Gradient definition */}
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#a855f7" />
-            <stop offset="50%" stopColor="#3b82f6" />
-            <stop offset="100%" stopColor="#f59e0b" />
+            {statusColor === 'green' && (
+              <>
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#059669" />
+              </>
+            )}
+            {statusColor === 'yellow' && (
+              <>
+                <stop offset="0%" stopColor="#f59e0b" />
+                <stop offset="100%" stopColor="#d97706" />
+              </>
+            )}
+            {statusColor === 'red' && (
+              <>
+                <stop offset="0%" stopColor="#ef4444" />
+                <stop offset="100%" stopColor="#dc2626" />
+              </>
+            )}
+            {statusColor === 'default' && (
+              <>
+                <stop offset="0%" stopColor="#a855f7" />
+                <stop offset="50%" stopColor="#3b82f6" />
+                <stop offset="100%" stopColor="#f59e0b" />
+              </>
+            )}
           </linearGradient>
         </defs>
       </svg>
 
       {/* Center label */}
       {showLabel && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold bg-gradient-to-r from-cosmic-purple-600 to-cosmic-blue-600 bg-clip-text text-transparent">
-            {Math.round(progress)}%
-          </span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-2">
+          {subLabel && (
+            <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-cosmic-purple-600 to-cosmic-blue-600 bg-clip-text text-transparent text-center leading-tight">
+              {subLabel}
+            </span>
+          )}
           {label && (
             <span className="text-xs text-gray-600 mt-1">{label}</span>
-          )}
-          {subLabel && (
-            <span className="text-xs text-gray-500">{subLabel}</span>
           )}
         </div>
       )}
@@ -80,6 +102,7 @@ ProgressRing.propTypes = {
   showLabel: PropTypes.bool,
   label: PropTypes.string,
   subLabel: PropTypes.string,
+  statusColor: PropTypes.oneOf(['default', 'green', 'yellow', 'red']),
 };
 
 export default ProgressRing;
