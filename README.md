@@ -324,7 +324,13 @@ Contributions are welcome! Here's how to get started:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Copyright (c) 2025 Mihir Chavan
+
+All Rights Reserved.
+
+This software and associated documentation files (the "Software") may not be
+copied, modified, merged, published, distributed, sublicensed, and/or sold
+without express written permission from the copyright holder.
 
 ---
 
