@@ -91,7 +91,7 @@ export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
               setIsLocationOpen(false);
               setLocationSearch('');
             }}
-            title="Select Location"
+            title="Select Current Location"
             maxHeight={85}
           >
             {/* Search Input */}
