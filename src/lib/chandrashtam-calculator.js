@@ -10,25 +10,37 @@ export function calculatePreciseDaysUntilChandrashtam(userRashi, moonData) {
   }
 
   const { rashi_number, degrees_in_rashi, speed } = moonData;
-  const currentMoonRashi = RASHI_ORDER[rashi_number];
   const afflictingMoonRashi = CHANDRASHTAM_MAP[userRashi];
-  
+
   if (!afflictingMoonRashi) {
     return { days: 0, hours: 0, totalDays: 0, status: 'unknown' };
   }
 
   const afflictingMoonIndex = RASHI_ORDER.indexOf(afflictingMoonRashi);
-
-  // Calculate total degrees to travel
-  let totalDegrees;
   const currentMoonIndex = rashi_number;
 
-  if (afflictingMoonIndex >= currentMoonIndex) {
+  // Special case: Moon is already in the afflicting Rashi
+  // Calculate time remaining in current Rashi (when Chandrashtam ends)
+  if (currentMoonIndex === afflictingMoonIndex) {
+    const degreesLeft = 30 - degrees_in_rashi;
+    const hoursLeft = (degreesLeft / speed) * 24;
+
+    return {
+      days: Math.floor(hoursLeft / 24),
+      hours: Math.floor(hoursLeft % 24),
+      totalDays: hoursLeft / 24
+    };
+  }
+
+  // Calculate total degrees to travel to reach afflicting Rashi
+  let totalDegrees;
+
+  if (afflictingMoonIndex > currentMoonIndex) {
     // Moon needs to travel forward
     const rashiDistance = afflictingMoonIndex - currentMoonIndex;
     totalDegrees = (30 - degrees_in_rashi) + (rashiDistance - 1) * 30;
   } else {
-    // Moon needs to complete cycle
+    // Moon needs to complete cycle (wrap around)
     const rashiDistance = 12 - currentMoonIndex + afflictingMoonIndex;
     totalDegrees = (30 - degrees_in_rashi) + (rashiDistance - 1) * 30;
   }
