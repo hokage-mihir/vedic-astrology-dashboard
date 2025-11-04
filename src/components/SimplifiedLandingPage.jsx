@@ -129,9 +129,11 @@ export function SimplifiedLandingPage({ onShowAdvanced }) {
             transition={!prefersReducedMotion ? { duration: 0.5, delay: 0.4 } : { duration: 0 }}
           >
             <ErrorBoundary message="Unable to load your Chandrashtam status. Please refresh the page.">
-              <PersonalStatusCard 
+              <PersonalStatusCard
                 userRashi={selectedRashi}
                 location={currentLocation}
+                compact={true}
+                defaultExpanded={false}
               />
             </ErrorBoundary>
           </motion.div>
@@ -143,8 +145,10 @@ export function SimplifiedLandingPage({ onShowAdvanced }) {
             transition={!prefersReducedMotion ? { duration: 0.5, delay: 0.5 } : { duration: 0 }}
           >
             <ErrorBoundary message="Unable to load Rahu Kalam timing. Please refresh the page.">
-              <RahuKalamCard 
+              <RahuKalamCard
                 location={currentLocation}
+                compact={true}
+                defaultExpanded={false}
               />
             </ErrorBoundary>
           </motion.div>

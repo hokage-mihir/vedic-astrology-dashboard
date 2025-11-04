@@ -6,7 +6,7 @@ import { calculateRahuKalam, calculateSunTimes } from '../lib/sun-calculator.js'
 import { ImprovedTooltip } from './ui/improved-tooltip';
 import { trackEvent } from '../services/analytics';
 
-export function RahuKalamCard({ location, date }) {
+export function RahuKalamCard({ location, date, compact = false, defaultExpanded = false }) {
   // Stabilize the date to prevent infinite loops
   const stableDate = useMemo(() => date || new Date(), [date]);
 
@@ -14,6 +14,7 @@ export function RahuKalamCard({ location, date }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showNextDays, setShowNextDays] = useState(false);
   const [nextDaysData, setNextDaysData] = useState([]);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   useEffect(() => {
     if (!location) return;
@@ -117,12 +118,86 @@ export function RahuKalamCard({ location, date }) {
 
   const isActive = isRahuKalamActive();
 
+  // Compact collapsed view for mobile
+  if (compact && !isExpanded) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className={`rounded-xl shadow-lg p-4 border-2 cursor-pointer ${
+          isActive
+            ? 'bg-red-50 border-red-200'
+            : 'bg-orange-50 border-orange-200'
+        }`}
+        onClick={() => setIsExpanded(true)}
+      >
+        {/* Compact Header */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <div className={`p-1.5 rounded-full flex-shrink-0 ${
+              isActive ? 'bg-red-100' : 'bg-orange-100'
+            }`}>
+              <AlertTriangle className={`w-4 h-4 ${
+                isActive ? 'text-red-600' : 'text-orange-600'
+              }`} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className={`text-sm font-bold ${
+                isActive ? 'text-red-700' : 'text-orange-700'
+              }`}>
+                Rahu Kalam
+              </h3>
+              <p className={`text-xs ${
+                isActive ? 'text-red-600' : 'text-orange-600'
+              }`}>
+                {isActive ? '⚠️ Active Now' : 'Today'}
+              </p>
+            </div>
+          </div>
+          <ImprovedTooltip term="rahuKalam" />
+        </div>
+
+        {/* Time Display */}
+        <div className="text-center mb-3">
+          <div className={`text-lg font-bold ${
+            isActive ? 'text-red-700' : 'text-orange-700'
+          }`}>
+            {formatTimeRange()}
+          </div>
+          <p className={`text-xs mt-1 ${
+            isActive ? 'text-red-600' : 'text-orange-600'
+          }`}>
+            {location?.name || 'Default Location'}
+          </p>
+        </div>
+
+        {/* Expand Button */}
+        <button
+          className={`w-full py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1 ${
+            isActive
+              ? 'bg-red-100 hover:bg-red-200 text-red-700'
+              : 'bg-orange-100 hover:bg-orange-200 text-orange-700'
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
+        >
+          <span>View Guidance</span>
+          <ChevronDown className="w-3.5 h-3.5" />
+        </button>
+      </motion.div>
+    );
+  }
+
+  // Full expanded view
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className={`rounded-xl shadow-lg p-4 sm:p-5 md:p-6 border-2 ${
+      className={`rounded-xl shadow-lg ${compact ? 'p-4' : 'p-4 sm:p-5 md:p-6'} border-2 ${
         isActive
           ? 'bg-red-50 border-red-200'
           : 'bg-orange-50 border-orange-200'
@@ -289,6 +364,23 @@ export function RahuKalamCard({ location, date }) {
           ))}
         </motion.div>
       )}
+
+      {/* Collapse Button (only in compact mode) */}
+      {compact && (
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <button
+            className={`w-full py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1 ${
+              isActive
+                ? 'bg-red-100 hover:bg-red-200 text-red-700'
+                : 'bg-orange-100 hover:bg-orange-200 text-orange-700'
+            }`}
+            onClick={() => setIsExpanded(false)}
+          >
+            <span>Collapse</span>
+            <ChevronUp className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -300,7 +392,9 @@ RahuKalamCard.propTypes = {
     longitude: PropTypes.number,
     timezone: PropTypes.string
   }),
-  date: PropTypes.instanceOf(Date)
+  date: PropTypes.instanceOf(Date),
+  compact: PropTypes.bool,
+  defaultExpanded: PropTypes.bool
 };
 
 export default RahuKalamCard;

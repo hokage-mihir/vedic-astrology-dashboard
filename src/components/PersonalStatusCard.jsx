@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { motion } from 'framer-motion';
-import { AlertTriangle, CheckCircle, XCircle, Clock, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AlertTriangle, CheckCircle, XCircle, Clock, Info, ChevronDown, ChevronUp } from 'lucide-react';
 import ProgressRing from './ProgressRing';
 import { getChandrashtamStatus, calculatePreciseDaysUntilChandrashtam, formatTimeRemaining, calculateProgress } from '../lib/chandrashtam-calculator.js';
 import { calculateMoonPosition } from '../lib/astro-calculator.js';
 import { RASHI_ORDER } from '../lib/vedic-constants.js';
 import { ImprovedTooltip } from './ui/improved-tooltip';
 
-export function PersonalStatusCard({ userRashi, location }) {
+export function PersonalStatusCard({ userRashi, location, compact = false, defaultExpanded = false }) {
   const [moonData, setMoonData] = useState(null);
   const [status, setStatus] = useState(null);
   const [timeUntil, setTimeUntil] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   useEffect(() => {
     if (!userRashi) return;
@@ -108,12 +109,98 @@ export function PersonalStatusCard({ userRashi, location }) {
 
   const progress = timeUntil ? calculateProgress(timeUntil) : 0;
 
+  // Compact collapsed view for mobile
+  if (compact && !isExpanded) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`rounded-xl shadow-lg p-4 border-2 ${getStatusBgColor()} cursor-pointer`}
+        onClick={() => setIsExpanded(true)}
+      >
+        {/* Compact Header */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {getStatusIcon()}
+            <div className="min-w-0 flex-1">
+              <h2 className={`text-sm font-bold ${getStatusTextColor()}`}>
+                Chandrashtam Status
+              </h2>
+              <p className={`text-xs ${getStatusTextColor()} opacity-75`}>
+                {userRashi} Rashi
+              </p>
+            </div>
+          </div>
+          <ImprovedTooltip term="chandrashtam" />
+        </div>
+
+        {/* Status Badge */}
+        <div className="text-center mb-3">
+          <motion.div
+            className={`text-base font-bold mb-1 ${getStatusTextColor()}`}
+            animate={status.color === 'red' ? { scale: [1, 1.05, 1] } : {}}
+            transition={status.color === 'red' ? { repeat: Infinity, duration: 2 } : {}}
+          >
+            {status.title}
+          </motion.div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-3">
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center gap-1.5">
+              <Clock className={`w-3.5 h-3.5 ${getStatusTextColor()}`} />
+              <p className={`text-xs ${getStatusTextColor()} opacity-75`}>
+                {status.color === 'red' ? 'Ends in' : status.color === 'yellow' ? 'Starts in' : 'Next in'}
+              </p>
+            </div>
+            <p className={`text-sm font-bold ${getStatusTextColor()}`}>
+              {timeUntil ? formatTimeRemaining(timeUntil.days, timeUntil.hours) : '...'}
+            </p>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="w-full h-2 bg-white bg-opacity-50 rounded-full overflow-hidden">
+            <motion.div
+              className={`h-full ${
+                status.color === 'red' ? 'bg-red-600' :
+                status.color === 'yellow' ? 'bg-yellow-600' :
+                'bg-green-600'
+              }`}
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
+          </div>
+        </div>
+
+        {/* Expand Button */}
+        <button
+          className={`w-full py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1 ${
+            status.color === 'red' ? 'bg-red-100 hover:bg-red-200 text-red-700' :
+            status.color === 'yellow' ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700' :
+            'bg-green-100 hover:bg-green-200 text-green-700'
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
+        >
+          <span>View Details</span>
+          <ChevronDown className="w-3.5 h-3.5" />
+        </button>
+      </motion.div>
+    );
+  }
+
+  // Full expanded view
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`rounded-xl shadow-lg p-4 sm:p-5 md:p-6 border-2 ${getStatusBgColor()}`}
+      className={`rounded-xl shadow-lg ${compact ? 'p-4' : 'p-4 sm:p-5 md:p-6'} border-2 ${getStatusBgColor()}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4 sm:mb-6">
@@ -207,6 +294,21 @@ export function PersonalStatusCard({ userRashi, location }) {
           </p>
         </div>
       )}
+
+      {/* Collapse Button (only in compact mode) */}
+      {compact && (
+        <button
+          className={`w-full mt-4 py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1 ${
+            status.color === 'red' ? 'bg-red-100 hover:bg-red-200 text-red-700' :
+            status.color === 'yellow' ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700' :
+            'bg-green-100 hover:bg-green-200 text-green-700'
+          }`}
+          onClick={() => setIsExpanded(false)}
+        >
+          <span>Collapse</span>
+          <ChevronUp className="w-3.5 h-3.5" />
+        </button>
+      )}
     </motion.div>
   );
 }
@@ -218,7 +320,9 @@ PersonalStatusCard.propTypes = {
     latitude: PropTypes.number,
     longitude: PropTypes.number,
     timezone: PropTypes.string
-  })
+  }),
+  compact: PropTypes.bool,
+  defaultExpanded: PropTypes.bool
 };
 
 export default PersonalStatusCard;
