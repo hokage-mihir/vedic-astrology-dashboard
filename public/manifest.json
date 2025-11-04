@@ -61,10 +61,34 @@
   "screenshots": [],
   "shortcuts": [
     {
-      "name": "View Current Status",
+      "name": "Check My Status",
       "short_name": "Status",
-      "description": "Check current Chandrashtam status",
-      "url": "/",
+      "description": "View your personal Chandrashtam status",
+      "url": "/?view=simplified",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "View Calendar",
+      "short_name": "Calendar",
+      "description": "See annual Chandrashtam calendar",
+      "url": "/?view=advanced#annual-calendar",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Today's Details",
+      "short_name": "Details",
+      "description": "Check today's Panchang and Rahu Kalam",
+      "url": "/?view=advanced",
       "icons": [
         {
           "src": "/icon-96x96.png",

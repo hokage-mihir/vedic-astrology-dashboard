@@ -7,6 +7,8 @@ import { LocationRashiBar } from './components/LocationRashiBar'
 import WelcomeBanner from './components/WelcomeBanner'
 import OfflineIndicator from './components/OfflineIndicator'
 import InstallPrompt from './components/InstallPrompt'
+import IOSInstallPrompt from './components/IOSInstallPrompt'
+import InstallButton from './components/InstallButton'
 import { useReducedMotion } from './hooks/useReducedMotion'
 import ErrorBoundary from './components/ErrorBoundary'
 import { calculateMoonPosition } from './lib/astro-calculator'
@@ -61,6 +63,7 @@ function App() {
       <>
         <SimplifiedLandingPage onShowAdvanced={handleShowAdvanced} />
         <InstallPrompt />
+        <IOSInstallPrompt />
       </>
     );
   }
@@ -72,6 +75,7 @@ function App() {
 
       {/* Install Prompt */}
       <InstallPrompt />
+      <IOSInstallPrompt />
 
       {/* View Toggle */}
       <motion.div
@@ -231,15 +235,18 @@ function App() {
           transition={!prefersReducedMotion ? { delay: 1, duration: 0.5 } : { duration: 0 }}
           className="mt-12 text-center text-xs text-gray-600"
         >
+          <div className="flex justify-center mb-3">
+            <InstallButton />
+          </div>
           <p>Calculations based on Vedic sidereal zodiac • Updates every minute</p>
           <p className="mt-1">Timings are approximate and for reference only</p>
           <p className="mt-3 flex items-center justify-center gap-1">
-            Made with 
+            Made with
             <Heart className="w-3 h-3 text-red-500 fill-current animate-pulse" aria-label="Heart icon" />
-            by 
-            <a 
-              href="https://mihirchavan.in" 
-              target="_blank" 
+            by
+            <a
+              href="https://mihirchavan.in"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-cosmic-purple-600 hover:text-cosmic-purple-700 font-medium transition-colors"
             >

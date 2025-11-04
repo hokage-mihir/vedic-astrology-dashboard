@@ -8,6 +8,7 @@ import RahuKalamCard from './RahuKalamCard';
 import WelcomeBanner from './WelcomeBanner';
 import OfflineIndicator from './OfflineIndicator';
 import ErrorBoundary from './ErrorBoundary';
+import InstallButton from './InstallButton';
 
 export function SimplifiedLandingPage({ onShowAdvanced }) {
   const prefersReducedMotion = useReducedMotion();
@@ -176,6 +177,9 @@ export function SimplifiedLandingPage({ onShowAdvanced }) {
           transition={!prefersReducedMotion ? { delay: 1, duration: 0.5 } : { duration: 0 }}
           className="mt-8 sm:mt-10 md:mt-12 text-center text-xs text-gray-600 px-4"
         >
+          <div className="flex justify-center mb-3">
+            <InstallButton />
+          </div>
           <p className="leading-relaxed">Calculations based on Vedic sidereal zodiac • Updates every minute</p>
           <p className="mt-1 leading-relaxed">Timings are approximate and for reference only</p>
           <p className="mt-2 sm:mt-3 flex flex-wrap items-center justify-center gap-1">

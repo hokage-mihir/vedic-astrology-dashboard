@@ -52,16 +52,44 @@ const TOOLTIPS = {
 
 export function ImprovedTooltip({ term, className = '' }) {
   const [isVisible, setIsVisible] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [position, setPosition] = useState({ top: 0, left: 0, align: 'center' });
   const buttonRef = useRef(null);
   const tooltip = TOOLTIPS[term];
 
   const updatePosition = () => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const tooltipWidth = 288; // w-72 = 18rem = 288px
+      const tooltipHeight = 140; // approximate height
+      const padding = 16; // 1rem padding from edges
+
+      let left = rect.left + rect.width / 2;
+      let align = 'center';
+
+      // Check if tooltip would overflow on the right
+      if (left + tooltipWidth / 2 > viewportWidth - padding) {
+        align = 'right';
+        left = Math.min(left, viewportWidth - padding);
+      }
+      // Check if tooltip would overflow on the left
+      else if (left - tooltipWidth / 2 < padding) {
+        align = 'left';
+        left = Math.max(left, padding);
+      }
+
+      // Calculate top position, ensure it doesn't go above viewport
+      let top = rect.top;
+      if (top - tooltipHeight - 12 < padding) {
+        // Not enough space above, position below instead
+        top = rect.bottom + 12;
+        align = align + '-below';
+      }
+
       setPosition({
-        top: rect.top,
-        left: rect.left + rect.width / 2,
+        top,
+        left,
+        align,
       });
     }
   };
@@ -83,17 +111,54 @@ export function ImprovedTooltip({ term, className = '' }) {
     return null;
   }
 
+  const getTransform = () => {
+    const isBelow = position.align.includes('below');
+
+    if (position.align.startsWith('left')) {
+      return isBelow ? 'translateY(0)' : 'translate(0, -100%)';
+    } else if (position.align.startsWith('right')) {
+      return isBelow ? 'translate(-100%, 0)' : 'translate(-100%, -100%)';
+    } else {
+      return isBelow ? 'translate(-50%, 0)' : 'translate(-50%, -100%)';
+    }
+  };
+
+  const getArrowPosition = () => {
+    const isBelow = position.align.includes('below');
+    const baseClasses = "absolute w-3 h-3 bg-gray-900 rotate-45 border-gray-700";
+
+    if (isBelow) {
+      // Arrow on top when tooltip is below
+      if (position.align.startsWith('left')) {
+        return `${baseClasses} top-[-6px] left-4 border-l border-t`;
+      } else if (position.align.startsWith('right')) {
+        return `${baseClasses} top-[-6px] right-4 border-l border-t`;
+      } else {
+        return `${baseClasses} top-[-6px] left-1/2 -translate-x-1/2 border-l border-t`;
+      }
+    } else {
+      // Arrow on bottom when tooltip is above
+      if (position.align.startsWith('left')) {
+        return `${baseClasses} bottom-[-6px] left-4 border-r border-b`;
+      } else if (position.align.startsWith('right')) {
+        return `${baseClasses} bottom-[-6px] right-4 border-r border-b`;
+      } else {
+        return `${baseClasses} bottom-[-6px] left-1/2 -translate-x-1/2 border-r border-b`;
+      }
+    }
+  };
+
   const tooltipContent = isVisible && position.top > 0 && (
     <motion.div
       initial={{ opacity: 0, scale: 0.95, y: -5 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: -5 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
-      className="fixed pointer-events-none w-72"
+      className="fixed pointer-events-none w-72 max-w-[calc(100vw-2rem)]"
       style={{
-        top: `${position.top - 12}px`,
+        top: `${position.top}px`,
         left: `${position.left}px`,
-        transform: 'translate(-50%, -100%)',
+        transform: getTransform(),
         zIndex: 9999
       }}
     >
@@ -121,7 +186,7 @@ export function ImprovedTooltip({ term, className = '' }) {
         </div>
 
         {/* Arrow */}
-        <div className="absolute w-3 h-3 bg-gray-900 rotate-45 bottom-[-6px] left-1/2 -translate-x-1/2 border-r border-b border-gray-700" />
+        <div className={getArrowPosition()} />
       </div>
     </motion.div>
   );

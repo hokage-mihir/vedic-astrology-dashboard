@@ -1,18 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, X } from 'lucide-react';
+import { Download, X, Clock } from 'lucide-react';
 
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [canShow, setCanShow] = useState(false);
+  const engagementRef = useRef({
+    visitCount: 0,
+    startTime: Date.now(),
+    interactions: 0,
+  });
 
   useEffect(() => {
-    // Check if already dismissed
-    const dismissed = localStorage.getItem('installPromptDismissed');
-    if (dismissed) {
-      setShowPrompt(false);
+    // Check if permanently dismissed
+    const permanentlyDismissed = localStorage.getItem('installPromptPermanentlyDismissed');
+    if (permanentlyDismissed === 'true') {
       return;
     }
+
+    // Check if temporarily dismissed (7 days)
+    const dismissedTime = localStorage.getItem('installPromptDismissedTime');
+    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    if (dismissedTime && parseInt(dismissedTime) > sevenDaysAgo) {
+      return;
+    }
+
+    // Check if app is already installed
+    if (window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true) {
+      return;
+    }
+
+    // Track visit count
+    const visitCount = parseInt(localStorage.getItem('appVisitCount') || '0');
+    localStorage.setItem('appVisitCount', (visitCount + 1).toString());
+    engagementRef.current.visitCount = visitCount + 1;
 
     // Listen for the beforeinstallprompt event
     const handler = (e) => {
@@ -20,21 +43,50 @@ export function InstallPrompt() {
       e.preventDefault();
       // Stash the event so it can be triggered later
       setDeferredPrompt(e);
-      setShowPrompt(true);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Check if app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone === true) {
-      setShowPrompt(false);
-    }
+    // Track user engagement
+    const handleInteraction = () => {
+      engagementRef.current.interactions++;
+    };
+
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('scroll', handleInteraction);
+    window.addEventListener('touchstart', handleInteraction);
+
+    // Check engagement periodically
+    const checkEngagement = () => {
+      const { visitCount, startTime, interactions } = engagementRef.current;
+      const timeSpent = (Date.now() - startTime) / 1000; // seconds
+
+      // Show prompt if:
+      // - User has visited 3+ times, OR
+      // - User has spent 2+ minutes on site, OR
+      // - User has had 10+ interactions
+      if (visitCount >= 3 || timeSpent >= 120 || interactions >= 10) {
+        setCanShow(true);
+      }
+    };
+
+    const engagementTimer = setInterval(checkEngagement, 10000); // Check every 10 seconds
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('scroll', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      clearInterval(engagementTimer);
     };
   }, []);
+
+  useEffect(() => {
+    // Show prompt when both conditions are met
+    if (deferredPrompt && canShow) {
+      setShowPrompt(true);
+    }
+  }, [deferredPrompt, canShow]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
@@ -58,9 +110,14 @@ export function InstallPrompt() {
     setShowPrompt(false);
   };
 
-  const handleDismiss = () => {
+  const handleDismissTemporary = () => {
     setShowPrompt(false);
-    localStorage.setItem('installPromptDismissed', 'true');
+    localStorage.setItem('installPromptDismissedTime', Date.now().toString());
+  };
+
+  const handleDismissPermanent = () => {
+    setShowPrompt(false);
+    localStorage.setItem('installPromptPermanentlyDismissed', 'true');
   };
 
   if (!showPrompt) {
@@ -82,7 +139,7 @@ export function InstallPrompt() {
 
           {/* Close button */}
           <button
-            onClick={handleDismiss}
+            onClick={handleDismissTemporary}
             className="absolute top-2 right-2 p-1 rounded-full hover:bg-white/20 transition-colors z-10"
             aria-label="Dismiss"
           >
@@ -103,13 +160,31 @@ export function InstallPrompt() {
               </div>
             </div>
 
-            <button
-              onClick={handleInstallClick}
-              className="w-full py-2.5 px-4 bg-white text-cosmic-purple-700 font-semibold rounded-lg hover:bg-white/90 transition-colors flex items-center justify-center gap-2 shadow-lg"
-            >
-              <Download className="w-4 h-4" />
-              Install App
-            </button>
+            <div className="space-y-2">
+              <button
+                onClick={handleInstallClick}
+                className="w-full py-2.5 px-4 bg-white text-cosmic-purple-700 font-semibold rounded-lg hover:bg-white/90 transition-colors flex items-center justify-center gap-2 shadow-lg"
+              >
+                <Download className="w-4 h-4" />
+                Install App
+              </button>
+
+              <div className="flex gap-2 text-xs">
+                <button
+                  onClick={handleDismissTemporary}
+                  className="flex-1 py-2 px-3 text-white/90 hover:bg-white/10 rounded-lg transition-colors flex items-center justify-center gap-1"
+                >
+                  <Clock className="w-3 h-3" />
+                  Remind in 7 days
+                </button>
+                <button
+                  onClick={handleDismissPermanent}
+                  className="flex-1 py-2 px-3 text-white/70 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  Don't show again
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>
