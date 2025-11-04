@@ -67,25 +67,22 @@ export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className="bg-white rounded-xl shadow-lg p-4 sm:p-5 md:p-6 border border-gray-200"
+      className="bg-white rounded-xl shadow-lg p-3 border border-gray-200"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+      <div className="grid grid-cols-2 gap-2">
         {/* Location Selector */}
-        <div className="space-y-2">
-          <label className="text-xs sm:text-sm font-medium text-gray-700 flex items-center gap-2">
-            <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            Location (Current or Closest Available)
-          </label>
-          <button
-            onClick={() => setIsLocationOpen(true)}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left bg-gray-50 border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-cosmic-purple-500 focus:border-transparent transition-colors flex items-center justify-between"
-          >
-            <div className="text-left min-w-0 flex-1">
-              <span className="font-medium text-sm sm:text-base text-gray-900 block truncate">{selectedLocation.name}</span>
-              <p className="text-xs text-gray-500 mt-0.5">Select your current city or nearest location</p>
-            </div>
-            <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0 ml-2" />
-          </button>
+        <button
+          onClick={() => setIsLocationOpen(true)}
+          className="px-3 py-2.5 text-left bg-gray-50 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-cosmic-purple-500 focus:border-transparent transition-colors"
+        >
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <MapPin className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
+            <span className="text-xs font-medium text-gray-600">Location</span>
+          </div>
+          <div className="font-medium text-sm text-gray-900 truncate">
+            {selectedLocation.name}
+          </div>
+        </button>
 
           {/* Location Bottom Sheet */}
           <BottomSheet
@@ -139,55 +136,43 @@ export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
               )}
             </div>
           </BottomSheet>
-        </div>
 
         {/* Rashi Selector */}
-        <div className="space-y-2">
-          <label className="text-xs sm:text-sm font-medium text-gray-700 flex items-center gap-2">
-            <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            Your Rashi (Moon Sign)
-          </label>
-          <button
-            onClick={() => setIsRashiOpen(true)}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left bg-gray-50 border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-cosmic-purple-500 focus:border-transparent transition-colors flex items-center justify-between"
-          >
-            <span className="font-medium text-sm sm:text-base text-gray-900">
-              {selectedRashi ? `${RASHI_SYMBOLS[selectedRashi]} ${selectedRashi}` : 'Select your Rashi'}
-            </span>
-            <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0" />
-          </button>
+        <button
+          onClick={() => setIsRashiOpen(true)}
+          className="px-3 py-2.5 text-left bg-gray-50 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-cosmic-purple-500 focus:border-transparent transition-colors"
+        >
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <Moon className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
+            <span className="text-xs font-medium text-gray-600">Rashi</span>
+          </div>
+          <div className="font-medium text-sm text-gray-900 truncate">
+            {selectedRashi ? `${RASHI_SYMBOLS[selectedRashi]} ${selectedRashi}` : 'Select Rashi'}
+          </div>
+        </button>
 
-          {/* Rashi Bottom Sheet */}
-          <BottomSheet
-            isOpen={isRashiOpen}
-            onClose={() => setIsRashiOpen(false)}
-            title="Select Your Rashi"
-            maxHeight={75}
-          >
-            <div className="p-2">
-              {RASHI_ORDER.map((rashi) => (
-                <button
-                  key={rashi}
-                  onClick={() => handleRashiSelect(rashi)}
-                  className={`w-full px-4 py-3.5 mb-1 text-left rounded-lg hover:bg-cosmic-purple-50 active:bg-cosmic-purple-100 focus:bg-cosmic-purple-50 focus:outline-none transition-colors flex items-center gap-3 ${
-                    selectedRashi === rashi ? 'bg-cosmic-purple-100 text-cosmic-purple-700' : 'text-gray-900'
-                  }`}
-                >
-                  <span className="text-2xl">{RASHI_SYMBOLS[rashi]}</span>
-                  <span className="font-medium text-base">{rashi}</span>
-                </button>
-              ))}
-            </div>
-          </BottomSheet>
-        </div>
-      </div>
-
-      {/* Info Text */}
-      <div className="mt-4 sm:mt-4 md:mt-4 p-2.5 sm:p-3 bg-cosmic-purple-50 rounded-lg border border-cosmic-purple-200">
-        <p className="text-xs sm:text-sm text-cosmic-purple-700">
-          <strong>Why your Rashi matters:</strong> Your Moon sign (Rashi) determines when Chandrashtam periods affect you.
-          Each Rashi experiences Chandrashtam when the Moon transits the 8th house from it.
-        </p>
+        {/* Rashi Bottom Sheet */}
+        <BottomSheet
+          isOpen={isRashiOpen}
+          onClose={() => setIsRashiOpen(false)}
+          title="Select Your Rashi"
+          maxHeight={75}
+        >
+          <div className="p-2">
+            {RASHI_ORDER.map((rashi) => (
+              <button
+                key={rashi}
+                onClick={() => handleRashiSelect(rashi)}
+                className={`w-full px-4 py-3.5 mb-1 text-left rounded-lg hover:bg-cosmic-purple-50 active:bg-cosmic-purple-100 focus:bg-cosmic-purple-50 focus:outline-none transition-colors flex items-center gap-3 ${
+                  selectedRashi === rashi ? 'bg-cosmic-purple-100 text-cosmic-purple-700' : 'text-gray-900'
+                }`}
+              >
+                <span className="text-2xl">{RASHI_SYMBOLS[rashi]}</span>
+                <span className="font-medium text-base">{rashi}</span>
+              </button>
+            ))}
+          </div>
+        </BottomSheet>
       </div>
     </motion.div>
   );
