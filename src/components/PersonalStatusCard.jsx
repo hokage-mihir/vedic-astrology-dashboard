@@ -164,9 +164,9 @@ export function PersonalStatusCard({ userRashi, location, compact = false, defau
           <div className="w-full h-2 bg-white bg-opacity-50 rounded-full overflow-hidden">
             <motion.div
               className={`h-full ${
-                status.color === 'red' ? 'bg-red-600' :
-                status.color === 'yellow' ? 'bg-yellow-600' :
-                'bg-green-600'
+                status.color === 'red' ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                status.color === 'yellow' ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                'bg-gradient-to-r from-purple-500 to-blue-500'
               }`}
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
