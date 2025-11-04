@@ -199,6 +199,7 @@ export function SimplifiedLandingPage({ onShowAdvanced }) {
               Hokage Mihir
             </a>
           </p>
+          <p className="mt-2 text-[10px] text-gray-400">v1.1.0-accordion+bottomsheet</p>
         </motion.footer>
       </div>
     </div>
