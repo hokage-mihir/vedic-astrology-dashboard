@@ -157,6 +157,32 @@ export default defineConfig({
                 statuses: [0, 200]
               }
             }
+          },
+          {
+            // Queue Google Analytics requests when offline
+            urlPattern: /^https:\/\/(www|region1)\.google-analytics\.com\/.*/i,
+            handler: 'NetworkOnly',
+            options: {
+              backgroundSync: {
+                name: 'analytics-queue',
+                options: {
+                  maxRetentionTime: 24 * 60 // Retry for up to 24 hours (in minutes)
+                }
+              }
+            }
+          },
+          {
+            // Queue Google Analytics 4 requests when offline
+            urlPattern: /^https:\/\/analytics\.google\.com\/.*/i,
+            handler: 'NetworkOnly',
+            options: {
+              backgroundSync: {
+                name: 'analytics-queue',
+                options: {
+                  maxRetentionTime: 24 * 60 // Retry for up to 24 hours (in minutes)
+                }
+              }
+            }
           }
         ]
       },

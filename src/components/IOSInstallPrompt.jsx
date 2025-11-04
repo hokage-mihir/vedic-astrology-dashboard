@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Share, Plus, X, Clock, Smartphone } from 'lucide-react';
+import { trackEvent } from '../services/analytics';
 
 export function IOSInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
@@ -43,6 +44,7 @@ export function IOSInstallPrompt() {
       // Delay showing by 5 seconds to not interrupt initial experience
       setTimeout(() => {
         setShowPrompt(true);
+        trackEvent('PWA', 'ios_prompt_shown', 'ios_install_instructions');
       }, 5000);
     }
   }, []);
@@ -50,11 +52,13 @@ export function IOSInstallPrompt() {
   const handleDismissTemporary = () => {
     setShowPrompt(false);
     localStorage.setItem('iosInstallPromptDismissedTime', Date.now().toString());
+    trackEvent('PWA', 'ios_dismissed_temp', 'remind_7_days');
   };
 
   const handleDismissPermanent = () => {
     setShowPrompt(false);
     localStorage.setItem('iosInstallPromptPermanentlyDismissed', 'true');
+    trackEvent('PWA', 'ios_dismissed_perm', 'never_show');
   };
 
   if (!isIOS || !showPrompt) {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Download } from 'lucide-react';
 import PropTypes from 'prop-types';
+import { trackEvent } from '../services/analytics';
 
 export function InstallButton({ className = '' }) {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -33,6 +34,8 @@ export function InstallButton({ className = '' }) {
       return;
     }
 
+    trackEvent('PWA', 'manual_install_click', 'footer_button');
+
     // Show the install prompt
     deferredPrompt.prompt();
 
@@ -41,7 +44,10 @@ export function InstallButton({ className = '' }) {
 
     if (outcome === 'accepted') {
       console.log('User accepted the install prompt from manual button');
+      trackEvent('PWA', 'manual_install_accepted', 'footer_button');
       setIsInstallable(false);
+    } else {
+      trackEvent('PWA', 'manual_install_declined', 'footer_button');
     }
 
     // Clear the deferredPrompt for next time

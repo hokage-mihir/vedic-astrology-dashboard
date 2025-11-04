@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Clock, X } from 'lucide-react';
+import { AlertTriangle, Clock, X, ChevronDown, ChevronUp, Calendar as CalendarIcon } from 'lucide-react';
 import { calculateRahuKalam, calculateSunTimes } from '../lib/sun-calculator.js';
 import { ImprovedTooltip } from './ui/improved-tooltip';
+import { trackEvent } from '../services/analytics';
 
 export function RahuKalamCard({ location, date = new Date() }) {
   const [rahuKalam, setRahuKalam] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showNextDays, setShowNextDays] = useState(false);
+  const [nextDaysData, setNextDaysData] = useState([]);
 
   useEffect(() => {
     if (!location) return;
@@ -30,7 +33,34 @@ export function RahuKalamCard({ location, date = new Date() }) {
     };
 
     calculateRahuKalamTiming();
-    
+
+    // Calculate next 6 days' Rahu Kalam
+    const calculateNextDays = () => {
+      const days = [];
+      for (let i = 1; i <= 6; i++) {
+        const futureDate = new Date(date);
+        futureDate.setDate(date.getDate() + i);
+
+        try {
+          const sunTimes = calculateSunTimes(location, futureDate);
+          if (sunTimes && sunTimes.sunrise && sunTimes.sunset) {
+            const timing = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset, futureDate.getDay());
+            days.push({
+              date: futureDate,
+              dayName: futureDate.toLocaleDateString('en-US', { weekday: 'long' }),
+              dateStr: futureDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+              timing
+            });
+          }
+        } catch (error) {
+          console.error(`Error calculating Rahu Kalam for day ${i}:`, error);
+        }
+      }
+      setNextDaysData(days);
+    };
+
+    calculateNextDays();
+
     // Update current time every minute
     const timeInterval = setInterval(() => {
       setCurrentTime(new Date());
@@ -185,6 +215,77 @@ export function RahuKalamCard({ location, date = new Date() }) {
           Rahu Kalam is an inauspicious 90-minute period ruled by Rahu (North Node of Moon)
         </p>
       </div>
+
+      {/* Next 6 Days Toggle */}
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <button
+          onClick={() => {
+            setShowNextDays(!showNextDays);
+            if (!showNextDays) {
+              trackEvent('Rahu Kalam', 'view_next_days', '6_day_forecast');
+            }
+          }}
+          className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium text-sm transition-colors ${
+            isActive
+              ? 'bg-red-100 hover:bg-red-200 text-red-700'
+              : 'bg-orange-100 hover:bg-orange-200 text-orange-700'
+          }`}
+        >
+          <CalendarIcon className="w-4 h-4" />
+          <span>{showNextDays ? 'Hide' : 'Show'} Next 6 Days</span>
+          {showNextDays ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+
+      {/* Next Days Display */}
+      {showNextDays && nextDaysData.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mt-4 space-y-3"
+        >
+          {nextDaysData.map((dayData, index) => (
+            <div
+              key={index}
+              className={`p-3 rounded-lg border ${
+                isActive
+                  ? 'bg-red-50 border-red-200'
+                  : 'bg-orange-50 border-orange-200'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <p className={`font-semibold text-sm ${
+                    isActive ? 'text-red-700' : 'text-orange-700'
+                  }`}>
+                    {dayData.dayName}
+                  </p>
+                  <p className={`text-xs ${
+                    isActive ? 'text-red-600' : 'text-orange-600'
+                  }`}>
+                    {dayData.dateStr}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className={`font-semibold text-sm ${
+                    isActive ? 'text-red-700' : 'text-orange-700'
+                  }`}>
+                    {dayData.timing.start && dayData.timing.end
+                      ? `${formatTime(dayData.timing.start)} - ${formatTime(dayData.timing.end)}`
+                      : 'Not available'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      )}
     </motion.div>
   );
 }

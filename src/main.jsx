@@ -5,6 +5,8 @@ import './index.css'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { registerSW } from 'virtual:pwa-register'
 import { UpdateToast } from './components/UpdateToast'
+import { CookieConsent } from './components/CookieConsent'
+import { initializeAnalytics, enableAnalytics, disableAnalytics } from './services/analytics'
 
 // Create a container for the update toast
 let showUpdateToast = null;
@@ -28,6 +30,9 @@ function Root() {
   React.useEffect(() => {
     // Allow service worker to trigger update toast
     showUpdateToast = () => setNeedsUpdate(true);
+
+    // Try to initialize analytics if consent already given
+    initializeAnalytics();
   }, []);
 
   const handleUpdate = () => {
@@ -39,6 +44,18 @@ function Root() {
     setNeedsUpdate(false);
   };
 
+  const handleAcceptCookies = () => {
+    const initialized = enableAnalytics();
+    if (initialized) {
+      console.log('Analytics enabled with user consent');
+    }
+  };
+
+  const handleRejectCookies = () => {
+    disableAnalytics();
+    console.log('Analytics disabled by user choice');
+  };
+
   return (
     <React.StrictMode>
       <NotificationProvider>
@@ -46,6 +63,10 @@ function Root() {
         {needsUpdate && (
           <UpdateToast onUpdate={handleUpdate} onDismiss={handleDismiss} />
         )}
+        <CookieConsent
+          onAccept={handleAcceptCookies}
+          onReject={handleRejectCookies}
+        />
       </NotificationProvider>
     </React.StrictMode>
   );

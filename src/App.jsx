@@ -17,6 +17,7 @@ import { Sparkles, Heart, Home, BarChart3 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import CosmicLoader from './components/CosmicLoader'
 import SimplifiedLandingPage from './components/SimplifiedLandingPage'
+import { trackPageView, trackEvent } from './services/analytics'
 
 // Lazy load Annual Calendar (only loads when scrolled into view)
 const ChandrashtamAnnualView = lazy(() => import('./components/ChandrashtamAnnualView'))
@@ -47,14 +48,25 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // Track initial page view
+  useEffect(() => {
+    const pageTitle = view === 'simplified' ? 'Simplified View' : 'Advanced Dashboard';
+    const pagePath = view === 'simplified' ? '/simplified' : '/advanced';
+    trackPageView(pagePath, pageTitle);
+  }, []);
+
   const handleShowAdvanced = () => {
     setView('advanced');
     localStorage.setItem('preferredView', 'advanced');
+    trackPageView('/advanced', 'Advanced Dashboard');
+    trackEvent('Navigation', 'view_changed', 'advanced');
   };
 
   const handleShowSimplified = () => {
     setView('simplified');
     localStorage.setItem('preferredView', 'simplified');
+    trackPageView('/simplified', 'Simplified View');
+    trackEvent('Navigation', 'view_changed', 'simplified');
   };
 
   // If simplified view, show the simplified landing page

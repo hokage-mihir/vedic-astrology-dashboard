@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X, Clock } from 'lucide-react';
+import { trackEvent } from '../services/analytics';
 
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -85,6 +86,7 @@ export function InstallPrompt() {
     // Show prompt when both conditions are met
     if (deferredPrompt && canShow) {
       setShowPrompt(true);
+      trackEvent('PWA', 'prompt_shown', 'install_prompt');
     }
   }, [deferredPrompt, canShow]);
 
@@ -101,8 +103,10 @@ export function InstallPrompt() {
 
     if (outcome === 'accepted') {
       console.log('User accepted the install prompt');
+      trackEvent('PWA', 'install_accepted', 'install_prompt');
     } else {
       console.log('User dismissed the install prompt');
+      trackEvent('PWA', 'install_declined', 'install_prompt');
     }
 
     // Clear the deferredPrompt for next time
@@ -113,11 +117,13 @@ export function InstallPrompt() {
   const handleDismissTemporary = () => {
     setShowPrompt(false);
     localStorage.setItem('installPromptDismissedTime', Date.now().toString());
+    trackEvent('PWA', 'install_dismissed_temp', 'remind_7_days');
   };
 
   const handleDismissPermanent = () => {
     setShowPrompt(false);
     localStorage.setItem('installPromptPermanentlyDismissed', 'true');
+    trackEvent('PWA', 'install_dismissed_perm', 'never_show');
   };
 
   if (!showPrompt) {
