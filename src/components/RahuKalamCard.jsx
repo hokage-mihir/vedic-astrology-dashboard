@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Clock, X, ChevronDown, ChevronUp, Calendar as CalendarIcon } from 'lucide-react';
@@ -6,7 +6,10 @@ import { calculateRahuKalam, calculateSunTimes } from '../lib/sun-calculator.js'
 import { ImprovedTooltip } from './ui/improved-tooltip';
 import { trackEvent } from '../services/analytics';
 
-export function RahuKalamCard({ location, date = new Date() }) {
+export function RahuKalamCard({ location, date }) {
+  // Stabilize the date to prevent infinite loops
+  const stableDate = useMemo(() => date || new Date(), [date]);
+
   const [rahuKalam, setRahuKalam] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showNextDays, setShowNextDays] = useState(false);
@@ -18,10 +21,10 @@ export function RahuKalamCard({ location, date = new Date() }) {
     const calculateRahuKalamTiming = () => {
       try {
         // Calculate sunrise and sunset times
-        const sunTimes = calculateSunTimes(location, date);
-        
+        const sunTimes = calculateSunTimes(location, stableDate);
+
         if (sunTimes && sunTimes.sunrise && sunTimes.sunset) {
-          const timing = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset, date.getDay());
+          const timing = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset, stableDate.getDay());
           setRahuKalam(timing);
         } else {
           setRahuKalam({ start: null, end: null });
@@ -38,8 +41,8 @@ export function RahuKalamCard({ location, date = new Date() }) {
     const calculateNextDays = () => {
       const days = [];
       for (let i = 1; i <= 6; i++) {
-        const futureDate = new Date(date);
-        futureDate.setDate(date.getDate() + i);
+        const futureDate = new Date(stableDate);
+        futureDate.setDate(stableDate.getDate() + i);
 
         try {
           const sunTimes = calculateSunTimes(location, futureDate);
@@ -67,7 +70,7 @@ export function RahuKalamCard({ location, date = new Date() }) {
     }, 60000);
 
     return () => clearInterval(timeInterval);
-  }, [location, date]);
+  }, [location, stableDate]);
 
   const isRahuKalamActive = () => {
     if (!rahuKalam || !rahuKalam.start || !rahuKalam.end) return false;
