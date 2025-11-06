@@ -144,15 +144,38 @@ export function formatTimeRemaining(days, hours) {
 
 /**
  * Calculate progress percentage for countdown ring
+ * The progress represents how close we are to the END of the current period
+ * - For ACTIVE Chandrashtam (red): shows progress toward END of affliction
+ * - For APPROACHING Chandrashtam (yellow): shows progress toward START of affliction
+ * - For CLEAR period (green): shows progress toward next Chandrashtam
  */
-export function calculateProgress(timeUntil) {
+export function calculateProgress(timeUntil, status = 'clear') {
   if (!timeUntil || timeUntil.totalDays === 0) {
-    return 100; // Active now
+    return 100; // Active now, ending soon
   }
-  
-  // Total lunar cycle is ~27.32 days
+
+  // Moon stays in each rashi for ~2.3 days (27.32 / 12)
+  const rashiDuration = 2.3;
+
+  // For ACTIVE state: Chandrashtam is happening now
+  // Progress should be HIGH when it's about to END (low time remaining)
+  if (status === 'active') {
+    const progress = ((rashiDuration - timeUntil.totalDays) / rashiDuration) * 100;
+    return Math.max(0, Math.min(100, progress));
+  }
+
+  // For APPROACHING state: Chandrashtam starts soon (within ~3 days)
+  // Progress should increase as we get closer to the START
+  if (status === 'approaching') {
+    const approachWindow = 3; // 3 days warning window
+    const progress = ((approachWindow - timeUntil.totalDays) / approachWindow) * 100;
+    return Math.max(0, Math.min(100, progress));
+  }
+
+  // For CLEAR state: Show progress through the full lunar cycle until next Chandrashtam
+  // This gives context of where we are in the cycle
   const totalCycle = 27.32;
   const progress = ((totalCycle - timeUntil.totalDays) / totalCycle) * 100;
-  
+
   return Math.max(0, Math.min(100, progress));
 }

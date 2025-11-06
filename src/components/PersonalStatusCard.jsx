@@ -107,7 +107,7 @@ export function PersonalStatusCard({ userRashi, location, compact = false, defau
     }
   };
 
-  const progress = timeUntil ? calculateProgress(timeUntil) : 0;
+  const progress = timeUntil ? calculateProgress(timeUntil, status?.status) : 0;
 
   // Compact collapsed view for mobile
   if (compact && !isExpanded) {
