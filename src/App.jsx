@@ -53,7 +53,7 @@ function App() {
     const pageTitle = view === 'simplified' ? 'Simplified View' : 'Advanced Dashboard';
     const pagePath = view === 'simplified' ? '/simplified' : '/advanced';
     trackPageView(pagePath, pageTitle);
-  }, []);
+  }, [view]);
 
   const handleShowAdvanced = () => {
     setView('advanced');
@@ -90,12 +90,13 @@ function App() {
       <IOSInstallPrompt />
 
       {/* View Toggle */}
-      <motion.div
-        initial={!prefersReducedMotion ? { opacity: 0, y: -20 } : {}}
-        animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
-        transition={!prefersReducedMotion ? { duration: 0.6 } : { duration: 0 }}
-        className="flex justify-center mb-4"
-      >
+      <nav role="navigation" aria-label="View navigation">
+        <motion.div
+          initial={!prefersReducedMotion ? { opacity: 0, y: -20 } : {}}
+          animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
+          transition={!prefersReducedMotion ? { duration: 0.6 } : { duration: 0 }}
+          className="flex justify-center mb-4"
+        >
         <div className="bg-white rounded-full shadow-md p-1 flex gap-1">
           <button
             onClick={handleShowSimplified}
@@ -121,6 +122,7 @@ function App() {
           </button>
         </div>
       </motion.div>
+      </nav>
 
       {/* Animated background elements */}
       {!prefersReducedMotion && (
@@ -164,29 +166,31 @@ function App() {
         </div>
       )}
 
-      <div className="container mx-auto max-w-4xl relative z-10">
-        <motion.div
-          initial={!prefersReducedMotion ? { opacity: 0, y: -20 } : {}}
-          animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
-          transition={!prefersReducedMotion ? { duration: 0.6 } : { duration: 0 }}
-          className="text-center mb-6 md:mb-10"
-        >
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Sparkles className="w-8 h-8 text-cosmic-gold-500 animate-pulse" aria-label="Sparkles icon" role="img" />
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cosmic-purple-600 via-cosmic-blue-600 to-cosmic-gold-600 bg-clip-text text-transparent">
-              Moon Mood
-            </h1>
-            <Sparkles className="w-8 h-8 text-cosmic-gold-500 animate-pulse" aria-label="Sparkles icon" role="img" />
-          </div>
-          <p className="text-sm md:text-base text-gray-700 font-medium">
-            Vedic Astrology Dashboard
-          </p>
-          <div className="mt-2 flex items-center justify-center gap-2">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent via-cosmic-purple-400 to-transparent" />
-            <span className="text-xs text-gray-600">Track cosmic influences on consciousness</span>
-            <div className="h-px w-12 bg-gradient-to-r from-transparent via-cosmic-purple-400 to-transparent" />
-          </div>
-        </motion.div>
+      <main className="container mx-auto max-w-4xl relative z-10">
+        <header>
+          <motion.div
+            initial={!prefersReducedMotion ? { opacity: 0, y: -20 } : {}}
+            animate={!prefersReducedMotion ? { opacity: 1, y: 0 } : {}}
+            transition={!prefersReducedMotion ? { duration: 0.6 } : { duration: 0 }}
+            className="text-center mb-6 md:mb-10"
+          >
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <Sparkles className="w-8 h-8 text-cosmic-gold-500 animate-pulse" aria-label="Sparkles icon" role="img" />
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cosmic-purple-600 via-cosmic-blue-600 to-cosmic-gold-600 bg-clip-text text-transparent">
+                Moon Mood
+              </h1>
+              <Sparkles className="w-8 h-8 text-cosmic-gold-500 animate-pulse" aria-label="Sparkles icon" role="img" />
+            </div>
+            <p className="text-sm md:text-base text-gray-700 font-medium">
+              Vedic Astrology Dashboard
+            </p>
+            <div className="mt-2 flex items-center justify-center gap-2">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent via-cosmic-purple-400 to-transparent" />
+              <span className="text-xs text-gray-600">Track cosmic influences on consciousness</span>
+              <div className="h-px w-12 bg-gradient-to-r from-transparent via-cosmic-purple-400 to-transparent" />
+            </div>
+          </motion.div>
+        </header>
 
         {/* Welcome Banner for First-Time Users */}
         <WelcomeBanner />
@@ -266,7 +270,7 @@ function App() {
             </a>
           </p>
         </motion.footer>
-      </div>
+      </main>
     </div>
   )
 }

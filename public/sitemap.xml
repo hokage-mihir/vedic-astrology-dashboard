@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Main Application -->
+  <url>
+    <loc>https://moonmood.xyz/</loc>
+    <lastmod>2025-11-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://moonmood.xyz/" />
+  </url>
+  
+  <!-- Simplified View -->
+  <url>
+    <loc>https://moonmood.xyz/?view=simplified</loc>
+    <lastmod>2025-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://moonmood.xyz/?view=simplified" />
+  </url>
+  
+  <!-- Advanced Dashboard -->
+  <url>
+    <loc>https://moonmood.xyz/?view=advanced</loc>
+    <lastmod>2025-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://moonmood.xyz/?view=advanced" />
+  </url>
+  
+  <!-- Annual Calendar View -->
+  <url>
+    <loc>https://moonmood.xyz/?view=advanced#annual-calendar</loc>
+    <lastmod>2025-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://moonmood.xyz/?view=advanced#annual-calendar" />
+  </url>
+  
+</urlset>

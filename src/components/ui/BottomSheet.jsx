@@ -63,7 +63,7 @@ export function BottomSheet({ isOpen, onClose, title, children, maxHeight = 90 }
               mass: 0.8
             }}
             className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-2xl"
-            style={{ maxHeight: `${maxHeight}vh` }}
+            style={{ maxHeight: `${Math.min(maxHeight, window.innerHeight * 0.9 / window.innerHeight * 100)}vh` }}
           >
             {/* Drag Handle */}
             <div className="flex justify-center pt-3 pb-2">
@@ -83,7 +83,7 @@ export function BottomSheet({ isOpen, onClose, title, children, maxHeight = 90 }
             </div>
 
             {/* Content */}
-            <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: `${maxHeight - 15}vh` }}>
+            <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: `${Math.min(maxHeight - 15, window.innerHeight * 0.75 / window.innerHeight * 100)}vh` }}>
               {children}
             </div>
           </motion.div>

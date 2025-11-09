@@ -1,0 +1,33 @@
+# Robots.txt for Moon Mood Vedic Astrology Dashboard
+# https://moonmood.xyz
+
+User-agent: *
+Allow: /
+
+# Prioritize important pages
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://moonmood.xyz/sitemap.xml
+
+# Block unnecessary paths
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /scripts/
+Disallow: /*.json$
+Disallow: /test/
+
+# Allow search engines to access PWA assets
+Allow: /manifest.json
+Allow: /icon-*.png
+Allow: /vite.svg
+
+# Special rules for common crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /

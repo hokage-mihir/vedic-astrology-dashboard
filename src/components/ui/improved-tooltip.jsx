@@ -156,9 +156,12 @@ export function ImprovedTooltip({ term, className = '' }) {
       transition={{ duration: 0.15, ease: "easeOut" }}
       className="fixed pointer-events-none w-72 max-w-[calc(100vw-2rem)]"
       style={{
-        top: `${position.top}px`,
-        left: `${position.left}px`,
-        transform: getTransform(),
+        '--tooltip-top': `${position.top}px`,
+        '--tooltip-left': `${position.left}px`,
+        '--tooltip-transform': getTransform(),
+        top: 'var(--tooltip-top)',
+        left: 'var(--tooltip-left)',
+        transform: 'var(--tooltip-transform)',
         zIndex: 9999
       }}
     >
