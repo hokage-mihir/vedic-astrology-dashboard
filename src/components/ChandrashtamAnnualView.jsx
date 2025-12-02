@@ -26,13 +26,21 @@ const loadYearData = async (year) => {
   }
 };
 
-const ChandrashtamAnnualView = ({ year = 2025 }) => {
-  const [selectedRashi, setSelectedRashi] = useState('Mesh');
+const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
+  // Initialize with prop if available, otherwise default
+  const [selectedRashi, setSelectedRashi] = useState(userRashi || 'Mesh');
   const [selectedYear, setSelectedYear] = useState(year);
   const [expandedPeriod, setExpandedPeriod] = useState(null);
   const [chandrashtamData, setChandrashtamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const prefersReducedMotion = useReducedMotion();
+
+  // Sync with prop changes (e.g. from context)
+  useEffect(() => {
+    if (userRashi) {
+      setSelectedRashi(userRashi);
+    }
+  }, [userRashi]);
 
   // Available years
   const availableYears = [2025, 2026, 2027, 2028, 2029];
@@ -305,7 +313,8 @@ const ChandrashtamAnnualView = ({ year = 2025 }) => {
 };
 
 ChandrashtamAnnualView.propTypes = {
-  year: PropTypes.number
+  year: PropTypes.number,
+  userRashi: PropTypes.string
 };
 
 export default memo(ChandrashtamAnnualView);

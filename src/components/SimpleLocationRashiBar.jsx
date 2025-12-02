@@ -7,44 +7,35 @@ import { RASHI_SYMBOLS } from '../lib/rashi-symbols.js';
 import LOCATIONS from '../data/locations';
 import { BottomSheet } from './ui/BottomSheet';
 
-export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
-  const [selectedLocation, setSelectedLocation] = useState(() => {
-    const saved = localStorage.getItem('selectedLocation');
-    return saved ? JSON.parse(saved) : LOCATIONS[0]; // Default to first location (Accra alphabetically)
-  });
+export function SimpleLocationRashiBar({ onLocationChange, onRashiChange, currentLocation, currentRashi }) {
+  // Use props if provided, otherwise fallback to local state (though context should always provide props now)
+  const [selectedLocation, setSelectedLocation] = useState(currentLocation || LOCATIONS[0]);
+  const [selectedRashi, setSelectedRashi] = useState(currentRashi || '');
 
-  const [selectedRashi, setSelectedRashi] = useState(() => {
-    const saved = localStorage.getItem('selectedRashi');
-    return saved || '';
-  });
+  // Sync local state with props when they change (from context)
+  useEffect(() => {
+    if (currentLocation) setSelectedLocation(currentLocation);
+  }, [currentLocation]);
+
+  useEffect(() => {
+    if (currentRashi) setSelectedRashi(currentRashi);
+  }, [currentRashi]);
 
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [isRashiOpen, setIsRashiOpen] = useState(false);
   const [locationSearch, setLocationSearch] = useState('');
   const searchInputRef = useRef(null);
 
-  useEffect(() => {
-    localStorage.setItem('selectedLocation', JSON.stringify(selectedLocation));
-    if (onLocationChange) {
-      onLocationChange(selectedLocation);
-    }
-  }, [selectedLocation, onLocationChange]);
-
-  useEffect(() => {
-    localStorage.setItem('selectedRashi', selectedRashi);
-    if (onRashiChange) {
-      onRashiChange(selectedRashi);
-    }
-  }, [selectedRashi, onRashiChange]);
-
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
+    if (onLocationChange) onLocationChange(location);
     setIsLocationOpen(false);
     setLocationSearch('');
   };
 
   const handleRashiSelect = (rashi) => {
     setSelectedRashi(rashi);
+    if (onRashiChange) onRashiChange(rashi);
     setIsRashiOpen(false);
   };
 
@@ -180,7 +171,9 @@ export function SimpleLocationRashiBar({ onLocationChange, onRashiChange }) {
 
 SimpleLocationRashiBar.propTypes = {
   onLocationChange: PropTypes.func,
-  onRashiChange: PropTypes.func
+  onRashiChange: PropTypes.func,
+  currentLocation: PropTypes.object,
+  currentRashi: PropTypes.string
 };
 
 export default SimpleLocationRashiBar;

@@ -55,9 +55,7 @@ $RECYCLE.BIN/
 .nfs*
 
 # Project documentation (private)
-project-updates.md
-SIMPLIFIED_LANDING_PAGE_PLAN.md
-ANALYTICS_SETUP.md
+/docs
 
 # Temporary files
 *.tmp

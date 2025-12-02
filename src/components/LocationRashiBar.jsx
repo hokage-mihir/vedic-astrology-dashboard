@@ -6,33 +6,30 @@ import { RASHI_ORDER, CHANDRASHTAM_MAP } from '../lib/vedic-constants';
 import { RASHI_SYMBOLS } from '../lib/rashi-symbols';
 import LOCATIONS from '../data/locations';
 
-const LocationRashiBar = ({ onLocationChange, currentMoonRashi }) => {
-  const [selectedLocation, setSelectedLocation] = useState(() => {
-    const saved = localStorage.getItem('selectedLocation');
-    return saved ? JSON.parse(saved) : LOCATIONS[0];
-  });
+const LocationRashiBar = ({ onLocationChange, onRashiChange, currentLocation, currentRashi, currentMoonRashi }) => {
+  // Use props if provided, otherwise fallback to local state (though context should always provide props now)
+  const [selectedLocation, setSelectedLocation] = useState(currentLocation || LOCATIONS[0]);
+  const [selectedRashi, setSelectedRashi] = useState(currentRashi || RASHI_ORDER[0]);
 
-  const [selectedRashi, setSelectedRashi] = useState(() => {
-    const saved = localStorage.getItem('userMoonRashi');
-    return saved || RASHI_ORDER[0];
-  });
+  // Sync local state with props when they change (from context)
+  useEffect(() => {
+    if (currentLocation) setSelectedLocation(currentLocation);
+  }, [currentLocation]);
 
   useEffect(() => {
-    localStorage.setItem('selectedLocation', JSON.stringify(selectedLocation));
-    onLocationChange(selectedLocation);
-  }, [selectedLocation, onLocationChange]);
-
-  useEffect(() => {
-    localStorage.setItem('userMoonRashi', selectedRashi);
-  }, [selectedRashi]);
+    if (currentRashi) setSelectedRashi(currentRashi);
+  }, [currentRashi]);
 
   const handleLocationChange = (e) => {
     const location = LOCATIONS.find(loc => loc.name === e.target.value);
     setSelectedLocation(location);
+    if (onLocationChange) onLocationChange(location);
   };
 
   const handleRashiChange = (e) => {
-    setSelectedRashi(e.target.value);
+    const rashi = e.target.value;
+    setSelectedRashi(rashi);
+    if (onRashiChange) onRashiChange(rashi);
   };
 
   // Check if selected Rashi is currently afflicted
@@ -170,6 +167,9 @@ const LocationRashiBar = ({ onLocationChange, currentMoonRashi }) => {
 
 LocationRashiBar.propTypes = {
   onLocationChange: PropTypes.func.isRequired,
+  onRashiChange: PropTypes.func,
+  currentLocation: PropTypes.object,
+  currentRashi: PropTypes.string,
   currentMoonRashi: PropTypes.string.isRequired,
 };
 
