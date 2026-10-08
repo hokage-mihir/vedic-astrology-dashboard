@@ -85,7 +85,7 @@ const WelcomeBanner = ({ onDismiss }) => {
 
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
                   <p className="font-semibold mb-2 text-xs sm:text-sm md:text-base">
-                    👋 First time here? Here's what to do:
+                    👋 First time here? Here&apos;s what to do:
                   </p>
                   <ol className="space-y-2 text-xs sm:text-sm md:text-base text-white/90">
                     <li className="flex items-start gap-2">
@@ -97,7 +97,7 @@ const WelcomeBanner = ({ onDismiss }) => {
                     <li className="flex items-start gap-2">
                       <span className="font-bold text-white flex-shrink-0">2.</span>
                       <span>
-                        <strong className="text-white">Choose your Moon sign (Rashi)</strong> 🌙 - Don't know it? Find out (coming soon)!
+                        <strong className="text-white">Choose your Moon sign (Rashi)</strong> 🌙 - Don&apos;t know it? Find out (coming soon)!
                       </span>
                     </li>
                     <li className="flex items-start gap-2">

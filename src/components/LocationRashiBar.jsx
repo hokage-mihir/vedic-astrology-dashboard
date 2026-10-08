@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { RASHI_ORDER, CHANDRASHTAM_MAP } from '../lib/vedic-constants';
 import { RASHI_SYMBOLS } from '../lib/rashi-symbols';
-import LOCATIONS from '../data/locations';
+import LOCATIONS, { DEFAULT_LOCATION } from '../data/locations';
 
 const LocationRashiBar = ({ onLocationChange, onRashiChange, currentLocation, currentRashi, currentMoonRashi }) => {
   // Use props if provided, otherwise fallback to local state (though context should always provide props now)
-  const [selectedLocation, setSelectedLocation] = useState(currentLocation || LOCATIONS[0]);
+  const [selectedLocation, setSelectedLocation] = useState(currentLocation || DEFAULT_LOCATION);
   const [selectedRashi, setSelectedRashi] = useState(currentRashi || RASHI_ORDER[0]);
 
   // Sync local state with props when they change (from context)

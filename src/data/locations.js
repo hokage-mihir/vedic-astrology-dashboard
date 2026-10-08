@@ -160,4 +160,7 @@ export const LOCATIONS = [
   { name: 'Casablanca', latitude: 33.5731, longitude: -7.5898, timezone: 'Africa/Casablanca', country: 'Morocco' },
 ].sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
 
+// Used until the user picks a location
+export const DEFAULT_LOCATION = LOCATIONS.find((loc) => loc.name === 'Mumbai');
+
 export default LOCATIONS;

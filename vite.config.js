@@ -3,9 +3,41 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { ROUTE_SEO, ROUTE_HTML_FILES } from './src/lib/seo-config.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+
+// Emit a static HTML file per non-root route with its own title, description
+// and canonical, so crawlers don't see the homepage's tags on /advanced.
+// index.html must use the '/' values from src/lib/seo-config.js verbatim.
+function routeHtmlPlugin() {
+  return {
+    name: 'route-html',
+    apply: 'build',
+    enforce: 'post',
+    generateBundle(_options, bundle) {
+      const index = bundle['index.html']
+      if (!index) return
+      const home = ROUTE_SEO['/']
+      const source = String(index.source)
+      for (const tag of [home.title, home.description, `href="${home.canonical}"`]) {
+        if (!source.includes(tag)) {
+          this.error(`route-html: index.html no longer contains "${tag}"; keep it in sync with src/lib/seo-config.js`)
+        }
+      }
+      for (const [route, fileName] of Object.entries(ROUTE_HTML_FILES)) {
+        const seo = ROUTE_SEO[route]
+        const html = source
+          .replaceAll(home.title, seo.title)
+          .replaceAll(home.description, seo.description)
+          .replaceAll(`href="${home.canonical}"`, `href="${seo.canonical}"`)
+          .replaceAll(`content="${home.canonical}"`, `content="${seo.canonical}"`)
+        this.emitFile({ type: 'asset', fileName, source: html })
+      }
+    },
+  }
+}
 
 export default defineConfig({
   build: {
@@ -22,67 +54,60 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    routeHtmlPlugin(),
     VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['vite.svg', 'icon-*.png'],
+      // "prompt": a new version waits for the user to tap "Reload Now" in the
+      // update card instead of reloading the page under them
+      registerType: 'prompt',
+      includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png', 'badge-96x96.png', 'browserconfig.xml', 'icon-*.png'],
       manifest: {
+        id: '/',
         name: 'Moon Mood - Vedic Astrology Dashboard',
         short_name: 'Moon Mood',
-        description: 'Track Chandrashtam periods and cosmic influences on consciousness with Vedic astrology',
+        description: 'Track Chandrashtam periods, Rahu Kalam and daily Panchang with Vedic astrology (Lahiri ayanamsa)',
+        lang: 'en',
+        dir: 'ltr',
         theme_color: '#8b5cf6',
         background_color: '#ffffff',
         display: 'standalone',
-        orientation: 'portrait-primary',
+        orientation: 'portrait',
         scope: '/',
         start_url: '/',
+        categories: ['lifestyle', 'utilities'],
         icons: [
+          { src: '/icon-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icon-384x384.png', sizes: '384x384', type: 'image/png', purpose: 'any' },
+          { src: '/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/maskable-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: '/maskable-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ],
+        shortcuts: [
           {
-            src: '/icon-72x72.png',
-            sizes: '72x72',
-            type: 'image/png'
+            name: 'Check My Status',
+            short_name: 'Status',
+            description: 'View your personal Chandrashtam status',
+            url: '/',
+            icons: [{ src: '/icon-96x96.png', sizes: '96x96', type: 'image/png' }]
           },
           {
-            src: '/icon-96x96.png',
-            sizes: '96x96',
-            type: 'image/png'
+            name: "Today's Details",
+            short_name: 'Details',
+            description: "Check today's Panchang and Rahu Kalam",
+            url: '/advanced',
+            icons: [{ src: '/icon-96x96.png', sizes: '96x96', type: 'image/png' }]
           },
           {
-            src: '/icon-128x128.png',
-            sizes: '128x128',
-            type: 'image/png'
-          },
-          {
-            src: '/icon-144x144.png',
-            sizes: '144x144',
-            type: 'image/png'
-          },
-          {
-            src: '/icon-152x152.png',
-            sizes: '152x152',
-            type: 'image/png'
-          },
-          {
-            src: '/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any maskable'
-          },
-          {
-            src: '/icon-384x384.png',
-            sizes: '384x384',
-            type: 'image/png'
-          },
-          {
-            src: '/icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable'
+            name: 'View Calendar',
+            short_name: 'Calendar',
+            description: 'See the annual Chandrashtam calendar',
+            url: '/advanced#annual-calendar',
+            icons: [{ src: '/icon-96x96.png', sizes: '96x96', type: 'image/png' }]
           }
         ]
       },
       workbox: {
-        skipWaiting: true,
-        clientsClaim: true,
+        // Handles notification taps (see public/sw-notifications.js)
+        importScripts: ['sw-notifications.js'],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
         globIgnores: ['**/node_modules/**/*'],
         runtimeCaching: [

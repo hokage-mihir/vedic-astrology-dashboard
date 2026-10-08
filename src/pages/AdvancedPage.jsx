@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import ChandrashtamCalculator from '../components/ChandrashtamCalculator';
 import NakshatraInfo from '../components/NakshatraInfo';
@@ -11,21 +11,23 @@ import CosmicLoader from '../components/CosmicLoader';
 import { calculateMoonPosition } from '../lib/astro-calculator';
 import { RASHI_ORDER } from '../lib/vedic-constants';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { trackPageView } from '../services/analytics';
+import { trackRoutePageView } from '../services/analytics';
 import { useLocationContext } from '../contexts/LocationContext';
+import { useSEO } from '../hooks/useSEO';
 
 // Lazy load Annual Calendar
 const ChandrashtamAnnualView = lazy(() => import('../components/ChandrashtamAnnualView'));
 
 const AdvancedPage = () => {
   const prefersReducedMotion = useReducedMotion();
+  useSEO('/advanced');
   const { currentLocation, selectedRashi, updateLocation, updateRashi } = useLocationContext();
   
   const [currentMoonRashi, setCurrentMoonRashi] = useState('');
 
   // Track page view
   useEffect(() => {
-    trackPageView('/advanced', 'Advanced Dashboard');
+    trackRoutePageView('/advanced');
   }, []);
 
   // Get current moon position for status card
@@ -92,10 +94,7 @@ const AdvancedPage = () => {
         <div id="annual-calendar">
           <ErrorBoundary message="Unable to load annual calendar data.">
             <Suspense fallback={<CosmicLoader text="Loading calendar..." size={50} />}>
-              <ChandrashtamAnnualView 
-                year={2025} 
-                userRashi={selectedRashi}
-              />
+              <ChandrashtamAnnualView userRashi={selectedRashi} />
             </Suspense>
           </ErrorBoundary>
         </div>

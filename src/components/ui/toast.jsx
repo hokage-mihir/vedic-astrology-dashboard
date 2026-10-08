@@ -62,7 +62,7 @@ export function Toast({ toast, onClose }) {
 
 Toast.propTypes = {
   toast: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
     title: PropTypes.string,
     description: PropTypes.string,
@@ -74,7 +74,7 @@ export function ToastContainer({ toasts, onClose }) {
   return (
     <div
       aria-live="assertive"
-      className="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:p-6"
+      className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex items-start px-4 pb-6 pt-[max(1.5rem,env(safe-area-inset-top))] sm:p-6"
     >
       <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
         <AnimatePresence>
@@ -90,7 +90,7 @@ export function ToastContainer({ toasts, onClose }) {
 ToastContainer.propTypes = {
   toasts: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
       type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
       title: PropTypes.string,
       description: PropTypes.string,

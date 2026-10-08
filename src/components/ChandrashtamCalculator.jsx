@@ -1,48 +1,24 @@
-import { useState, useEffect, useCallback, useRef, memo } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { ImprovedTooltip } from "../components/ui/improved-tooltip";
-import { calculateMoonPosition } from '../lib/astro-calculator';
+import { calculateMoonPosition, formatDurationMs } from '../lib/astro-calculator';
 import { RASHI_ORDER, CHANDRASHTAM_MAP, getNextRashi } from '../lib/vedic-constants';
 import { RASHI_SYMBOLS } from '../lib/rashi-symbols';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { useNotifications } from '../contexts/NotificationContext';
 import { Moon, AlertTriangle, Clock, Sparkles, CalendarDays } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CosmicLoader from './CosmicLoader';
 import ProgressRing from './ProgressRing';
-import MoonPhase from './MoonPhase';
 
 const ChandrashtamCalculator = () => {
   const [moonData, setMoonData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const prefersReducedMotion = useReducedMotion();
-  const { showNotification, notificationSettings } = useNotifications();
-  const previousAfflictedRashi = useRef(null);
-  const previousUserRashiStatus = useRef(null); // Track if user's Rashi was afflicted
-
-  // Memoized function to calculate time left in current Rashi
-  const calculateTimeLeft = useCallback((degreesInRashi, moonSpeed) => {
-    const degreesLeft = 30 - degreesInRashi; // Each Rashi is 30 degrees
-    const timeLeftHours = (degreesLeft / moonSpeed) * 24; // Convert to hours
-
-    const days = Math.floor(timeLeftHours / 24);
-    const remainingHours = Math.floor(timeLeftHours % 24);
-    const minutes = Math.floor((timeLeftHours - Math.floor(timeLeftHours)) * 60);
-
-    if (days === 0) {
-      return `${remainingHours}h ${minutes}m`;
-    }
-
-    const daysText = days === 1 ? 'day' : 'days';
-    return `${days} ${daysText} ${remainingHours}h ${minutes}m`;
-  }, []);
 
   const calculatePositions = useCallback(() => {
     try {
-      setLoading(true);
-
       const moonPos = calculateMoonPosition();
       const currentRashi = RASHI_ORDER[moonPos.rashi_number];
 
@@ -57,57 +33,20 @@ const ChandrashtamCalculator = () => {
         ([, moonPosition]) => moonPosition === nextMoonRashi
       )?.[0] || null;
 
-      const timeLeft = calculateTimeLeft(moonPos.degrees_in_rashi, moonPos.speed);
-
-      // Get user's selected Rashi from localStorage
-      const userMoonRashi = localStorage.getItem('userMoonRashi') || RASHI_ORDER[0];
-
-      // Check if user's Rashi is currently afflicted
-      const isUserRashiAfflicted = (afflictedRashi === userMoonRashi);
-
-      // Send personalized notifications only for user's Rashi
-      if (previousUserRashiStatus.current !== null &&
-          previousUserRashiStatus.current !== isUserRashiAfflicted) {
-
-        if (isUserRashiAfflicted) {
-          // User's Rashi just became afflicted
-          if (notificationSettings.chandrashtamStart) {
-            showNotification({
-              title: '⚠️ Your Chandrashtam Started',
-              body: `${userMoonRashi} is now experiencing Chandrashtam. Practice awareness and patience during this period.`,
-              type: 'warning',
-              duration: 10000
-            });
-          }
-        } else {
-          // User's Rashi is no longer afflicted
-          if (notificationSettings.chandrashtamEnd) {
-            showNotification({
-              title: '✓ Your Chandrashtam Ended',
-              body: `The difficult period has ended for ${userMoonRashi}. Mental clarity returning!`,
-              type: 'success',
-              duration: 8000
-            });
-          }
-        }
-      }
-
-      previousAfflictedRashi.current = afflictedRashi;
-      previousUserRashiStatus.current = isUserRashiAfflicted;
-
       setMoonData({
         current_rashi: currentRashi,
         afflicted_rashi: afflictedRashi,
         next_afflicted_rashi: nextAfflictedRashi,
         degrees_in_rashi: moonPos.degrees_in_rashi,
-        time_left: timeLeft
+        time_left: formatDurationMs(moonPos.rashi_end - Date.now()),
+        rashi_end: moonPos.rashi_end
       });
     } catch (err) {
       console.error('Error:', err);
     } finally {
       setLoading(false);
     }
-  }, [calculateTimeLeft, showNotification, notificationSettings]);
+  }, []);
 
   useEffect(() => {
     calculatePositions();
@@ -196,7 +135,9 @@ const ChandrashtamCalculator = () => {
                     </div>
                     <div className="text-xs text-gray-600 flex items-center gap-1 mt-3">
                       <Clock className="w-3 h-3" />
-                      <span>until next Rashi</span>
+                      <span>
+                        until next Rashi ({moonData.rashi_end.toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })})
+                      </span>
                     </div>
                   </div>
                 </motion.div>

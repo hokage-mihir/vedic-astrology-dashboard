@@ -4,14 +4,19 @@ import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card"
 import { ImprovedTooltip } from "../components/ui/improved-tooltip";
 import { calculateMoonPosition, calculateSunPosition } from '../lib/astro-calculator';
 import { RASHI_ORDER, TITHI_NAMES } from '../lib/vedic-constants';
-import { calculateSunTimes, formatTime, calculateRahuKalam } from '../lib/sun-calculator';
+import { calculateSunTimesForDay, getZonedDay, formatTime, calculateRahuKalam, getTimeZoneLabel } from '../lib/sun-calculator';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { Calendar, Sun, Moon, AlertCircle, Clock, Sunrise, Sunset, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CosmicLoader from './CosmicLoader';
 
+const DAY_MS = 86400000;
+const MAX_DAYS_AHEAD = 4;
+
+// labelDate is noon UTC on the civil date, so format it in UTC
 const formatGregorianDate = (date) => {
   return date.toLocaleDateString('en-US', {
+    timeZone: 'UTC',
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -23,48 +28,15 @@ const PanchangDetails = ({ location }) => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  // Days ahead of today at the selected location (0 = today)
+  const [dayOffset, setDayOffset] = useState(0);
   const prefersReducedMotion = useReducedMotion();
+  const timeZone = location.timezone;
+  const isToday = dayOffset === 0;
 
-  // Helper to check if selected date is today
-  const isToday = (date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
-
-  // Helper to get start of day for a date
-  const getStartOfDay = (date) => {
-    const newDate = new Date(date);
-    newDate.setHours(0, 0, 0, 0);
-    return newDate;
-  };
-
-  // Navigate to previous day (min: today)
-  const handlePreviousDay = () => {
-    const today = getStartOfDay(new Date());
-    const prevDay = new Date(selectedDate);
-    prevDay.setDate(prevDay.getDate() - 1);
-    if (prevDay >= today) {
-      setSelectedDate(prevDay);
-    }
-  };
-
-  // Navigate to next day (max: today + 4 days)
-  const handleNextDay = () => {
-    const maxDate = getStartOfDay(new Date());
-    maxDate.setDate(maxDate.getDate() + 4);
-    const nextDay = new Date(selectedDate);
-    nextDay.setDate(nextDay.getDate() + 1);
-    const nextDayStart = getStartOfDay(nextDay);
-    if (nextDayStart <= maxDate) {
-      setSelectedDate(nextDay);
-    }
-  };
-
-  // Jump to today
-  const handleToday = () => {
-    setSelectedDate(new Date());
-  };
+  const handlePreviousDay = () => setDayOffset((d) => Math.max(0, d - 1));
+  const handleNextDay = () => setDayOffset((d) => Math.min(MAX_DAYS_AHEAD, d + 1));
+  const handleToday = () => setDayOffset(0);
 
   const calculateTithiEndTime = (moonPos, sunPos, baseDate) => {
     try {
@@ -136,6 +108,9 @@ const PanchangDetails = ({ location }) => {
     const updateDetails = () => {
       try {
         setLoading(true);
+        const now = new Date();
+        const selectedDate = new Date(now.getTime() + dayOffset * DAY_MS);
+        const civilDay = getZonedDay(now, timeZone, dayOffset);
         const moonPos = calculateMoonPosition(selectedDate);
         const sunPos = calculateSunPosition(selectedDate);
 
@@ -143,16 +118,16 @@ const PanchangDetails = ({ location }) => {
           throw new Error('Failed to calculate positions');
         }
 
-        // Calculate real sunrise/sunset using suncalc
-        const sunTimes = calculateSunTimes(location, selectedDate);
+        // Sunrise/sunset for the civil day at the selected location
+        const sunTimes = calculateSunTimesForDay(location, civilDay);
 
-        // Calculate Rahu Kalam based on real sunrise/sunset and selected date's day of week
-        const rahuKalam = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset, selectedDate.getDay());
+        // Rahu Kalam uses that day's sunrise/sunset and weekday at the location
+        const rahuKalam = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset, civilDay.dayOfWeek);
 
         const tithiDetails = calculateTithi(moonPos, sunPos, selectedDate);
 
         setDetails({
-          gregorianDate: formatGregorianDate(selectedDate),
+          gregorianDate: formatGregorianDate(civilDay.labelDate),
           moonPosition: {
             rashi: RASHI_ORDER[moonPos.rashi_number],
             degrees: moonPos.degrees_in_rashi.toFixed(2)
@@ -167,11 +142,11 @@ const PanchangDetails = ({ location }) => {
             abhijeet: "11:48 AM - 12:36 PM"
           },
           rahuKalam: rahuKalam.start && rahuKalam.end
-            ? `${formatTime(rahuKalam.start)} - ${formatTime(rahuKalam.end)}`
+            ? `${formatTime(rahuKalam.start, timeZone)} - ${formatTime(rahuKalam.end, timeZone)}`
             : 'Not available',
           timings: {
-            sunrise: formatTime(sunTimes.sunrise),
-            sunset: formatTime(sunTimes.sunset)
+            sunrise: formatTime(sunTimes.sunrise, timeZone),
+            sunset: formatTime(sunTimes.sunset, timeZone)
           }
         });
 
@@ -186,16 +161,12 @@ const PanchangDetails = ({ location }) => {
 
     updateDetails();
 
-    // Only auto-refresh if viewing today
-    let interval;
-    if (isToday(selectedDate)) {
-      interval = setInterval(updateDetails, 60000);
-    }
+    // Refresh every minute (also rolls over at the location's midnight)
+    const interval = setInterval(updateDetails, 60000);
 
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [location, selectedDate]);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location, dayOffset]);
 
   return (
     <motion.div
@@ -217,7 +188,7 @@ const PanchangDetails = ({ location }) => {
           <div className="flex items-center justify-between mt-3 gap-2">
             <button
               onClick={handlePreviousDay}
-              disabled={isToday(selectedDate)}
+              disabled={isToday}
               className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label="Previous day"
             >
@@ -225,7 +196,7 @@ const PanchangDetails = ({ location }) => {
             </button>
 
             <div className="flex items-center gap-2">
-              {!isToday(selectedDate) && (
+              {!isToday && (
                 <button
                   onClick={handleToday}
                   className="px-3 py-1 text-xs font-medium bg-cosmic-gold-100 text-cosmic-gold-700 rounded-lg hover:bg-cosmic-gold-200 transition-colors"
@@ -247,11 +218,7 @@ const PanchangDetails = ({ location }) => {
 
             <button
               onClick={handleNextDay}
-              disabled={(() => {
-                const maxDate = getStartOfDay(new Date());
-                maxDate.setDate(maxDate.getDate() + 4);
-                return getStartOfDay(selectedDate) >= maxDate;
-              })()}
+              disabled={dayOffset >= MAX_DAYS_AHEAD}
               className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label="Next day"
             >
@@ -318,10 +285,7 @@ const PanchangDetails = ({ location }) => {
                     <div className="mt-2 text-xs text-gray-700 flex items-center gap-1">
                       <Clock className="w-3 h-3" aria-label="Clock icon" role="img" />
                       <span>
-                        Changes at: {details.tithi.endTime.toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+                        Changes at: {formatTime(details.tithi.endTime, timeZone)}
                         {details.tithi.hoursToEnd < 24 && (
                           <span className="ml-1">
                             (in {Math.floor(details.tithi.hoursToEnd)}h {Math.floor((details.tithi.hoursToEnd % 1) * 60)}m)
@@ -334,7 +298,7 @@ const PanchangDetails = ({ location }) => {
 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="font-semibold text-gray-900 text-sm">Timings ({location.name})</span>
+                    <span className="font-semibold text-gray-900 text-sm">Timings ({location.name}, {getTimeZoneLabel(timeZone)})</span>
                   </div>
                   <div className="space-y-1 text-sm">
                     <div className="flex items-center gap-2 text-gray-700">

@@ -146,9 +146,8 @@ vedic-astrology-dashboard/
 │   │   ├── ChandrashtamAnnualView.jsx    # Annual calendar
 │   │   ├── NakshatraInfo.jsx             # Nakshatra details
 │   │   ├── PanchangDetails.jsx           # Daily Panchang
-│   │   ├── MoonPhase.jsx                 # Moon visualization
-│   │   ├── NotificationSettings.jsx      # Notification controls
-│   │   ├── TimezoneSelector.jsx          # Location selector
+│   │   ├── NotificationSettingsNoHover.jsx # Notification controls
+│   │   ├── SimpleLocationRashiBar.jsx    # Location & Rashi selector
 │   │   └── ui/                           # Reusable UI components
 │   ├── contexts/
 │   │   └── NotificationContext.jsx       # Global notifications
@@ -178,32 +177,22 @@ vedic-astrology-dashboard/
 
 ## 🔧 Configuration
 
-### Generate Chandrashtam Data
-Pre-calculate Chandrashtam periods for any year:
+### Chandrashtam Data
+The annual calendar uses a rolling 5-year window (current year to current year + 4),
+generated automatically before every `npm run dev` and `npm run build`. Old years are
+removed and the next year is added on each deploy; the files are gitignored. To
+regenerate manually:
 
 ```bash
-# Generate for 2025 (default)
-npm run generate:chandrashtam
-
-# Generate for specific year
-npm run generate:chandrashtam 2026
+npm run data:sync
 ```
 
-This creates a JSON file in `src/data/` with ~165 periods across all 12 Rashis.
-
-### Change Default Year
-Edit `src/App.jsx`:
-```jsx
-<ChandrashtamAnnualView year={2026} />
-```
+The calendar opens on the current year automatically.
 
 ### Customize Location
-Edit `src/components/TimezoneSelector.jsx` to add your location:
+Add a city to `src/data/locations.js` (the default for new visitors is `DEFAULT_LOCATION`, Mumbai):
 ```javascript
-export const LOCATIONS = [
-  { name: 'Mumbai', lat: 19.0760, lon: 72.8777, tz: 'Asia/Kolkata' },
-  { name: 'Your City', lat: XX.XXXX, lon: YY.YYYY, tz: 'Your/Timezone' },
-]
+{ name: 'Your City', latitude: XX.XXXX, longitude: YY.YYYY, timezone: 'Your/Timezone', country: 'Your Country' },
 ```
 
 ---

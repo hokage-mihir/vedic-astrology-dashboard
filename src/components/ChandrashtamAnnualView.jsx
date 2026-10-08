@@ -8,28 +8,28 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import CosmicLoader from './CosmicLoader';
 
-// Lazy load data only when needed
+// Pre-calculated years (rolling 5-year window written by scripts/sync-chandrashtam-data.js
+// before every build), loaded on demand
+const yearModules = import.meta.glob('../data/chandrashtam-*.json', { import: 'default' });
+const YEAR_LOADERS = Object.fromEntries(
+  Object.entries(yearModules).map(([path, load]) => [Number(path.match(/(\d{4})\.json$/)[1]), load])
+);
+const CURRENT_YEAR = new Date().getFullYear();
+// The current year is always offered; if the deployed build predates it, it's calculated in the browser
+const AVAILABLE_YEARS = [...new Set([CURRENT_YEAR, ...Object.keys(YEAR_LOADERS).map(Number)])]
+  .filter((y) => y >= CURRENT_YEAR)
+  .sort((a, b) => a - b);
+
 const loadYearData = async (year) => {
-  switch(year) {
-    case 2025:
-      return (await import('../data/chandrashtam-2025.json')).default;
-    case 2026:
-      return (await import('../data/chandrashtam-2026.json')).default;
-    case 2027:
-      return (await import('../data/chandrashtam-2027.json')).default;
-    case 2028:
-      return (await import('../data/chandrashtam-2028.json')).default;
-    case 2029:
-      return (await import('../data/chandrashtam-2029.json')).default;
-    default:
-      throw new Error(`No data available for year ${year}`);
-  }
+  if (YEAR_LOADERS[year]) return YEAR_LOADERS[year]();
+  const { buildYearData } = await import('../lib/chandrashtam-calendar.js');
+  return buildYearData(year);
 };
 
-const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
+const ChandrashtamAnnualView = ({ year, userRashi }) => {
   // Initialize with prop if available, otherwise default
   const [selectedRashi, setSelectedRashi] = useState(userRashi || 'Mesh');
-  const [selectedYear, setSelectedYear] = useState(year);
+  const [selectedYear, setSelectedYear] = useState(() => (AVAILABLE_YEARS.includes(year) ? year : CURRENT_YEAR));
   const [expandedPeriod, setExpandedPeriod] = useState(null);
   const [chandrashtamData, setChandrashtamData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,9 +41,6 @@ const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
       setSelectedRashi(userRashi);
     }
   }, [userRashi]);
-
-  // Available years
-  const availableYears = [2025, 2026, 2027, 2028, 2029];
 
   // Load and process pre-calculated data
   useEffect(() => {
@@ -58,15 +55,19 @@ const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
           return;
         }
 
-        // Convert ISO strings back to Date objects
+        // Convert ISO strings back to Date objects, keeping periods that overlap
+        // the selected year in the viewer's timezone
+        const yearStart = new Date(selectedYear, 0, 1);
+        const yearEnd = new Date(selectedYear + 1, 0, 1);
         const converted = {};
         Object.keys(rawData.data).forEach(rashi => {
-          converted[rashi] = rawData.data[rashi].map(period => ({
-            start: new Date(period.start),
-            end: new Date(period.end),
-            duration: period.duration,
-            incomplete: period.incomplete
-          }));
+          converted[rashi] = rawData.data[rashi]
+            .map(period => ({
+              start: new Date(period.start),
+              end: new Date(period.end),
+              duration: period.duration
+            }))
+            .filter(period => period.end > yearStart && period.start < yearEnd);
         });
 
         setChandrashtamData({
@@ -85,7 +86,7 @@ const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
     loadData();
   }, [selectedYear]);
 
-  const periods = chandrashtamData?.data[selectedRashi] || [];
+  const periods = useMemo(() => chandrashtamData?.data[selectedRashi] || [], [chandrashtamData, selectedRashi]);
 
   const formatDate = (date) => {
     return date.toLocaleDateString('en-US', {
@@ -121,14 +122,15 @@ const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
   const periodsByMonth = useMemo(() => {
     const grouped = {};
     periods.forEach(period => {
-      const month = period.start.getMonth();
+      // A period that began in December of the previous year belongs to January
+      const month = period.start.getFullYear() < selectedYear ? 0 : period.start.getMonth();
       if (!grouped[month]) {
         grouped[month] = [];
       }
       grouped[month].push(period);
     });
     return grouped;
-  }, [periods]);
+  }, [periods, selectedYear]);
 
   if (loading) {
     return (
@@ -145,7 +147,7 @@ const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
       <Card>
         <CardContent className="p-6">
           <p className="text-center text-gray-600">
-            No pre-calculated data available for {year}
+            No pre-calculated data available for {selectedYear}
           </p>
         </CardContent>
       </Card>
@@ -182,7 +184,7 @@ const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
               onChange={(e) => setSelectedYear(Number(e.target.value))}
               className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-cosmic-blue-500 focus:border-transparent"
             >
-              {availableYears.map(yr => (
+              {AVAILABLE_YEARS.map(yr => (
                 <option key={yr} value={yr}>{yr}</option>
               ))}
             </select>
@@ -305,7 +307,7 @@ const ChandrashtamAnnualView = ({ year = 2025, userRashi }) => {
         </div>
 
         <div className="mt-4 text-xs text-gray-500 text-center">
-          Data generated: {new Date(chandrashtamData.generatedAt).toLocaleString()}
+          Lahiri ayanamsa • Times shown in your device&apos;s timezone • Data generated {new Date(chandrashtamData.generatedAt).toLocaleDateString()}
         </div>
       </CardContent>
     </Card>

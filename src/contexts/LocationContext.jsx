@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import LOCATIONS from '../data/locations';
+import { createContext, useContext, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import LOCATIONS, { DEFAULT_LOCATION } from '../data/locations';
 import { RASHI_ORDER } from '../lib/vedic-constants';
 
 const LocationContext = createContext();
@@ -16,11 +17,12 @@ export const LocationProvider = ({ children }) => {
   // Initialize location from localStorage or default to first location
   const [currentLocation, setCurrentLocation] = useState(() => {
     try {
-      const saved = localStorage.getItem('selectedLocation');
-      return saved ? JSON.parse(saved) : LOCATIONS[0];
+      const saved = JSON.parse(localStorage.getItem('selectedLocation'));
+      // Re-resolve against the current list so stale or malformed entries can't leak in
+      return LOCATIONS.find((loc) => loc.name === saved?.name) || DEFAULT_LOCATION;
     } catch (e) {
       console.error('Error parsing saved location:', e);
-      return LOCATIONS[0];
+      return DEFAULT_LOCATION;
     }
   });
 
@@ -30,7 +32,7 @@ export const LocationProvider = ({ children }) => {
       const saved = localStorage.getItem('selectedRashi');
       // Fallback for legacy key 'userMoonRashi' if 'selectedRashi' is missing
       const legacySaved = localStorage.getItem('userMoonRashi');
-      return saved || legacySaved || RASHI_ORDER[0];
+      return [saved, legacySaved].find((rashi) => RASHI_ORDER.includes(rashi)) || RASHI_ORDER[0];
     } catch (e) {
       console.error('Error parsing saved rashi:', e);
       return RASHI_ORDER[0];
@@ -39,14 +41,21 @@ export const LocationProvider = ({ children }) => {
 
   // Persist location changes
   useEffect(() => {
-    localStorage.setItem('selectedLocation', JSON.stringify(currentLocation));
+    try {
+      localStorage.setItem('selectedLocation', JSON.stringify(currentLocation));
+    } catch {
+      // Storage unavailable; selection stays in memory
+    }
   }, [currentLocation]);
 
   // Persist Rashi changes
   useEffect(() => {
-    localStorage.setItem('selectedRashi', selectedRashi);
-    // Keep legacy key in sync for now to avoid breaking other components reading it directly
-    localStorage.setItem('userMoonRashi', selectedRashi);
+    try {
+      localStorage.setItem('selectedRashi', selectedRashi);
+      localStorage.removeItem('userMoonRashi');
+    } catch {
+      // Storage unavailable; selection stays in memory
+    }
   }, [selectedRashi]);
 
   const updateLocation = (location) => {
@@ -69,4 +78,8 @@ export const LocationProvider = ({ children }) => {
       {children}
     </LocationContext.Provider>
   );
+};
+
+LocationProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

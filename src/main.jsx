@@ -4,68 +4,86 @@ import App from './App.jsx'
 import './index.css'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { registerSW } from 'virtual:pwa-register'
-import { UpdateToast } from './components/UpdateToast'
-import { CookieConsent } from './components/CookieConsent'
-import { initializeAnalytics, enableAnalytics, disableAnalytics } from './services/analytics'
+import { PromptDock } from './components/PromptDock'
+import { initializeAnalytics, enableAnalytics, disableAnalytics, trackRoutePageView } from './services/analytics'
+// Imported for its side effect: captures `beforeinstallprompt` as early as possible
+import './lib/pwa-install'
 
-// Create a container for the update toast
+const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
+
+// Lets the service worker callback reach React state
 let showUpdateToast = null;
+let updateAvailable = false;
 
-// Register service worker for PWA
+// Register service worker for PWA. In "prompt" mode a new version waits until
+// the user chooses to reload, instead of reloading the page under them.
 const updateSW = registerSW({
   onNeedRefresh() {
-    // Show toast instead of confirm dialog
-    if (showUpdateToast) {
-      showUpdateToast();
-    }
+    updateAvailable = true;
+    showUpdateToast?.();
   },
-  onOfflineReady() {
-    console.log('App ready to work offline')
+  onRegisteredSW(_swUrl, registration) {
+    // Installed PWAs can stay open for days; check for new versions hourly
+    if (registration) {
+      setInterval(() => registration.update(), UPDATE_CHECK_INTERVAL_MS);
+    }
   },
 })
 
+// Initialize before the first render: page components send their page view
+// from effects, which run before any effect in Root would
+initializeAnalytics();
+
+const hasConsentChoice = () => {
+  try {
+    return !!localStorage.getItem('analyticsConsent');
+  } catch {
+    return true;
+  }
+};
+
 function Root() {
-  const [needsUpdate, setNeedsUpdate] = React.useState(false);
+  const [needsUpdate, setNeedsUpdate] = React.useState(updateAvailable);
+  const [consentPending, setConsentPending] = React.useState(() => !hasConsentChoice());
 
   React.useEffect(() => {
     // Allow service worker to trigger update toast
     showUpdateToast = () => setNeedsUpdate(true);
-
-    // Try to initialize analytics if consent already given
-    initializeAnalytics();
   }, []);
 
-  const handleUpdate = () => {
+  const handleUpdate = React.useCallback(() => {
     setNeedsUpdate(false);
     updateSW(true);
-  };
+  }, []);
 
-  const handleDismiss = () => {
+  const handleDismissUpdate = React.useCallback(() => {
     setNeedsUpdate(false);
-  };
+  }, []);
 
   const handleAcceptCookies = () => {
-    const initialized = enableAnalytics();
-    if (initialized) {
-      console.log('Analytics enabled with user consent');
+    setConsentPending(false);
+    // The current page rendered before consent, so record its view now
+    if (enableAnalytics()) {
+      trackRoutePageView(window.location.pathname);
     }
   };
 
   const handleRejectCookies = () => {
+    setConsentPending(false);
     disableAnalytics();
-    console.log('Analytics disabled by user choice');
   };
 
   return (
     <React.StrictMode>
       <NotificationProvider>
         <App />
-        {needsUpdate && (
-          <UpdateToast onUpdate={handleUpdate} onDismiss={handleDismiss} />
-        )}
-        <CookieConsent
-          onAccept={handleAcceptCookies}
-          onReject={handleRejectCookies}
+        <PromptDock
+          needsUpdate={needsUpdate}
+          onUpdate={handleUpdate}
+          onDismissUpdate={handleDismissUpdate}
+          consentPending={consentPending}
+          onAcceptCookies={handleAcceptCookies}
+          onRejectCookies={handleRejectCookies}
         />
       </NotificationProvider>
     </React.StrictMode>

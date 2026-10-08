@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle, XCircle, Clock, Info, ChevronDown, ChevronUp } from 'lucide-react';
 import ProgressRing from './ProgressRing';
-import { getChandrashtamStatus, calculatePreciseDaysUntilChandrashtam, formatTimeRemaining, calculateProgress } from '../lib/chandrashtam-calculator.js';
-import { calculateMoonPosition } from '../lib/astro-calculator.js';
-import { RASHI_ORDER } from '../lib/vedic-constants.js';
+import { getChandrashtamStatus, formatTimeRemaining, calculateProgress } from '../lib/chandrashtam-calculator.js';
 import { ImprovedTooltip } from './ui/improved-tooltip';
 
-export function PersonalStatusCard({ userRashi, location, compact = false, defaultExpanded = false }) {
-  const [moonData, setMoonData] = useState(null);
+export function PersonalStatusCard({ userRashi, compact = false, defaultExpanded = false }) {
   const [status, setStatus] = useState(null);
   const [timeUntil, setTimeUntil] = useState(null);
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
@@ -18,16 +15,12 @@ export function PersonalStatusCard({ userRashi, location, compact = false, defau
     if (!userRashi) return;
 
     const updateStatus = () => {
-      const moonPos = calculateMoonPosition();
-      if (moonPos) {
-        setMoonData(moonPos);
-
-        const currentRashi = RASHI_ORDER[moonPos.rashi_number];
-        const chandrashtamStatus = getChandrashtamStatus(userRashi, currentRashi, moonPos);
+      try {
+        const chandrashtamStatus = getChandrashtamStatus(userRashi, new Date());
         setStatus(chandrashtamStatus);
-
-        const timeData = calculatePreciseDaysUntilChandrashtam(userRashi, moonPos);
-        setTimeUntil(timeData);
+        setTimeUntil(chandrashtamStatus.timeUntil || null);
+      } catch (error) {
+        console.error('Error calculating Chandrashtam status:', error);
       }
     };
 
@@ -286,11 +279,11 @@ export function PersonalStatusCard({ userRashi, location, compact = false, defau
         </div>
       )}
 
-      {/* Location Info */}
-      {location && (
+      {/* Exact window */}
+      {timeUntil?.start && timeUntil?.end && (
         <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
           <p className="text-xs text-gray-500 text-center">
-            Calculations based on {location.name} ({location.latitude.toFixed(2)}°, {location.longitude.toFixed(2)}°)
+            {status.color === 'red' ? 'Current' : 'Next'} Chandrashtam: {formatPeriodBoundary(timeUntil.start)} – {formatPeriodBoundary(timeUntil.end)}
           </p>
         </div>
       )}
@@ -313,14 +306,17 @@ export function PersonalStatusCard({ userRashi, location, compact = false, defau
   );
 }
 
+const formatPeriodBoundary = (date) =>
+  date.toLocaleString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+
 PersonalStatusCard.propTypes = {
   userRashi: PropTypes.string,
-  location: PropTypes.shape({
-    name: PropTypes.string,
-    latitude: PropTypes.number,
-    longitude: PropTypes.number,
-    timezone: PropTypes.string
-  }),
   compact: PropTypes.bool,
   defaultExpanded: PropTypes.bool
 };

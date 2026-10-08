@@ -1,57 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Download, RefreshCw } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { trackEvent } from '../services/analytics';
+import { usePWAInstall, promptInstall } from '../lib/pwa-install';
+import { useNotifications } from '../contexts/NotificationContext';
 
 export function InstallButton({ className = '' }) {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const { canInstall } = usePWAInstall();
+  const { addToast } = useNotifications();
   const [isChecking, setIsChecking] = useState(false);
 
-  useEffect(() => {
-    // Check if app is already installed
-    const checkInstalled = window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone === true;
-
-    setIsInstalled(checkInstalled);
-
-    // Listen for the beforeinstallprompt event (for non-installed state)
-    const handler = (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setIsInstalled(false);
-    };
-
-    window.addEventListener('beforeinstallprompt', handler);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
-    };
-  }, []);
-
   const handleInstallClick = async () => {
-    if (!deferredPrompt) {
-      return;
-    }
-
     trackEvent('PWA', 'manual_install_click', 'footer_button');
-
-    // Show the install prompt
-    deferredPrompt.prompt();
-
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
-
+    const outcome = await promptInstall();
     if (outcome === 'accepted') {
-      console.log('User accepted the install prompt from manual button');
       trackEvent('PWA', 'manual_install_accepted', 'footer_button');
-      setIsInstalled(true);
-    } else {
+    } else if (outcome === 'dismissed') {
       trackEvent('PWA', 'manual_install_declined', 'footer_button');
     }
-
-    // Clear the deferredPrompt for next time
-    setDeferredPrompt(null);
   };
 
   const handleUpdateCheck = async () => {
@@ -59,53 +25,37 @@ export function InstallButton({ className = '' }) {
     trackEvent('PWA', 'manual_update_check', 'footer_button');
 
     try {
-      // Check if service worker is supported
-      if ('serviceWorker' in navigator) {
-        const registration = await navigator.serviceWorker.getRegistration();
+      const registration = 'serviceWorker' in navigator
+        ? await navigator.serviceWorker.getRegistration()
+        : null;
 
-        if (registration) {
-          // Force check for updates
-          await registration.update();
-          console.log('Checked for updates');
+      if (!registration) {
+        addToast({ title: 'Updates unavailable', description: 'Offline support is not active in this browser.', type: 'info' });
+        return;
+      }
 
-          // Wait a bit to see if there's an update
-          setTimeout(() => {
-            // If there's a waiting service worker, it means there's an update
-            if (registration.waiting) {
-              console.log('Update available! Refreshing...');
-              trackEvent('PWA', 'update_found', 'manual_check');
+      await registration.update();
 
-              // Tell the waiting service worker to activate
-              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-
-              // Reload the page to get the new version
-              window.location.reload();
-            } else {
-              console.log('App is up to date');
-              trackEvent('PWA', 'already_updated', 'manual_check');
-
-              // Show feedback to user
-              alert('App is already up to date!');
-              setIsChecking(false);
-            }
-          }, 1000);
-        } else {
-          console.log('No service worker registration found');
-          setIsChecking(false);
-        }
+      // A found update installs in the background and then shows the
+      // "Update Available" card via the service worker's onNeedRefresh.
+      if (registration.installing || registration.waiting) {
+        trackEvent('PWA', 'update_found', 'manual_check');
+        addToast({ title: 'Update found', description: 'Downloading the new version…', type: 'info' });
       } else {
-        console.log('Service workers not supported');
-        setIsChecking(false);
+        trackEvent('PWA', 'already_updated', 'manual_check');
+        addToast({ title: 'You’re up to date', description: 'You have the latest version of Moon Mood.', type: 'success' });
       }
     } catch (error) {
       console.error('Error checking for updates:', error);
       trackEvent('PWA', 'update_check_error', error.message);
+      addToast({ title: 'Couldn’t check for updates', description: 'Please check your connection and try again.', type: 'error' });
+    } finally {
       setIsChecking(false);
     }
   };
 
-  // Show "Install App" if not installed and prompt is available
-  if (!isInstalled && deferredPrompt) {
+  // Show "Install App" when the browser offers installation
+  if (canInstall) {
     return (
       <button
         onClick={handleInstallClick}
@@ -118,7 +68,7 @@ export function InstallButton({ className = '' }) {
     );
   }
 
-  // Show "Check for Updates" if installed or no prompt available
+  // Otherwise offer a manual update check
   return (
     <button
       onClick={handleUpdateCheck}

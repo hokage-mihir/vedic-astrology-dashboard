@@ -1,13 +1,23 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import SimplifiedLandingPage from '../components/SimplifiedLandingPage';
-import { trackPageView, trackEvent } from '../services/analytics';
+import { trackRoutePageView, trackEvent } from '../services/analytics';
+import { useSEO } from '../hooks/useSEO';
 
 const SimplifiedPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  useSEO('/');
+
+  // Old links used /?view=advanced before the app moved to real routes
+  useEffect(() => {
+    if (searchParams.get('view') === 'advanced') {
+      navigate('/advanced', { replace: true });
+    }
+  }, [searchParams, navigate]);
 
   useEffect(() => {
-    trackPageView('/simplified', 'Simplified View');
+    trackRoutePageView('/');
   }, []);
 
   const handleShowAdvanced = () => {

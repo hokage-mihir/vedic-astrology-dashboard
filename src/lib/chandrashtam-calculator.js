@@ -1,76 +1,60 @@
 import { RASHI_ORDER, CHANDRASHTAM_MAP } from './vedic-constants.js';
+import { moonRashiSpan, previousMoonIngress } from './astro-core.js';
+
+const DAY_MS = 86400000;
+const APPROACH_WINDOW_DAYS = 3;
 
 /**
- * Calculate precise time until Chandrashtam using Moon's speed
- * Uses actual Moon position in degrees for accurate timing
+ * Find the current (or next) Chandrashtam period for a Rashi.
+ * @returns {{ start: Date, end: Date, active: boolean } | null}
  */
-export function calculatePreciseDaysUntilChandrashtam(userRashi, moonData) {
-  if (!userRashi || !moonData) {
+export function getChandrashtamPeriod(userRashi, now = new Date()) {
+  const afflictingMoonIndex = RASHI_ORDER.indexOf(CHANDRASHTAM_MAP[userRashi]);
+  if (afflictingMoonIndex === -1) return null;
+  return moonRashiSpan(afflictingMoonIndex, now);
+}
+
+/**
+ * Calculate exact time until Chandrashtam starts, or until it ends if active.
+ * Transition times are solved from the Moon's actual position, not extrapolated.
+ */
+export function calculatePreciseDaysUntilChandrashtam(userRashi, now = new Date()) {
+  const period = userRashi ? getChandrashtamPeriod(userRashi, now) : null;
+  if (!period) {
     return { days: 0, hours: 0, totalDays: 0, status: 'unknown' };
   }
 
-  const { rashi_number, degrees_in_rashi, speed } = moonData;
-  const afflictingMoonRashi = CHANDRASHTAM_MAP[userRashi];
-
-  if (!afflictingMoonRashi) {
-    return { days: 0, hours: 0, totalDays: 0, status: 'unknown' };
-  }
-
-  const afflictingMoonIndex = RASHI_ORDER.indexOf(afflictingMoonRashi);
-  const currentMoonIndex = rashi_number;
-
-  // Special case: Moon is already in the afflicting Rashi
-  // Calculate time remaining in current Rashi (when Chandrashtam ends)
-  if (currentMoonIndex === afflictingMoonIndex) {
-    const degreesLeft = 30 - degrees_in_rashi;
-    const hoursLeft = (degreesLeft / speed) * 24;
-
-    return {
-      days: Math.floor(hoursLeft / 24),
-      hours: Math.floor(hoursLeft % 24),
-      totalDays: hoursLeft / 24
-    };
-  }
-
-  // Calculate total degrees to travel to reach afflicting Rashi
-  let totalDegrees;
-
-  if (afflictingMoonIndex > currentMoonIndex) {
-    // Moon needs to travel forward
-    const rashiDistance = afflictingMoonIndex - currentMoonIndex;
-    totalDegrees = (30 - degrees_in_rashi) + (rashiDistance - 1) * 30;
-  } else {
-    // Moon needs to complete cycle (wrap around)
-    const rashiDistance = 12 - currentMoonIndex + afflictingMoonIndex;
-    totalDegrees = (30 - degrees_in_rashi) + (rashiDistance - 1) * 30;
-  }
-
-  // Moon speed is in degrees per day
-  const daysUntil = totalDegrees / speed;
+  const afflictingIndex = RASHI_ORDER.indexOf(CHANDRASHTAM_MAP[userRashi]);
+  const target = period.active ? period.end : period.start;
+  const totalDays = Math.max(0, (target - now) / DAY_MS);
 
   return {
-    days: Math.floor(daysUntil),
-    hours: Math.floor((daysUntil % 1) * 24),
-    totalDays: daysUntil
+    days: Math.floor(totalDays),
+    hours: Math.floor((totalDays % 1) * 24),
+    totalDays,
+    active: period.active,
+    afflictingIndex,
+    start: period.start,
+    end: period.end
   };
 }
 
 /**
- * Get Chandrashtam status based on user's Rashi and current Moon position
+ * Get Chandrashtam status for the user's Rashi at a given moment
  */
-export function getChandrashtamStatus(userRashi, currentMoonRashi, moonData) {
-  if (!userRashi || !currentMoonRashi || !moonData) {
+export function getChandrashtamStatus(userRashi, now = new Date()) {
+  if (!userRashi) {
     return { status: 'unknown', color: 'gray', message: 'Select your Rashi to see status' };
   }
 
-  const afflictingMoonRashi = CHANDRASHTAM_MAP[userRashi];
-  
-  if (!afflictingMoonRashi) {
+  if (!CHANDRASHTAM_MAP[userRashi]) {
     return { status: 'unknown', color: 'gray', message: 'Invalid Rashi selection' };
   }
 
+  const timeUntil = calculatePreciseDaysUntilChandrashtam(userRashi, now);
+
   // Check if currently afflicted
-  if (currentMoonRashi === afflictingMoonRashi) {
+  if (timeUntil.active) {
     return {
       status: 'active',
       color: 'red',
@@ -84,15 +68,13 @@ export function getChandrashtamStatus(userRashi, currentMoonRashi, moonData) {
         'Increase meditation or spiritual practices',
         'Remember: Just being aware of these days can save your mind from negative effects',
         'Relax knowing this is a cosmic game'
-      ]
+      ],
+      timeUntil
     };
   }
 
-  // Calculate days until next Chandrashtam
-  const timeUntil = calculatePreciseDaysUntilChandrashtam(userRashi, moonData);
-  
   // Check if approaching (within ~3 days)
-  if (timeUntil.totalDays <= 3) {
+  if (timeUntil.totalDays <= APPROACH_WINDOW_DAYS) {
     return {
       status: 'approaching',
       color: 'yellow',
@@ -128,54 +110,42 @@ export function getChandrashtamStatus(userRashi, currentMoonRashi, moonData) {
  */
 export function formatTimeRemaining(days, hours) {
   if (days === 0 && hours === 0) {
-    return 'Active now';
+    return 'Less than an hour';
   }
-  
+
   if (days === 0) {
     return `${hours} hour${hours !== 1 ? 's' : ''}`;
   }
-  
+
   if (hours === 0) {
     return `${days} day${days !== 1 ? 's' : ''}`;
   }
-  
+
   return `${days} day${days !== 1 ? 's' : ''} ${hours} hour${hours !== 1 ? 's' : ''}`;
 }
 
+const clampPercent = (value) => Math.max(0, Math.min(100, value));
+
 /**
  * Calculate progress percentage for countdown ring
- * The progress represents how close we are to the END of the current period
- * - For ACTIVE Chandrashtam (red): shows progress toward END of affliction
- * - For APPROACHING Chandrashtam (yellow): shows progress toward START of affliction
- * - For CLEAR period (green): shows progress toward next Chandrashtam
+ * - ACTIVE (red): share of the current Chandrashtam already elapsed
+ * - APPROACHING (yellow): progress through the 3-day warning window
+ * - CLEAR (green): progress from the last Chandrashtam's end to the next start
  */
-export function calculateProgress(timeUntil, status = 'clear') {
-  if (!timeUntil || timeUntil.totalDays === 0) {
-    return 100; // Active now, ending soon
+export function calculateProgress(timeUntil, status = 'clear', now = new Date()) {
+  if (!timeUntil || !timeUntil.start || !timeUntil.end) {
+    return 0;
   }
 
-  // Moon stays in each rashi for ~2.3 days (27.32 / 12)
-  const rashiDuration = 2.3;
-
-  // For ACTIVE state: Chandrashtam is happening now
-  // Progress should be HIGH when it's about to END (low time remaining)
   if (status === 'active') {
-    const progress = ((rashiDuration - timeUntil.totalDays) / rashiDuration) * 100;
-    return Math.max(0, Math.min(100, progress));
+    return clampPercent(((now - timeUntil.start) / (timeUntil.end - timeUntil.start)) * 100);
   }
 
-  // For APPROACHING state: Chandrashtam starts soon (within ~3 days)
-  // Progress should increase as we get closer to the START
   if (status === 'approaching') {
-    const approachWindow = 3; // 3 days warning window
-    const progress = ((approachWindow - timeUntil.totalDays) / approachWindow) * 100;
-    return Math.max(0, Math.min(100, progress));
+    return clampPercent(((APPROACH_WINDOW_DAYS - timeUntil.totalDays) / APPROACH_WINDOW_DAYS) * 100);
   }
 
-  // For CLEAR state: Show progress through the full lunar cycle until next Chandrashtam
-  // This gives context of where we are in the cycle
-  const totalCycle = 27.32;
-  const progress = ((totalCycle - timeUntil.totalDays) / totalCycle) * 100;
-
-  return Math.max(0, Math.min(100, progress));
+  // The previous Chandrashtam ended when the Moon last left the afflicting rashi
+  const previousEnd = previousMoonIngress((timeUntil.afflictingIndex + 1) % 12, now);
+  return clampPercent(((now - previousEnd) / (timeUntil.start - previousEnd)) * 100);
 }

@@ -95,3 +95,6 @@ public/icon-*.svg
 # Misc
 .cache
 .parcel-cache
+
+# Chandrashtam data is generated on every dev/build (scripts/sync-chandrashtam-data.js)
+src/data/chandrashtam-*.json

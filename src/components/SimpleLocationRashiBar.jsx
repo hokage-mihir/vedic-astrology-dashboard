@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
-import { MapPin, Moon, ChevronDown, Search } from 'lucide-react';
+import { MapPin, Moon, Search } from 'lucide-react';
 import { RASHI_ORDER } from '../lib/vedic-constants.js';
 import { RASHI_SYMBOLS } from '../lib/rashi-symbols.js';
-import LOCATIONS from '../data/locations';
+import LOCATIONS, { DEFAULT_LOCATION } from '../data/locations';
 import { BottomSheet } from './ui/BottomSheet';
 
 export function SimpleLocationRashiBar({ onLocationChange, onRashiChange, currentLocation, currentRashi }) {
   // Use props if provided, otherwise fallback to local state (though context should always provide props now)
-  const [selectedLocation, setSelectedLocation] = useState(currentLocation || LOCATIONS[0]);
+  const [selectedLocation, setSelectedLocation] = useState(currentLocation || DEFAULT_LOCATION);
   const [selectedRashi, setSelectedRashi] = useState(currentRashi || '');
 
   // Sync local state with props when they change (from context)

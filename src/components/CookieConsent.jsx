@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cookie, X, Shield, BarChart3 } from 'lucide-react';
+import PropTypes from 'prop-types';
+import { Cookie, Shield, BarChart3 } from 'lucide-react';
 
 export function CookieConsent({ onAccept, onReject }) {
   const [showConsent, setShowConsent] = useState(false);
@@ -33,18 +34,17 @@ export function CookieConsent({ onAccept, onReject }) {
     }
   };
 
-  if (!showConsent) {
-    return null;
-  }
-
   return (
     <AnimatePresence>
+      {showConsent && (
       <motion.div
-        initial={{ opacity: 0, y: 100 }}
+        key="cookie-consent"
+        role="dialog"
+        aria-labelledby="cookie-consent-title"
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 100 }}
+        exit={{ opacity: 0, y: 40 }}
         transition={{ duration: 0.3 }}
-        className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-50"
       >
         <div className="bg-white rounded-xl shadow-2xl border-2 border-cosmic-purple-200 p-4 relative overflow-hidden">
           {/* Background decoration */}
@@ -57,11 +57,11 @@ export function CookieConsent({ onAccept, onReject }) {
                 <Cookie className="w-5 h-5 text-cosmic-purple-600" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-base text-gray-900 mb-1">
+                <h3 id="cookie-consent-title" className="font-bold text-base text-gray-900 mb-1">
                   Cookie & Privacy Notice
                 </h3>
                 <p className="text-xs text-gray-600 leading-relaxed mb-2">
-                  We use analytics to improve your experience. We collect anonymous usage data and don't track personal information.
+                  We use analytics to improve your experience. We collect anonymous usage data and don&apos;t track personal information.
                 </p>
 
                 {/* What we track */}
@@ -103,8 +103,14 @@ export function CookieConsent({ onAccept, onReject }) {
           </div>
         </div>
       </motion.div>
+      )}
     </AnimatePresence>
   );
 }
+
+CookieConsent.propTypes = {
+  onAccept: PropTypes.func,
+  onReject: PropTypes.func,
+};
 
 export default CookieConsent;

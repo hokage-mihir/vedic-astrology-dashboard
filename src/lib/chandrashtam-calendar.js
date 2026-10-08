@@ -1,145 +1,47 @@
-import { julian, moonposition } from 'astronomia';
 import { RASHI_ORDER, CHANDRASHTAM_MAP } from './vedic-constants.js';
+import { nextMoonIngress, previousMoonIngress } from './astro-core.js';
 
-const normalize360 = (degrees) => {
-    degrees = degrees % 360;
-    return degrees < 0 ? degrees + 360 : degrees;
-};
-
-const calculateAyanamsa = (jd) => {
-    const T = (jd - 2451545.0) / 36525;
-    return 23.85 + 0.0137 * T;
-};
+const HOUR_MS = 60 * 60 * 1000;
+// Widen the UTC year by a day on each side so the calendar is complete in every
+// timezone (UTC-12 to UTC+14). The UI filters to the viewer's local year.
+const YEAR_MARGIN_MS = 24 * HOUR_MS;
 
 /**
- * Calculate which Rashi the Moon is in for a given date
- * @param {Date} date - The date to check
- * @returns {Object} Object with rashi name, number, and degrees
- */
-const getMoonRashiForDate = (date) => {
-    try {
-        const jd = julian.DateToJD(date);
-        const moon = moonposition.position(jd);
-        const longitude = normalize360(moon.lon * 180 / Math.PI);
-        const ayanamsa = calculateAyanamsa(jd);
-        const siderealLongitude = normalize360(longitude - ayanamsa);
-        const rashiNumber = Math.floor(siderealLongitude / 30);
-        const degreesInRashi = siderealLongitude % 30;
-
-        return {
-            rashi: RASHI_ORDER[rashiNumber],
-            rashiNumber: rashiNumber,
-            degrees: degreesInRashi,
-            longitude: siderealLongitude
-        };
-    } catch (error) {
-        console.error('Error calculating moon rashi:', error);
-        return null;
-    }
-};
-
-/**
- * Calculate all Chandrashtam periods for a specific Rashi in a year
+ * Calculate all Chandrashtam periods for a Rashi that overlap a calendar year.
+ * Start/end are the exact Moon ingress times (Lahiri), so a period that spans
+ * New Year keeps its true start and end rather than being clipped.
  * @param {string} rashi - The Rashi to calculate for (e.g., 'Mesh', 'Vrishab')
  * @param {number} year - The year to calculate for
- * @returns {Array} Array of objects with start and end dates/times
+ * @returns {Array<{start: Date, end: Date, duration: number}>} duration in hours
  */
 export const calculateChandrashtamForRashi = (rashi, year) => {
-    const chandrashtamRashi = CHANDRASHTAM_MAP[rashi];
-    if (!chandrashtamRashi) {
+    const afflictingIndex = RASHI_ORDER.indexOf(CHANDRASHTAM_MAP[rashi]);
+    if (afflictingIndex === -1) {
         console.error('Invalid rashi:', rashi);
         return [];
     }
+    const exitIndex = (afflictingIndex + 1) % 12;
+
+    const rangeStart = new Date(Date.UTC(year, 0, 1) - YEAR_MARGIN_MS);
+    const rangeEnd = new Date(Date.UTC(year + 1, 0, 1) + YEAR_MARGIN_MS);
 
     const periods = [];
-    const startDate = new Date(year, 0, 1); // Jan 1
-    const endDate = new Date(year, 11, 31, 23, 59, 59); // Dec 31
+    // Start from the last ingress before the range so an in-progress period is included
+    let start = previousMoonIngress(afflictingIndex, rangeStart);
 
-    // Check every 6 hours (Moon moves ~13° per day, ~0.5° per hour)
-    // This gives us enough granularity without being too expensive
-    const checkInterval = 6 * 60 * 60 * 1000; // 6 hours in ms
-    let currentDate = new Date(startDate);
-    let inChandrashtam = false;
-    let periodStart = null;
-
-    while (currentDate <= endDate) {
-        const moonData = getMoonRashiForDate(currentDate);
-
-        if (moonData && moonData.rashi === chandrashtamRashi) {
-            if (!inChandrashtam) {
-                // Entering Chandrashtam - refine to find exact entry time
-                periodStart = refineTransitionTime(currentDate, chandrashtamRashi, true);
-                inChandrashtam = true;
-            }
-        } else {
-            if (inChandrashtam) {
-                // Exiting Chandrashtam - refine to find exact exit time
-                const periodEnd = refineTransitionTime(currentDate, chandrashtamRashi, false);
-                periods.push({
-                    start: periodStart,
-                    end: periodEnd,
-                    duration: (periodEnd - periodStart) / (1000 * 60 * 60) // hours
-                });
-                inChandrashtam = false;
-                periodStart = null;
-            }
+    while (start < rangeEnd) {
+        const end = nextMoonIngress(exitIndex, start);
+        if (end > rangeStart) {
+            periods.push({
+                start,
+                end,
+                duration: (end - start) / HOUR_MS
+            });
         }
-
-        currentDate = new Date(currentDate.getTime() + checkInterval);
-    }
-
-    // Handle case where year ends during Chandrashtam
-    if (inChandrashtam && periodStart) {
-        periods.push({
-            start: periodStart,
-            end: endDate,
-            duration: (endDate - periodStart) / (1000 * 60 * 60),
-            incomplete: true
-        });
+        start = nextMoonIngress(afflictingIndex, end);
     }
 
     return periods;
-};
-
-/**
- * Refine the exact transition time when Moon enters/exits a Rashi
- * @param {Date} approximateTime - The approximate time of transition
- * @param {string} targetRashi - The Rashi we're looking for
- * @param {boolean} entering - True if entering, false if exiting
- * @returns {Date} Refined transition time
- */
-const refineTransitionTime = (approximateTime, targetRashi, entering) => {
-    // Binary search to find transition within 5-minute accuracy
-    let start = new Date(approximateTime.getTime() - 6 * 60 * 60 * 1000); // 6 hours before
-    let end = new Date(approximateTime.getTime() + 6 * 60 * 60 * 1000); // 6 hours after
-    const minInterval = 5 * 60 * 1000; // 5 minutes
-
-    while (end - start > minInterval) {
-        const mid = new Date((start.getTime() + end.getTime()) / 2);
-        const moonData = getMoonRashiForDate(mid);
-
-        if (moonData) {
-            const isInRashi = moonData.rashi === targetRashi;
-
-            if (entering) {
-                if (isInRashi) {
-                    end = mid;
-                } else {
-                    start = mid;
-                }
-            } else {
-                if (isInRashi) {
-                    start = mid;
-                } else {
-                    end = mid;
-                }
-            }
-        } else {
-            break;
-        }
-    }
-
-    return entering ? end : start;
 };
 
 /**
@@ -158,95 +60,23 @@ export const calculateAllChandrashtamForYear = (year) => {
 };
 
 /**
- * Get current Chandrashtam status for a specific Rashi
- * @param {string} rashi - The Rashi to check
- * @param {Array} periods - Pre-calculated periods for this Rashi
- * @param {Date} now - Current date/time (optional, defaults to now)
- * @returns {Object} Status object with active period info
+ * Build the JSON document stored in src/data/chandrashtam-<year>.json
  */
-export const getCurrentChandrashtamStatus = (rashi, periods, now = new Date()) => {
-    if (!periods || periods.length === 0) {
-        return {
-            isActive: false,
-            currentPeriod: null,
-            nextPeriod: null
-        };
-    }
-
-    // Find active period
-    const activePeriod = periods.find(period => {
-        return now >= period.start && now <= period.end;
+export const buildYearData = (year) => {
+    const allPeriods = calculateAllChandrashtamForYear(year);
+    const data = {};
+    Object.keys(allPeriods).forEach(rashi => {
+        data[rashi] = allPeriods[rashi].map(period => ({
+            start: period.start.toISOString(),
+            end: period.end.toISOString(),
+            duration: Number(period.duration.toFixed(3))
+        }));
     });
-
-    if (activePeriod) {
-        return {
-            isActive: true,
-            currentPeriod: activePeriod,
-            timeLeft: activePeriod.end - now,
-            nextPeriod: null
-        };
-    }
-
-    // Find next period
-    const nextPeriod = periods.find(period => period.start > now);
 
     return {
-        isActive: false,
-        currentPeriod: null,
-        nextPeriod: nextPeriod,
-        timeUntilNext: nextPeriod ? nextPeriod.start - now : null
-    };
-};
-
-/**
- * Format a period for display
- * @param {Object} period - Period object with start and end dates
- * @returns {string} Formatted string
- */
-export const formatPeriod = (period) => {
-    const startStr = period.start.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    const endStr = period.end.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-
-    return `${startStr} - ${endStr} (${period.duration.toFixed(1)}h)`;
-};
-
-/**
- * Get statistics about Chandrashtam periods for a Rashi
- * @param {Array} periods - Array of periods
- * @returns {Object} Statistics object
- */
-export const getChandrashtamStats = (periods) => {
-    if (!periods || periods.length === 0) {
-        return {
-            totalPeriods: 0,
-            totalDuration: 0,
-            averageDuration: 0,
-            longestPeriod: null,
-            shortestPeriod: null
-        };
-    }
-
-    const completePeriods = periods.filter(p => !p.incomplete);
-    const totalDuration = completePeriods.reduce((sum, p) => sum + p.duration, 0);
-    const averageDuration = totalDuration / completePeriods.length;
-
-    const sorted = [...completePeriods].sort((a, b) => a.duration - b.duration);
-
-    return {
-        totalPeriods: periods.length,
-        totalDuration: totalDuration,
-        averageDuration: averageDuration,
-        longestPeriod: sorted[sorted.length - 1],
-        shortestPeriod: sorted[0]
+        year,
+        ayanamsa: 'Lahiri',
+        generatedAt: new Date().toISOString(),
+        data
     };
 };

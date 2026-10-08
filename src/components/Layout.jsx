@@ -1,12 +1,10 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Heart, Home, BarChart3 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import OfflineIndicator from './OfflineIndicator';
-import InstallPrompt from './InstallPrompt';
-import IOSInstallPrompt from './IOSInstallPrompt';
 import InstallButton from './InstallButton';
+import PropTypes from 'prop-types';
 
 const Layout = ({ children }) => {
   const prefersReducedMotion = useReducedMotion();
@@ -16,13 +14,9 @@ const Layout = ({ children }) => {
   const isSimplified = location.pathname === '/' || location.pathname === '/simplified';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] relative overflow-hidden">
       {/* Offline Indicator */}
       <OfflineIndicator />
-
-      {/* Install Prompt */}
-      <InstallPrompt />
-      <IOSInstallPrompt />
 
       {/* View Toggle Navigation */}
       <nav role="navigation" aria-label="View navigation" className="relative z-20">
@@ -161,6 +155,10 @@ const Layout = ({ children }) => {
       </main>
     </div>
   );
+};
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default Layout;

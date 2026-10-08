@@ -1,99 +1,137 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { ToastContainer } from '@/components/ui/toast';
 import PropTypes from 'prop-types';
 
 const NotificationContext = createContext(null);
 
+const SETTINGS_KEY = 'notificationSettings';
+const DEFAULT_SETTINGS = {
+  chandrashtamStart: true,
+  chandrashtamEnd: true,
+  browserNotifications: false,
+  soundEnabled: true,
+};
+
+const NOTIFICATION_ICON = '/icon-192x192.png';
+const NOTIFICATION_BADGE = '/badge-96x96.png';
+
+const loadSettings = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+    return saved && typeof saved === 'object' ? { ...DEFAULT_SETTINGS, ...saved } : DEFAULT_SETTINGS;
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
+};
+
+const getPermission = () => ('Notification' in window ? Notification.permission : 'unsupported');
+
+/**
+ * Show a system notification. Android Chrome only allows notifications through
+ * the service worker (`new Notification()` throws there), so prefer that path.
+ */
+const showSystemNotification = async (title, options) => {
+  if ('serviceWorker' in navigator) {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration) {
+      await registration.showNotification(title, options);
+      return;
+    }
+  }
+  const notification = new Notification(title, options);
+  notification.onclick = () => {
+    window.focus();
+    notification.close();
+  };
+};
+
 let toastId = 0;
 
 export function NotificationProvider({ children }) {
   const [toasts, setToasts] = useState([]);
-  const [browserNotificationsEnabled, setBrowserNotificationsEnabled] = useState(false);
-  const [notificationSettings, setNotificationSettings] = useState(() => {
-    const saved = localStorage.getItem('notificationSettings');
-    return saved ? JSON.parse(saved) : {
-      chandrashtamStart: true,
-      chandrashtamEnd: true,
-      browserNotifications: false,
-    };
-  });
+  const [permission, setPermission] = useState(getPermission);
+  const [notificationSettings, setNotificationSettings] = useState(loadSettings);
+  const toastTimers = useRef(new Map());
 
-  // Check browser notification permission on mount
+  // Keep permission in sync if the user changes it in browser settings
   useEffect(() => {
-    if ('Notification' in window) {
-      setBrowserNotificationsEnabled(Notification.permission === 'granted');
-    }
+    if (!navigator.permissions?.query) return;
+    let status;
+    const handleChange = () => setPermission(getPermission());
+    navigator.permissions
+      .query({ name: 'notifications' })
+      .then((result) => {
+        status = result;
+        status.addEventListener('change', handleChange);
+      })
+      .catch(() => {});
+    return () => status?.removeEventListener('change', handleChange);
   }, []);
 
   // Save settings to localStorage
   useEffect(() => {
-    localStorage.setItem('notificationSettings', JSON.stringify(notificationSettings));
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(notificationSettings));
+    } catch {
+      // Storage unavailable (private mode); settings stay in memory
+    }
   }, [notificationSettings]);
 
-  const addToast = useCallback(({ title, description, type = 'info', duration = 5000 }) => {
-    const id = toastId++;
-    const toast = { id, title, description, type };
-
-    setToasts((prev) => [...prev, toast]);
-
-    if (duration > 0) {
-      setTimeout(() => {
-        removeToast(id);
-      }, duration);
-    }
-
-    return id;
-  }, []);
-
   const removeToast = useCallback((id) => {
+    clearTimeout(toastTimers.current.get(id));
+    toastTimers.current.delete(id);
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  const showNotification = useCallback(async ({ title, body, type = 'info', duration = 5000 }) => {
-    // Always show toast notification
+  const addToast = useCallback(({ title, description, type = 'info', duration = 5000 }) => {
+    const id = toastId++;
+    setToasts((prev) => [...prev, { id, title, description, type }]);
+
+    if (duration > 0) {
+      toastTimers.current.set(id, setTimeout(() => removeToast(id), duration));
+    }
+
+    return id;
+  }, [removeToast]);
+
+  const browserNotificationsEnabled = permission === 'granted';
+
+  const showNotification = useCallback(async ({ title, body, type = 'info', duration = 5000, tag }) => {
+    // Always show an in-app toast
     addToast({ title, description: body, type, duration });
 
-    // Show browser notification if enabled
-    if (notificationSettings.browserNotifications && browserNotificationsEnabled) {
-      try {
-        const notification = new Notification(title, {
-          body,
-          icon: '/icon.png', // You can add an icon file to public folder
-          badge: '/badge.png',
-          tag: `notification-${Date.now()}`,
-        });
-
-        notification.onclick = () => {
-          window.focus();
-          notification.close();
-        };
-      } catch (error) {
-        console.error('Failed to show browser notification:', error);
-      }
+    if (!notificationSettings.browserNotifications || !browserNotificationsEnabled) {
+      return;
     }
-  }, [addToast, notificationSettings.browserNotifications, browserNotificationsEnabled]);
+
+    try {
+      await showSystemNotification(title, {
+        body,
+        icon: NOTIFICATION_ICON,
+        badge: NOTIFICATION_BADGE,
+        tag: tag || `moon-mood-${Date.now()}`,
+        silent: !notificationSettings.soundEnabled,
+        data: { url: '/' },
+      });
+    } catch (error) {
+      console.error('Failed to show browser notification:', error);
+    }
+  }, [addToast, notificationSettings.browserNotifications, notificationSettings.soundEnabled, browserNotificationsEnabled]);
 
   const requestBrowserPermission = useCallback(async () => {
     if (!('Notification' in window)) {
-      console.warn('This browser does not support notifications');
       return false;
     }
 
-    if (Notification.permission === 'granted') {
-      setBrowserNotificationsEnabled(true);
-      setNotificationSettings(prev => ({ ...prev, browserNotifications: true }));
-      return true;
+    let result = Notification.permission;
+    if (result === 'default') {
+      result = await Notification.requestPermission();
     }
+    setPermission(result);
 
-    if (Notification.permission !== 'denied') {
-      const permission = await Notification.requestPermission();
-      const granted = permission === 'granted';
-      setBrowserNotificationsEnabled(granted);
-      setNotificationSettings(prev => ({ ...prev, browserNotifications: granted }));
-      return granted;
-    }
-
-    return false;
+    const granted = result === 'granted';
+    setNotificationSettings(prev => ({ ...prev, browserNotifications: granted }));
+    return granted;
   }, []);
 
   const updateSettings = useCallback((newSettings) => {
@@ -107,6 +145,7 @@ export function NotificationProvider({ children }) {
     showNotification,
     requestBrowserPermission,
     browserNotificationsEnabled,
+    notificationPermission: permission,
     notificationSettings,
     updateSettings,
   };

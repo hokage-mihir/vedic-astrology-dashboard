@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, BarChart3 } from 'lucide-react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
@@ -8,6 +7,7 @@ import RahuKalamCard from './RahuKalamCard';
 import WelcomeBanner from './WelcomeBanner';
 import ErrorBoundary from './ErrorBoundary';
 import { useLocationContext } from '../contexts/LocationContext';
+import PropTypes from 'prop-types';
 
 export function SimplifiedLandingPage({ onShowAdvanced }) {
   const prefersReducedMotion = useReducedMotion();
@@ -77,7 +77,6 @@ export function SimplifiedLandingPage({ onShowAdvanced }) {
           <ErrorBoundary message="Unable to load your Chandrashtam status. Please refresh the page.">
             <PersonalStatusCard
               userRashi={selectedRashi}
-              location={currentLocation}
               compact={true}
               defaultExpanded={false}
             />
@@ -122,5 +121,9 @@ export function SimplifiedLandingPage({ onShowAdvanced }) {
     </div>
   );
 }
+
+SimplifiedLandingPage.propTypes = {
+  onShowAdvanced: PropTypes.func.isRequired,
+};
 
 export default SimplifiedLandingPage;

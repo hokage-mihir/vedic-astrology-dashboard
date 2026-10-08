@@ -51,6 +51,22 @@ export const initializeAnalytics = () => {
   }
 };
 
+// Page names reported to GA for each route
+const ROUTE_PAGE_VIEWS = {
+  '/': { path: '/simplified', title: 'Simplified View' },
+  '/advanced': { path: '/advanced', title: 'Advanced Dashboard' },
+};
+
+/**
+ * Track a page view for a router pathname (e.g. '/' or '/advanced')
+ */
+export const trackRoutePageView = (pathname) => {
+  const page = ROUTE_PAGE_VIEWS[pathname];
+  if (page) {
+    trackPageView(page.path, page.title);
+  }
+};
+
 /**
  * Track page views
  */

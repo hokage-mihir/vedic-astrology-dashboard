@@ -1,105 +1,56 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Clock, X, ChevronDown, ChevronUp, Calendar as CalendarIcon } from 'lucide-react';
-import { calculateRahuKalam, calculateSunTimes } from '../lib/sun-calculator.js';
+import { getRahuKalamForDay, getZonedDateKey, formatTime as formatTimeInZone, getTimeZoneLabel, isDifferentTimeZone } from '../lib/sun-calculator.js';
 import { ImprovedTooltip } from './ui/improved-tooltip';
 import { trackEvent } from '../services/analytics';
 
-export function RahuKalamCard({ location, date, compact = false, defaultExpanded = false }) {
-  // Stabilize the date to prevent infinite loops
-  const stableDate = useMemo(() => date || new Date(), [date]);
-
-  const [rahuKalam, setRahuKalam] = useState(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
+export function RahuKalamCard({ location, compact = false, defaultExpanded = false }) {
+  const [now, setNow] = useState(() => new Date());
   const [showNextDays, setShowNextDays] = useState(false);
-  const [nextDaysData, setNextDaysData] = useState([]);
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
+  // Tick every minute so "active" state and the day rollover stay current
   useEffect(() => {
-    if (!location) return;
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
-    const calculateRahuKalamTiming = () => {
-      try {
-        // Calculate sunrise and sunset times
-        const sunTimes = calculateSunTimes(location, stableDate);
+  const timeZone = location?.timezone;
+  // Changes only when the calendar day changes at the selected location
+  const dayKey = location ? getZonedDateKey(now, timeZone) : null;
 
-        if (sunTimes && sunTimes.sunrise && sunTimes.sunset) {
-          const timing = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset, stableDate.getDay());
-          setRahuKalam(timing);
-        } else {
-          setRahuKalam({ start: null, end: null });
-        }
-      } catch (error) {
-        console.error('Error calculating Rahu Kalam:', error);
-        setRahuKalam({ start: null, end: null });
-      }
-    };
-
-    calculateRahuKalamTiming();
-
-    // Calculate next 6 days' Rahu Kalam
-    const calculateNextDays = () => {
-      const days = [];
-      for (let i = 1; i <= 6; i++) {
-        const futureDate = new Date(stableDate);
-        futureDate.setDate(stableDate.getDate() + i);
-
-        try {
-          const sunTimes = calculateSunTimes(location, futureDate);
-          if (sunTimes && sunTimes.sunrise && sunTimes.sunset) {
-            const timing = calculateRahuKalam(sunTimes.sunrise, sunTimes.sunset, futureDate.getDay());
-            days.push({
-              date: futureDate,
-              dayName: futureDate.toLocaleDateString('en-US', { weekday: 'long' }),
-              dateStr: futureDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-              timing
-            });
-          }
-        } catch (error) {
-          console.error(`Error calculating Rahu Kalam for day ${i}:`, error);
-        }
-      }
-      setNextDaysData(days);
-    };
-
-    calculateNextDays();
-
-    // Update current time every minute
-    const timeInterval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
-
-    return () => clearInterval(timeInterval);
-  }, [location, stableDate]);
-
-  const isRahuKalamActive = () => {
-    if (!rahuKalam || !rahuKalam.start || !rahuKalam.end) return false;
-
-    const now = currentTime.getTime();
-    const startTime = rahuKalam.start.getTime();
-    const endTime = rahuKalam.end.getTime();
-
-    return now >= startTime && now <= endTime;
-  };
-
-  const formatTime = (date) => {
-    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-      return '';
+  const { rahuKalam, tomorrow, nextDaysData } = useMemo(() => {
+    if (!location) return { rahuKalam: null, tomorrow: null, nextDaysData: [] };
+    const base = new Date();
+    const days = [];
+    for (let i = 1; i <= 6; i++) {
+      days.push(getRahuKalamForDay(location, base, i));
     }
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
+    return { rahuKalam: getRahuKalamForDay(location, base, 0), tomorrow: days[0], nextDaysData: days };
+    // dayKey drives recomputation at the location's midnight
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location, dayKey]);
 
-  const formatTimeRange = () => {
-    if (!rahuKalam || !rahuKalam.start || !rahuKalam.end) {
-      return 'Unable to calculate';
-    }
-    return `${formatTime(rahuKalam.start)} - ${formatTime(rahuKalam.end)}`;
-  };
+  const formatTime = (date) => (date ? formatTimeInZone(date, timeZone) : '');
+
+  const formatRange = (timing) =>
+    timing?.start && timing?.end ? `${formatTime(timing.start)} - ${formatTime(timing.end)}` : 'Unable to calculate';
+
+  const formatDayLabel = (date, options) =>
+    date.toLocaleDateString('en-US', { timeZone: 'UTC', ...options });
+
+  const formatTimeRange = () => formatRange(rahuKalam);
+
+  const showZoneLabel = timeZone && isDifferentTimeZone(timeZone, now);
+  const locationLabel = location
+    ? `${location.name}${showZoneLabel ? ` · ${getTimeZoneLabel(timeZone, now)}` : ''}`
+    : 'Default Location';
+
+  const phase = !rahuKalam?.start || !rahuKalam?.end
+    ? 'unknown'
+    : now < rahuKalam.start ? 'upcoming' : now <= rahuKalam.end ? 'active' : 'over';
 
   if (!rahuKalam) {
     return (
@@ -116,7 +67,8 @@ export function RahuKalamCard({ location, date, compact = false, defaultExpanded
     );
   }
 
-  const isActive = isRahuKalamActive();
+  const isActive = phase === 'active';
+  const phaseLabel = { active: '⚠️ Active now', upcoming: 'Later today', over: 'Over for today', unknown: 'Today' }[phase];
 
   // Compact collapsed view for mobile
   if (compact && !isExpanded) {
@@ -151,7 +103,7 @@ export function RahuKalamCard({ location, date, compact = false, defaultExpanded
               <p className={`text-xs ${
                 isActive ? 'text-red-600' : 'text-orange-600'
               }`}>
-                {isActive ? '⚠️ Active Now' : 'Today'}
+                {phaseLabel}
               </p>
             </div>
           </div>
@@ -168,8 +120,13 @@ export function RahuKalamCard({ location, date, compact = false, defaultExpanded
           <p className={`text-xs mt-1 ${
             isActive ? 'text-red-600' : 'text-orange-600'
           }`}>
-            {location?.name || 'Default Location'}
+            {locationLabel}
           </p>
+          {phase === 'over' && tomorrow && (
+            <p className="text-xs mt-1 text-orange-700 font-medium">
+              Tomorrow: {formatRange(tomorrow)}
+            </p>
+          )}
         </div>
 
         {/* Expand Button */}
@@ -217,12 +174,12 @@ export function RahuKalamCard({ location, date, compact = false, defaultExpanded
             <h3 className={`text-base sm:text-lg font-bold ${
               isActive ? 'text-red-700' : 'text-orange-700'
             }`}>
-              Today's Rahu Kalam
+              Today&apos;s Rahu Kalam
             </h3>
             <p className={`text-xs sm:text-sm ${
               isActive ? 'text-red-600' : 'text-orange-600'
             }`}>
-              {isActive ? '⚠️ ACTIVE NOW' : 'Scheduled for today'}
+              {phaseLabel}
             </p>
           </div>
         </div>
@@ -245,8 +202,13 @@ export function RahuKalamCard({ location, date, compact = false, defaultExpanded
         <p className={`text-xs sm:text-sm mt-1 ${
           isActive ? 'text-red-600' : 'text-orange-600'
         }`}>
-          {location?.name || 'Default Location'}
+          {locationLabel}
         </p>
+        {phase === 'over' && tomorrow && (
+          <p className="text-xs sm:text-sm mt-1 text-orange-700 font-medium">
+            Tomorrow: {formatRange(tomorrow)}
+          </p>
+        )}
       </div>
 
       {/* Guidance */}
@@ -290,7 +252,12 @@ export function RahuKalamCard({ location, date, compact = false, defaultExpanded
       {/* Additional Info */}
       <div className="mt-4 pt-4 border-t border-gray-200">
         <p className="text-xs text-gray-500 text-center">
-          Rahu Kalam is an inauspicious 90-minute period ruled by Rahu (North Node of Moon)
+          Rahu Kalam is one-eighth of the daytime (sunrise to sunset), so its length changes with the season and your location. It is ruled by Rahu (North Node of the Moon).
+        </p>
+        <p className="text-xs text-gray-500 text-center mt-2">
+          Calculated from sunrise and sunset at {location?.name || 'your location'}
+          {location ? ` (${location.latitude.toFixed(2)}°, ${location.longitude.toFixed(2)}°)` : ''}
+          {timeZone ? `, shown in ${getTimeZoneLabel(timeZone, now)}` : ''}.
         </p>
       </div>
 
@@ -328,9 +295,9 @@ export function RahuKalamCard({ location, date, compact = false, defaultExpanded
           transition={{ duration: 0.3 }}
           className="mt-4 space-y-3"
         >
-          {nextDaysData.map((dayData, index) => (
+          {nextDaysData.map((dayData) => (
             <div
-              key={index}
+              key={dayData.labelDate.toISOString()}
               className={`p-3 rounded-lg border ${
                 isActive
                   ? 'bg-red-50 border-red-200'
@@ -342,21 +309,19 @@ export function RahuKalamCard({ location, date, compact = false, defaultExpanded
                   <p className={`font-semibold text-sm ${
                     isActive ? 'text-red-700' : 'text-orange-700'
                   }`}>
-                    {dayData.dayName}
+                    {formatDayLabel(dayData.labelDate, { weekday: 'long' })}
                   </p>
                   <p className={`text-xs ${
                     isActive ? 'text-red-600' : 'text-orange-600'
                   }`}>
-                    {dayData.dateStr}
+                    {formatDayLabel(dayData.labelDate, { month: 'short', day: 'numeric' })}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className={`font-semibold text-sm ${
                     isActive ? 'text-red-700' : 'text-orange-700'
                   }`}>
-                    {dayData.timing.start && dayData.timing.end
-                      ? `${formatTime(dayData.timing.start)} - ${formatTime(dayData.timing.end)}`
-                      : 'Not available'}
+                    {formatRange(dayData)}
                   </p>
                 </div>
               </div>
@@ -392,7 +357,6 @@ RahuKalamCard.propTypes = {
     longitude: PropTypes.number,
     timezone: PropTypes.string
   }),
-  date: PropTypes.instanceOf(Date),
   compact: PropTypes.bool,
   defaultExpanded: PropTypes.bool
 };

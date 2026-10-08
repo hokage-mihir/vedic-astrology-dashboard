@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNotifications } from '../contexts/NotificationContext';
@@ -12,8 +12,12 @@ export function NotificationSettings() {
     updateSettings,
     requestBrowserPermission,
     browserNotificationsEnabled,
+    notificationPermission,
     showNotification,
   } = useNotifications();
+
+  const isUnsupported = notificationPermission === 'unsupported';
+  const isBlocked = notificationPermission === 'denied';
 
   const handleBrowserNotificationToggle = async (checked) => {
     if (checked && !browserNotificationsEnabled) {
@@ -81,19 +85,35 @@ export function NotificationSettings() {
             />
 
             <ToggleOption
-              label="Browser Notifications"
-              description="Receive notifications even when the app is in background"
-              checked={notificationSettings.browserNotifications}
+              label="System Notifications"
+              description="Show alerts in your device's notification tray while Moon Mood is open, even in a background tab"
+              checked={notificationSettings.browserNotifications && browserNotificationsEnabled}
+              disabled={isUnsupported || isBlocked}
               onChange={handleBrowserNotificationToggle}
             />
 
             <ToggleOption
-              label="Sound Alerts"
-              description="Play sound with notifications"
+              label="Notification Sound"
+              description="Play the system sound with notifications"
               checked={notificationSettings.soundEnabled}
+              disabled={!notificationSettings.browserNotifications || !browserNotificationsEnabled}
               onChange={(checked) => updateSettings({ soundEnabled: checked })}
             />
           </div>
+
+          {isUnsupported && (
+            <p className="text-xs text-gray-600 bg-gray-50 rounded-lg p-3">
+              This browser doesn&apos;t support system notifications. On iPhone and iPad, add Moon Mood to your Home Screen first (Share → Add to Home Screen), then open it from there.
+            </p>
+          )}
+          {isBlocked && (
+            <p className="text-xs text-amber-700 bg-amber-50 rounded-lg p-3">
+              Notifications are blocked for this site. Allow them in your browser&apos;s site settings to receive system alerts.
+            </p>
+          )}
+          <p className="text-xs text-gray-500">
+            Alerts fire at the exact start and end of your Chandrashtam on any page of the app. If your device was asleep, you&apos;ll be alerted when you return (within 2 hours).
+          </p>
 
           <button
             onClick={handleTestNotification}
@@ -107,17 +127,19 @@ export function NotificationSettings() {
   );
 }
 
-function ToggleOption({ label, description, checked, onChange }) {
+function ToggleOption({ label, description, checked, onChange, disabled = false }) {
   return (
-    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+    <div className={`flex items-center justify-between gap-3 p-3 bg-gray-50 rounded-lg ${disabled ? 'opacity-50' : ''}`}>
       <div className="flex-1">
         <div className="font-medium text-gray-900 text-sm">{label}</div>
         <div className="text-xs text-gray-600 mt-0.5">{description}</div>
       </div>
-      <label className="relative inline-flex items-center cursor-pointer">
+      <label className={`relative inline-flex flex-shrink-0 items-center ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
         <input
           type="checkbox"
           className="sr-only peer"
+          aria-label={label}
+          disabled={disabled}
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
         />
@@ -132,4 +154,5 @@ ToggleOption.propTypes = {
   description: PropTypes.string.isRequired,
   checked: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };
